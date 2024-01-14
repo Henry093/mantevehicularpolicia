@@ -1,0 +1,35 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Asignacione;
+use App\Models\Emantenimiento;
+use App\Models\Estado;
+use App\Models\Sasignacione;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatosSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        //Estado
+        Estado::create(['nombre' => 'Activo']);
+        Estado::create(['nombre' => 'Inactivo']);
+        Estado::create(['nombre' => 'Eliminado']);
+
+        //Asignaciones
+        Asignacione::create(['nombre' => 'No Asignado']);
+        Asignacione::create(['nombre' => 'Asignado']);
+        
+        //Estatus mantenimeinto
+        Emantenimiento::create(['nombre' => 'Enviado']);
+        Emantenimiento::create(['nombre' => 'Aceptado']);
+        Emantenimiento::create(['nombre' => 'Re-Asignado']);
+        Emantenimiento::create(['nombre' => 'En Poceso']);
+        Emantenimiento::create(['nombre' => 'Finalizado']);
+    }
+}
