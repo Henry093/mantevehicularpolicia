@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asignacion;
 use App\Models\Asignacione;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -53,9 +54,8 @@ class AsignarController extends Controller
         $user = User::find($id);
 
         $roles = Role::all();
-        $asignaciones = Asignacione::all();
 
-        return view('user.sistem.rol_user', compact('user', 'roles', 'asignaciones'));
+        return view('user.sistem.rol_user', compact('user', 'roles'));
     }
 
     /**

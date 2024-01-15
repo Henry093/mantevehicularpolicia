@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Asignacione;
+use App\Models\Asignacion;
 use App\Models\Emantenimiento;
 use App\Models\Estado;
 use App\Models\Sasignacione;
@@ -22,8 +22,8 @@ class DatosSeeder extends Seeder
         Estado::create(['nombre' => 'Eliminado']);
 
         //Asignaciones
-        Asignacione::create(['nombre' => 'No Asignado']);
-        Asignacione::create(['nombre' => 'Asignado']);
+        Asignacion::create(['nombre' => 'Asignado']);
+        Asignacion::create(['nombre' => 'No Asignado']);
         
         //Estatus mantenimeinto
         Emantenimiento::create(['nombre' => 'Enviado']);
@@ -31,5 +31,6 @@ class DatosSeeder extends Seeder
         Emantenimiento::create(['nombre' => 'Re-Asignado']);
         Emantenimiento::create(['nombre' => 'En Poceso']);
         Emantenimiento::create(['nombre' => 'Finalizado']);
+        
     }
 }

@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
  * Class Distrito
  *
  * @property $id
- * @property $provincia_id
+ * @property $canton_id
  * @property $nombre
  * @property $codigo
  * @property $created_at
  * @property $updated_at
  *
+ * @property Canton $canton
  * @property Circuito[] $circuitos
- * @property Provincia $provincia
+ * @property Dependencia[] $dependencias
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
@@ -23,7 +24,7 @@ class Distrito extends Model
 {
     
     static $rules = [
-		'provincia_id' => 'required',
+		'canton_id' => 'required',
 		'nombre' => 'required',
 		'codigo' => 'required',
     ];
@@ -35,9 +36,17 @@ class Distrito extends Model
      *
      * @var array
      */
-    protected $fillable = ['provincia_id','nombre','codigo'];
+    protected $fillable = ['canton_id','nombre','codigo'];
 
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function canton()
+    {
+        return $this->hasOne('App\Models\Canton', 'id', 'canton_id');
+    }
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -47,11 +56,11 @@ class Distrito extends Model
     }
     
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function provincia()
+    public function dependencias()
     {
-        return $this->hasOne('App\Models\Provincia', 'id', 'provincia_id');
+        return $this->hasMany('App\Models\Dependencia', 'distrito_id', 'id');
     }
     
 

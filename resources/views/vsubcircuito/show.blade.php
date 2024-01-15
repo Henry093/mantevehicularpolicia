@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Vsubcircuito')
+@section('title', __('validation.View Vsubcircuito'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Vsubcircuito ') }}
+                        {{ __('Vsubcircuito') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Vsubcircuito List
+                            @lang('Vsubcircuito List')
                         </a>
                     </div>
                 </div>
@@ -45,28 +45,28 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Vsubcircuito Details</h3>
+                            <h3 class="card-title">@lang('Vsubcircuito Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Vehiculo Id:</strong>
+<strong>Placa Vehículo:</strong>
 {{ $vsubcircuito->vehiculo_id }}
 </div>
 <div class="form-group">
-<strong>Dependencia Id:</strong>
+<strong>Dependencia:</strong>
 {{ $vsubcircuito->dependencia_id }}
 </div>
 <div class="form-group">
-<strong>Usubcircuito Id:</strong>
+<strong>Usuario Subcircuito:</strong>
 {{ $vsubcircuito->usubcircuito_id }}
 </div>
 <div class="form-group">
-<strong>Asignacion Id:</strong>
+<strong>Asignación:</strong>
 {{ $vsubcircuito->asignacion_id }}
 </div>
 <div class="form-group">
-<strong>Estado Id:</strong>
+<strong>Estado:</strong>
 {{ $vsubcircuito->estado_id }}
 </div>
 

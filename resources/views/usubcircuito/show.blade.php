@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Usubcircuito')
+@section('title', __('validation.View Usubcircuito'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Usubcircuito ') }}
+                        {{ __('Usubcircuito') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Usubcircuito List
+                            @lang('Usubcircuito List')
                         </a>
                     </div>
                 </div>
@@ -45,25 +45,33 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Usubcircuito Details</h3>
+                            <h3 class="card-title">@lang('Usubcircuito Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>User Id:</strong>
-{{ $usubcircuito->user_id }}
+<strong>Nombre:</strong>
+{{ $usubcircuito->user->name }} {{ $usubcircuito->user->lastname }}
 </div>
 <div class="form-group">
-<strong>Dependencia Id:</strong>
-{{ $usubcircuito->dependencia_id }}
+<strong>Distrito:</strong>
+{{ $usubcircuito->dependencia->distrito->nombre }}
 </div>
 <div class="form-group">
-<strong>Asignacion Id:</strong>
-{{ $usubcircuito->asignacion_id }}
+<strong>Circuito:</strong>
+{{ $usubcircuito->dependencia->circuito->nombre }}
 </div>
 <div class="form-group">
-<strong>Estado Id:</strong>
-{{ $usubcircuito->estado_id }}
+<strong>Subcircuito:</strong>
+{{ $usubcircuito->dependencia->subcircuito->nombre }}
+</div>    
+<div class="form-group">
+<strong>Asignación:</strong>
+{{ $usubcircuito->asignacion->nombre }}
+</div>
+<div class="form-group">
+<strong>Estado:</strong>
+{{ $usubcircuito->estado->nombre }}
 </div>
 
                         </div>

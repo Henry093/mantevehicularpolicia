@@ -16,9 +16,9 @@ class DependenciaSeeder extends Seeder
     public function run(): void
     {
         //Distritos
-        Distrito::create(['provincia_id' => '11', 'nombre' => 'Loja', 'codigo' => '11D01']);
-        Distrito::create(['provincia_id' => '11', 'nombre' => 'Catamayo', 'codigo' => '11D02' ]);
-        Distrito::create(['provincia_id' => '11', 'nombre' => 'Macará', 'codigo' => '11D03']);
+        Distrito::create(['canton_id' => '1', 'nombre' => 'Loja', 'codigo' => '11D01']);
+        Distrito::create(['canton_id' => '1', 'nombre' => 'Catamayo', 'codigo' => '11D02' ]);
+        Distrito::create(['canton_id' => '1', 'nombre' => 'Macará', 'codigo' => '11D03']);
 
         //Circuitos
         Circuito::create(['distrito_id' => '1', 'nombre' => 'Vilcabamba', 'codigo' => '11D01C01']);

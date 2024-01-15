@@ -1,33 +1,32 @@
 
 <div class="form-group mb-3">
-    <label class="form-label">{{ Form::label('provincia_id', 'Provincia') }}</label>
+    <label class="form-label required" >{{ Form::label('canton_id', 'Cantón') }}</label>
     <div>
-        <select name="provincia_id" class="form-select form-control-rounded mb-2 {{ $errors->has('provincia_id') ? ' is-invalid' : '' }}" placeholder="Provincia">
-            <option value="" >Seleccionar Provincia..</option>
-            @foreach($provincias as $provincia)
-                <option value="{{ $provincia->id }}" {{ $distrito->provincia_id == $provincia->id ? 'selected' : '' }}>
-                    {{ $provincia->nombre }}
+        <select name="canton_id" class="form-control form-control-rounded mb-2 
+        {{ $errors->has('canton_id') ? ' is-invalid' : '' }}" placeholder="Cantón" required>
+            <option value="" >Seleccionar Cantón..</option>
+            @foreach($dcanton as $canton)
+                <option value="{{ $canton->id }}" {{ $distrito->canton_id == $canton->id ? 'selected' : '' }}>
+                    {{ $canton->nombre }}
                 </option>
             @endforeach
         </select>
-        {!! $errors->first('provincia_id', '<div class="invalid-feedback">:message</div>') !!}
+        {!! $errors->first('canton_id', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>
-
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('nombre', 'Nombre') }}</label>
+    <label class="form-label required">   {{ Form::label('nombre') }}</label>
     <div>
         {{ Form::text('nombre', $distrito->nombre, ['class' => 'form-control' .
-        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre distrito']) }}
+        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre', 'required']) }}
         {!! $errors->first('nombre', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>
-
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('codigo', 'Código') }}</label>
+    <label class="form-label required">   {{ Form::label('codigo', 'Código') }}</label>
     <div>
         {{ Form::text('codigo', $distrito->codigo, ['class' => 'form-control' .
-        ($errors->has('codigo') ? ' is-invalid' : ''), 'placeholder' => 'Código distrito']) }}
+        ($errors->has('codigo') ? ' is-invalid' : ''), 'placeholder' => 'Código', 'required']) }}
         {!! $errors->first('codigo', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

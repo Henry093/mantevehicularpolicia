@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Circuito;
 use App\Models\Distrito;
+use App\Models\Subcircuito;
 use Illuminate\Http\Request;
 
 /**
@@ -109,5 +110,10 @@ class CircuitoController extends Controller
 
         return redirect()->route('circuitos.index')
             ->with('success', 'Circuito deleted successfully');
+    }
+
+    public function getSubcircuitos($circuitoId) {
+        $subcircuitos = Subcircuito::where('circuito_id', $circuitoId)->pluck('nombre', 'id')->toArray();
+        return response()->json($subcircuitos);
     }
 }

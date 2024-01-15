@@ -1,109 +1,166 @@
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label required" >{{ Form::label('tvehiculo_id', 'Tipo Vehículo') }}</label>
+            <div>
+                <select name="tvehiculo_id" class="form-control form-control-rounded mb-2 
+                {{ $errors->has('tvehiculo_id') ? ' is-invalid' : '' }}" placeholder="Tipo Vehículo" >
+                    <option value="" >Seleccionar Tipo Vehículo..</option>
+                    @foreach($dvehiculo as $tvehiculo)
+                        <option value="{{ $tvehiculo->id }}" {{ $vehiculo->tvehiculo_id == $tvehiculo->id ? 'selected' : '' }}>
+                            {{ $tvehiculo->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                {!! $errors->first('tvehiculo_id', '<div class="invalid-feedback">:message</div>') !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required">   {{ Form::label('placa', 'Placa') }}</label>
+            <div>
+                {{ Form::text('placa', $vehiculo->placa, ['class' => 'form-control' .
+                ($errors->has('placa') ? ' is-invalid' : ''), 'placeholder' => 'Placa']) }}
+                {!! $errors->first('placa', '<div class="invalid-feedback">:message</div>') !!}
+            </div>                       
+        </div>
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label required">   {{ Form::label('chasis', 'Chasis') }}</label>
+            <div>
+                {{ Form::text('chasis', $vehiculo->chasis, ['class' => 'form-control' .
+                ($errors->has('chasis') ? ' is-invalid' : ''), 'placeholder' => 'Chasis']) }}
+                {!! $errors->first('chasis', '<div class="invalid-feedback">:message</div>') !!}
+            </div>            
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required" >{{ Form::label('marca_id', 'Marca') }}</label>
+            <div>
+                <select name="marca_id" class="form-control form-control-rounded mb-2 
+                {{ $errors->has('marca_id') ? ' is-invalid' : '' }}" placeholder="Marca" >
+                    <option value="" >Seleccionar Marca..</option>
+                    @foreach($dmarca as $marca)
+                        <option value="{{ $marca->id }}" {{ $vehiculo->marca_id == $marca->id ? 'selected' : '' }}>
+                            {{ $marca->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                {!! $errors->first('marca_id', '<div class="invalid-feedback">:message</div>') !!}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label required" >{{ Form::label('modelo_id', 'Modelo') }}</label>
+            <div>
+                <select name="modelo_id" class="form-control form-control-rounded mb-2 
+                {{ $errors->has('modelo_id') ? ' is-invalid' : '' }}" placeholder="Modelo" >
+                    <option value="" >Seleccionar Modelo..</option>
+                    @foreach($dmodelo as $modelo)
+                        <option value="{{ $modelo->id }}" {{ $vehiculo->modelo_id == $modelo->id ? 'selected' : '' }}>
+                            {{ $modelo->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                {!! $errors->first('modelo_id', '<div class="invalid-feedback">:message</div>') !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required">   {{ Form::label('motor', 'Motor') }}</label>
+            <div>
+                {{ Form::text('motor', $vehiculo->motor, ['class' => 'form-control' .
+                ($errors->has('motor') ? ' is-invalid' : ''), 'placeholder' => 'Motor']) }}
+                {!! $errors->first('motor', '<div class="invalid-feedback">:message</div>') !!}
+            </div>                       
+        </div>
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label required">   {{ Form::label('kilometraje', 'Kilometraje') }}</label>
+            <div>
+                {{ Form::text('kilometraje', $vehiculo->kilometraje, ['class' => 'form-control' .
+                ($errors->has('kilometraje') ? ' is-invalid' : ''), 'placeholder' => 'Kilometraje']) }}
+                {!! $errors->first('kilometraje', '<div class="invalid-feedback">:message</div>') !!}
+            </div>            
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required">   {{ Form::label('cilindraje', 'Cilindraje') }}</label>
+            <div>
+                {{ Form::text('cilindraje', $vehiculo->cilindraje, ['class' => 'form-control' .
+                ($errors->has('cilindraje') ? ' is-invalid' : ''), 'placeholder' => 'Cilindraje']) }}
+                {!! $errors->first('cilindraje', '<div class="invalid-feedback">:message</div>') !!}
+            </div>                      
+        </div>
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label required" >{{ Form::label('vcarga_id', 'Capacidad de Carga') }}</label>
+            <div>
+                <select name="vcarga_id" class="form-control form-control-rounded mb-2 
+                {{ $errors->has('vcarga_id') ? ' is-invalid' : '' }}" placeholder="Capacidad de Carga" >
+                    <option value="" >Seleccionar Capacidad de Carga..</option>
+                    @foreach($dcarga as $vcarga)
+                        <option value="{{ $vcarga->id }}" {{ $vehiculo->vcarga_id == $vcarga->id ? 'selected' : '' }}>
+                            {{ $vcarga->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                {!! $errors->first('vcarga_id', '<div class="invalid-feedback">:message</div>') !!}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label required" >{{ Form::label('vpasajero_id', 'Capacidad de Pasajeros') }}</label>
+            <div>
+                <select name="vpasajero_id" class="form-control form-control-rounded mb-2 
+                {{ $errors->has('vpasajero_id') ? ' is-invalid' : '' }}" placeholder="Capacidad de Pasajeros" >
+                    <option value="" >Seleccionar Capacidad de Pasajeros..</option>
+                    @foreach($dpasajero as $vpasajero)
+                        <option value="{{ $vpasajero->id }}" {{ $vehiculo->vpasajero_id == $vpasajero->id ? 'selected' : '' }}>
+                            {{ $vpasajero->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                {!! $errors->first('vpasajero_id', '<div class="invalid-feedback">:message</div>') !!}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label required" >{{ Form::label('estado_id', 'Estado') }}</label>
+            <div>
+                <select name="estado_id" class="form-control form-control-rounded mb-2 
+                {{ $errors->has('estado_id') ? ' is-invalid' : '' }}" placeholder="Estado" >
+                    @foreach($destado as $estado)
+                        <option value="{{ $estado->id }}" {{ $vehiculo->estado_id == $estado->id ? 'selected' : '' }}>
+                            {{ $estado->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                {!! $errors->first('estado_id', '<div class="invalid-feedback">:message</div>') !!}
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('tvehiculo_id') }}</label>
-    <div>
-        {{ Form::text('tvehiculo_id', $vehiculo->tvehiculo_id, ['class' => 'form-control' .
-        ($errors->has('tvehiculo_id') ? ' is-invalid' : ''), 'placeholder' => 'Tvehiculo Id']) }}
-        {!! $errors->first('tvehiculo_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>tvehiculo_id</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('placa') }}</label>
-    <div>
-        {{ Form::text('placa', $vehiculo->placa, ['class' => 'form-control' .
-        ($errors->has('placa') ? ' is-invalid' : ''), 'placeholder' => 'Placa']) }}
-        {!! $errors->first('placa', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>placa</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('chasis') }}</label>
-    <div>
-        {{ Form::text('chasis', $vehiculo->chasis, ['class' => 'form-control' .
-        ($errors->has('chasis') ? ' is-invalid' : ''), 'placeholder' => 'Chasis']) }}
-        {!! $errors->first('chasis', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>chasis</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('marca_id') }}</label>
-    <div>
-        {{ Form::text('marca_id', $vehiculo->marca_id, ['class' => 'form-control' .
-        ($errors->has('marca_id') ? ' is-invalid' : ''), 'placeholder' => 'Marca Id']) }}
-        {!! $errors->first('marca_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>marca_id</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('modelo_id') }}</label>
-    <div>
-        {{ Form::text('modelo_id', $vehiculo->modelo_id, ['class' => 'form-control' .
-        ($errors->has('modelo_id') ? ' is-invalid' : ''), 'placeholder' => 'Modelo Id']) }}
-        {!! $errors->first('modelo_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>modelo_id</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('motor') }}</label>
-    <div>
-        {{ Form::text('motor', $vehiculo->motor, ['class' => 'form-control' .
-        ($errors->has('motor') ? ' is-invalid' : ''), 'placeholder' => 'Motor']) }}
-        {!! $errors->first('motor', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>motor</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('kilometraje') }}</label>
-    <div>
-        {{ Form::text('kilometraje', $vehiculo->kilometraje, ['class' => 'form-control' .
-        ($errors->has('kilometraje') ? ' is-invalid' : ''), 'placeholder' => 'Kilometraje']) }}
-        {!! $errors->first('kilometraje', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>kilometraje</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('cilindraje') }}</label>
-    <div>
-        {{ Form::text('cilindraje', $vehiculo->cilindraje, ['class' => 'form-control' .
-        ($errors->has('cilindraje') ? ' is-invalid' : ''), 'placeholder' => 'Cilindraje']) }}
-        {!! $errors->first('cilindraje', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>cilindraje</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('vcarga_id') }}</label>
-    <div>
-        {{ Form::text('vcarga_id', $vehiculo->vcarga_id, ['class' => 'form-control' .
-        ($errors->has('vcarga_id') ? ' is-invalid' : ''), 'placeholder' => 'Vcarga Id']) }}
-        {!! $errors->first('vcarga_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>vcarga_id</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('vpasajero_id') }}</label>
-    <div>
-        {{ Form::text('vpasajero_id', $vehiculo->vpasajero_id, ['class' => 'form-control' .
-        ($errors->has('vpasajero_id') ? ' is-invalid' : ''), 'placeholder' => 'Vpasajero Id']) }}
-        {!! $errors->first('vpasajero_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>vpasajero_id</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('estado_id') }}</label>
-    <div>
-        {{ Form::text('estado_id', $vehiculo->estado_id, ['class' => 'form-control' .
-        ($errors->has('estado_id') ? ' is-invalid' : ''), 'placeholder' => 'Estado Id']) }}
-        {!! $errors->first('estado_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehiculo <b>estado_id</b> instruction.</small>
-    </div>
+
 </div>
 
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">
-                <a href="#" class="btn btn-danger">Cancel</a>
-                <button type="submit" class="btn btn-primary ms-auto ajax-submit">Submit</button>
+                <a href="/vehiculos" class="btn btn-danger">@lang('Cancel')</a>
+                <button type="submit" class="btn btn-primary ms-auto ajax-submit">@lang('Submit')</button>
             </div>
         </div>
     </div>

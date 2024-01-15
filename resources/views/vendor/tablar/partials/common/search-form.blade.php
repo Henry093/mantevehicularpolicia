@@ -1,4 +1,4 @@
-<form action="" method="get" autocomplete="off" novalidate>
+{{-- <form action="" method="get" autocomplete="off" novalidate>
     <div class="input-icon">
                     <span class="input-icon-addon">
                       <!-- Download SVG icon from http://tabler-icons.io/i/search -->
@@ -11,4 +11,4 @@
         <input type="text" value="" class="form-control" placeholder="Search…"
                aria-label="Search in website">
     </div>
-</form>
+</form> --}}

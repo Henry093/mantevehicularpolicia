@@ -1,29 +1,33 @@
-
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('vsubcircuito_id') }}</label>
+    <label class="form-label required">{{ Form::label('vsubcircuito_id', 'Vehículo Subcircuito') }}</label>
     <div>
-        {{ Form::text('vsubcircuito_id', $rmantenimiento->vsubcircuito_id, ['class' => 'form-control' .
-        ($errors->has('vsubcircuito_id') ? ' is-invalid' : ''), 'placeholder' => 'Vsubcircuito Id']) }}
+        <select name="vsubcircuito_id" class="form-control form-control-rounded mb-2  
+        {{ $errors->has('vsubcircuito_id') ? ' is-invalid' : '' }}" placeholder="Vehículo">
+            <option value="" >Seleccionar Vehículo Subcircuito..</option>
+            @foreach($dvsubcircuito as $vsubcircuito)
+                <option value="{{ $vsubcircuito->id }}" {{ $rmantenimiento->vsubcircuito_id == $vsubcircuito->id ? 'selected' : '' }}>
+                    {{ $vsubcircuito->vehiculo->placa }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('vsubcircuito_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">rmantenimiento <b>vsubcircuito_id</b> instruction.</small>
     </div>
 </div>
+
 <div class="form-group mb-3">
     <label class="form-label">   {{ Form::label('fecha_inicio') }}</label>
     <div>
-        {{ Form::text('fecha_inicio', $rmantenimiento->fecha_inicio, ['class' => 'form-control' .
+        {{ Form::date('fecha_inicio', $rmantenimiento->fecha_inicio, ['class' => 'form-control' .
         ($errors->has('fecha_inicio') ? ' is-invalid' : ''), 'placeholder' => 'Fecha Inicio']) }}
         {!! $errors->first('fecha_inicio', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">rmantenimiento <b>fecha_inicio</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
     <label class="form-label">   {{ Form::label('hora') }}</label>
     <div>
-        {{ Form::text('hora', $rmantenimiento->hora, ['class' => 'form-control' .
+        {{ Form::time('hora', $rmantenimiento->hora, ['class' => 'form-control' .
         ($errors->has('hora') ? ' is-invalid' : ''), 'placeholder' => 'Hora']) }}
         {!! $errors->first('hora', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">rmantenimiento <b>hora</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
@@ -32,33 +36,36 @@
         {{ Form::text('kilometraje', $rmantenimiento->kilometraje, ['class' => 'form-control' .
         ($errors->has('kilometraje') ? ' is-invalid' : ''), 'placeholder' => 'Kilometraje']) }}
         {!! $errors->first('kilometraje', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">rmantenimiento <b>kilometraje</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('observacion') }}</label>
+    <label class="form-label">   {{ Form::label('observacion', 'Observación') }}</label>
     <div>
         {{ Form::text('observacion', $rmantenimiento->observacion, ['class' => 'form-control' .
-        ($errors->has('observacion') ? ' is-invalid' : ''), 'placeholder' => 'Observacion']) }}
+        ($errors->has('observacion') ? ' is-invalid' : ''), 'placeholder' => 'Observación']) }}
         {!! $errors->first('observacion', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">rmantenimiento <b>observacion</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('emantenimiento_id') }}</label>
+    <label class="form-label required">{{ Form::label('emantenimiento_id', 'Estatus Mantenimiento') }}</label>
     <div>
-        {{ Form::text('emantenimiento_id', $rmantenimiento->emantenimiento_id, ['class' => 'form-control' .
-        ($errors->has('emantenimiento_id') ? ' is-invalid' : ''), 'placeholder' => 'Emantenimiento Id']) }}
+        <select name="emantenimiento_id" class="form-control form-control-rounded mb-2  
+        {{ $errors->has('emantenimiento_id') ? ' is-invalid' : '' }}" placeholder="Estatus Mantenimiento">
+            @foreach($demantenimiento as $emantenimiento)
+                <option value="{{ $emantenimiento->id }}" {{ $rmantenimiento->emantenimiento_id == $emantenimiento->id ? 'selected' : '' }}>
+                    {{ $emantenimiento->nombre }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('emantenimiento_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">rmantenimiento <b>emantenimiento_id</b> instruction.</small>
     </div>
 </div>
 
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">
-                <a href="#" class="btn btn-danger">Cancel</a>
-                <button type="submit" class="btn btn-primary ms-auto ajax-submit">Submit</button>
+                <a href="/rmantenimientos" class="btn btn-danger">@lang('Cancel')</a>
+                <button type="submit" class="btn btn-primary ms-auto ajax-submit">@lang('Submit')</button>
             </div>
         </div>
     </div>

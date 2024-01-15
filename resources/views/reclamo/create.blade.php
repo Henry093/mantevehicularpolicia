@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', __('validation.Update Asignacione'))
+@section('title', __('validation.Create Reclamo'))
 
 @section('content')
     <!-- Page header -->
@@ -10,16 +10,16 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        @lang('Update')
+                        @lang('Create')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Asignacione') }}
+                        {{ __('Reclamo') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
                 <div class="col-12 col-md-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="{{ route('asignaciones.index') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('reclamos.index') }}" class="btn btn-primary d-none d-sm-inline-block">
                             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            @lang('Asignacione List')
+                            @lang('Reclamo List')
                         </a>
                     </div>
                 </div>
@@ -45,15 +45,13 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">@lang('Asignacione Details')</h3>
+                            <h3 class="card-title">@lang('Reclamo Details')</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST"
-                                  action="{{ route('asignaciones.update', $asignacione->id) }}" id="ajaxForm" role="form"
+                            <form method="POST" action="{{ route('reclamos.store') }}" id="ajaxForm" role="form"
                                   enctype="multipart/form-data">
-                                {{ method_field('PATCH') }}
                                 @csrf
-                                @include('asignacione.form')
+                                @include('reclamo.form')
                             </form>
                         </div>
                     </div>
@@ -62,6 +60,4 @@
         </div>
     </div>
 @endsection
-
-
 

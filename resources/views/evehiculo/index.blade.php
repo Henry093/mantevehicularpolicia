@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-    Evehiculo
+@lang('Evehiculo')
 @endsection
 
 @section('content')
@@ -12,10 +12,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        List
+                        @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Evehiculo ') }}
+                        {{ __('Evehiculo') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Create Evehiculo
+                            @lang('Create Evehiculo')
                         </a>
                     </div>
                 </div>
@@ -47,20 +47,20 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Evehiculo</h3>
+                            <h3 class="card-title">@lang('Evehiculo')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    Show
+                                    @lang('Show')
                                     <div class="mx-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm" value="10" size="3"
                                                aria-label="Invoices count">
                                     </div>
-                                    entries
+                                    @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    Search:
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm"
                                                aria-label="Search invoice">
@@ -85,13 +85,16 @@
                                         </svg>
                                     </th>
                                     
-										<th>Rmantenimiento Id</th>
-										<th>Rvehiculo Id</th>
-										<th>Fecha Entrega</th>
-										<th>P Retiro</th>
-										<th>Km Actual</th>
-										<th>Km Proximo</th>
-										<th>Observaciones</th>
+                                        <th>Fecha Solicitud</th>
+                                        <th>Fecha Registro</th>
+                                        <th>Fecha Entrega</th>
+                                        <th>Nombre Registro</th>
+                                        <th>Nombre Retiro</th>
+                                        <th>KM Actual</th>
+                                        <th>KM Proximo</th>
+                                        <th>Tipo Mantenimiento</th>
+                                        <th>Observaciones</th>
+                                        <th>Estatus</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -104,29 +107,33 @@
                                                    aria-label="Select evehiculo"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $evehiculo->rmantenimiento_id }}</td>
-											<td>{{ $evehiculo->rvehiculo_id }}</td>
+                                            <td>{{ $evehiculo->rmantenimiento->fecha_inicio }}</td>
+											<td>{{ $evehiculo->rvehiculo->fecha_ingreso }}</td>
 											<td>{{ $evehiculo->fecha_entrega }}</td>
-											<td>{{ $evehiculo->p_retiro }}</td>
+											<td>{{ $evehiculo->rmantenimiento->vsubcircuito->usubcircuito->user->name }}
+                                                {{ $evehiculo->rmantenimiento->vsubcircuito->usubcircuito->user->lastname }}</td>
+                                            <td>{{ $evehiculo->p_retiro }}</td>
 											<td>{{ $evehiculo->km_actual }}</td>
 											<td>{{ $evehiculo->km_proximo }}</td>
+											<td>{{ $evehiculo->rvehiculo->tmantenimiento->nombre }}</td>
 											<td>{{ $evehiculo->observaciones }}</td>
+											<td>{{ $evehiculo->rmantenimiento->emantenimiento->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                        Actions
+                                                            @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('evehiculos.show',$evehiculo->id) }}">
-                                                            View
+                                                           @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('evehiculos.edit',$evehiculo->id) }}">
-                                                            Edit
+                                                           @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('evehiculos.destroy',$evehiculo->id) }}"
@@ -137,7 +144,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                Delete
+                                                                    @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
@@ -146,7 +153,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>No Data Found</td>
+                                    <td>@lang('No Data Found')</td>
                                 @endforelse
                                 </tbody>
 

@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $created_at
  * @property $updated_at
  *
- * @property Asignacione $asignacione
+ * @property Asignacion $asignacion
  * @property Dependencia $dependencia
  * @property Estado $estado
  * @property User $user
@@ -46,9 +46,9 @@ class Usubcircuito extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function asignacione()
+    public function asignacion()
     {
-        return $this->hasOne('App\Models\Asignacione', 'id', 'asignacion_id');
+        return $this->hasOne('App\Models\Asignacion', 'id', 'asignacion_id');
     }
     
     /**

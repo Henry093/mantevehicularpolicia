@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Evehiculo')
+@section('title', __('validation.View Evehiculo'))
 
 @section('content')
     <!-- Page header -->

@@ -50,7 +50,7 @@
         <div class="col-md-6">
             <label class="form-label">   {{ Form::label('asunto') }}</label>
             <div>
-                {{ Form::textarea('asunto', $rvehiculo->asunto, ['class' => 'form-control' .
+                {{ Form::textarea('asunto', $rvehiculo->asunto, ['class' => 'form-control  ' .
                 ($errors->has('asunto') ? ' is-invalid' : ''), 'placeholder' => 'Asunto']) }}
                 {!! $errors->first('asunto', '<div class="invalid-feedback">:message</div>') !!}
             </div>

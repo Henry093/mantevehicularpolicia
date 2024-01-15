@@ -50,7 +50,7 @@ class CantonController extends Controller
         $canton = Canton::create($request->all());
 
         return redirect()->route('cantons.index')
-            ->with('success', 'Canton created successfully.');
+            ->with('success', 'Cantón creado exitosamente.');
     }
 
     /**
@@ -94,7 +94,7 @@ class CantonController extends Controller
         $canton->update($request->all());
 
         return redirect()->route('cantons.index')
-            ->with('success', 'Canton updated successfully');
+            ->with('success', 'Cantón actualizado exitosamente.');
     }
 
     /**
@@ -107,6 +107,6 @@ class CantonController extends Controller
         $canton = Canton::find($id)->delete();
 
         return redirect()->route('cantons.index')
-            ->with('success', 'Canton deleted successfully');
+            ->with('success', 'Cantón borrado exitosamente.');
     }
 }

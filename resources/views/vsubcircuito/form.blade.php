@@ -1,55 +1,83 @@
 
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('vehiculo_id') }}</label>
+    <label class="form-label required" >{{ Form::label('vehiculo_id', 'Vehículo') }}</label>
     <div>
-        {{ Form::text('vehiculo_id', $vsubcircuito->vehiculo_id, ['class' => 'form-control' .
-        ($errors->has('vehiculo_id') ? ' is-invalid' : ''), 'placeholder' => 'Vehiculo Id']) }}
+        <select name="vehiculo_id" class="form-control form-control-rounded mb-2 
+        {{ $errors->has('vehiculo_id') ? ' is-invalid' : '' }}" placeholder="Vehículo" >
+        <option value="" >Seleccionar Vehículo..</option>
+            @foreach($dvehiculo as $vehiculo)
+                <option value="{{ $vehiculo->id }}" {{ $vsubcircuito->vehiculo_id == $vehiculo->id ? 'selected' : '' }}>
+                    {{ $vehiculo->placa }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('vehiculo_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vsubcircuito <b>vehiculo_id</b> instruction.</small>
-    </div>
+    </div>  
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('dependencia_id') }}</label>
+    <label class="form-label required">{{ Form::label('dependencia_id', 'Subcircuito') }}</label>
     <div>
-        {{ Form::text('dependencia_id', $vsubcircuito->dependencia_id, ['class' => 'form-control' .
-        ($errors->has('dependencia_id') ? ' is-invalid' : ''), 'placeholder' => 'Dependencia Id']) }}
+        <select name="dependencia_id" class="form-control form-control-rounded mb-2  
+        {{ $errors->has('dependencia_id') ? ' is-invalid' : '' }}" placeholder="Subcircuito">
+            <option value="" >Seleccionar Subcircuito..</option>
+            @foreach($ddependencia as $dependencia)
+                <option value="{{ $dependencia->id }}" {{ $vsubcircuito->dependencia_id == $dependencia->id ? 'selected' : '' }}>
+                    {{ $dependencia->subcircuito->nombre }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('dependencia_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vsubcircuito <b>dependencia_id</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('usubcircuito_id') }}</label>
+    <label class="form-label required">{{ Form::label('usubcircuito_id', 'Usuario Subcircuito') }}</label>
     <div>
-        {{ Form::text('usubcircuito_id', $vsubcircuito->usubcircuito_id, ['class' => 'form-control' .
-        ($errors->has('usubcircuito_id') ? ' is-invalid' : ''), 'placeholder' => 'Usubcircuito Id']) }}
+        <select name="usubcircuito_id" class="form-control form-control-rounded mb-2  
+        {{ $errors->has('usubcircuito_id') ? ' is-invalid' : '' }}" placeholder="Subcircuito">
+            <option value="" >Seleccionar Usuario Subcircuito..</option>
+            @foreach($dusubcircuito as $usubcircuito)
+                <option value="{{ $usubcircuito->id }}" {{ $vsubcircuito->usubcircuito_id == $usubcircuito->id ? 'selected' : '' }}>
+                    {{ $usubcircuito->user->name }} {{ $usubcircuito->user->lastname }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('usubcircuito_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vsubcircuito <b>usubcircuito_id</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('asignacion_id') }}</label>
+    <label class="form-label required" >{{ Form::label('asignacion_id', 'Asignación') }}</label>
     <div>
-        {{ Form::text('asignacion_id', $vsubcircuito->asignacion_id, ['class' => 'form-control' .
-        ($errors->has('asignacion_id') ? ' is-invalid' : ''), 'placeholder' => 'Asignacion Id']) }}
+        <select name="asignacion_id" class="form-control form-control-rounded mb-2 
+        {{ $errors->has('asignacion_id') ? ' is-invalid' : '' }}" placeholder="Asignación" >
+            @foreach($dasignacion as $asignacion)
+                <option value="{{ $asignacion->id }}" {{ $vsubcircuito->asignacion_id == $asignacion->id ? 'selected' : '' }}>
+                    {{ $asignacion->nombre }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('asignacion_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vsubcircuito <b>asignacion_id</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('estado_id') }}</label>
+    <label class="form-label required" >{{ Form::label('estado_id', 'Estado') }}</label>
     <div>
-        {{ Form::text('estado_id', $vsubcircuito->estado_id, ['class' => 'form-control' .
-        ($errors->has('estado_id') ? ' is-invalid' : ''), 'placeholder' => 'Estado Id']) }}
+        <select name="estado_id" class="form-control form-control-rounded mb-2 
+        {{ $errors->has('estado_id') ? ' is-invalid' : '' }}" placeholder="Estado" >
+            @foreach($destado as $estado)
+                <option value="{{ $estado->id }}" {{ $vsubcircuito->estado_id == $estado->id ? 'selected' : '' }}>
+                       {{ $estado->nombre }}
+                </option>
+            @endforeach
+        </select>
         {!! $errors->first('estado_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vsubcircuito <b>estado_id</b> instruction.</small>
     </div>
 </div>
 
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">
-                <a href="#" class="btn btn-danger">Cancel</a>
-                <button type="submit" class="btn btn-primary ms-auto ajax-submit">Submit</button>
+                <a href="/vsubcircuitos" class="btn btn-danger">@lang('Cancel')</a>
+                <button type="submit" class="btn btn-primary ms-auto ajax-submit">@lang('Submit')</button>
             </div>
         </div>
     </div>

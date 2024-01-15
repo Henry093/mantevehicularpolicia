@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Estado;
+use App\Models\Marca;
+use App\Models\Modelo;
+use App\Models\Tvehiculo;
+use App\Models\Vcarga;
 use App\Models\Vehiculo;
+use App\Models\Vpasajero;
 use Illuminate\Http\Request;
 
 /**
@@ -32,7 +38,14 @@ class VehiculoController extends Controller
     public function create()
     {
         $vehiculo = new Vehiculo();
-        return view('vehiculo.create', compact('vehiculo'));
+        $dvehiculo = Tvehiculo::all();
+        $dmarca = Marca::all();
+        $dmodelo = Modelo::all();
+        $dcarga = Vcarga::all();
+        $dpasajero = Vpasajero::all();
+        $destado = Estado::all();
+
+        return view('vehiculo.create', compact('vehiculo', 'dvehiculo', 'dmarca', 'dmodelo', 'dcarga', 'dpasajero', 'destado'));
     }
 
     /**
@@ -73,8 +86,14 @@ class VehiculoController extends Controller
     public function edit($id)
     {
         $vehiculo = Vehiculo::find($id);
+        $dvehiculo = Tvehiculo::all();
+        $dmarca = Marca::all();
+        $dmodelo = Modelo::all();
+        $dcarga = Vcarga::all();
+        $dpasajero = Vpasajero::all();
+        $destado = Estado::all();
 
-        return view('vehiculo.edit', compact('vehiculo'));
+        return view('vehiculo.edit', compact('vehiculo', 'dvehiculo', 'dmarca', 'dmodelo', 'dcarga', 'dpasajero', 'destado'));
     }
 
     /**
