@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Emantenimiento;
 use App\Models\Rmantenimiento;
+use App\Models\Vsubcircuito;
 use Illuminate\Http\Request;
 
 /**
@@ -32,7 +34,10 @@ class RmantenimientoController extends Controller
     public function create()
     {
         $rmantenimiento = new Rmantenimiento();
-        return view('rmantenimiento.create', compact('rmantenimiento'));
+
+        $dvsubcircuito = Vsubcircuito::all();
+        $demantenimiento = Emantenimiento::all();
+        return view('rmantenimiento.create', compact('rmantenimiento', 'dvsubcircuito', 'demantenimiento'));
     }
 
     /**
@@ -47,7 +52,7 @@ class RmantenimientoController extends Controller
 
         $rmantenimiento = Rmantenimiento::create($request->all());
 
-        return redirect()->route('rmantenimientos.index')
+        return redirect()->route('rmantenimientos.show',['id' => $rmantenimiento->id])
             ->with('success', 'Rmantenimiento created successfully.');
     }
 
@@ -74,7 +79,9 @@ class RmantenimientoController extends Controller
     {
         $rmantenimiento = Rmantenimiento::find($id);
 
-        return view('rmantenimiento.edit', compact('rmantenimiento'));
+        $dvsubcircuito = Vsubcircuito::all();
+        $demantenimiento = Emantenimiento::all();
+        return view('rmantenimiento.edit', compact('rmantenimiento', 'dvsubcircuito', 'demantenimiento'));
     }
 
     /**

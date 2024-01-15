@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Canton;
 use App\Models\Distrito;
-use App\Models\Provincia;
 use Illuminate\Http\Request;
 
 /**
@@ -34,9 +34,8 @@ class DistritoController extends Controller
     {
         $distrito = new Distrito();
 
-        $provincias = Provincia::all();
-
-        return view('distrito.create', compact('distrito', 'provincias'));
+        $dcanton = Canton::all();
+        return view('distrito.create', compact('distrito', 'dcanton'));
     }
 
     /**
@@ -64,8 +63,9 @@ class DistritoController extends Controller
     public function show($id)
     {
         $distrito = Distrito::find($id);
+        $dcanton = Canton::all();
 
-        return view('distrito.show', compact('distrito'));
+        return view('distrito.show', compact('distrito',  'dcanton'));
     }
 
     /**
@@ -77,10 +77,8 @@ class DistritoController extends Controller
     public function edit($id)
     {
         $distrito = Distrito::find($id);
-        
-        $provincias = Provincia::all();
 
-        return view('distrito.edit', compact('distrito', 'provincias'));
+        return view('distrito.edit', compact('distrito'));
     }
 
     /**

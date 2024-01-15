@@ -298,7 +298,7 @@ return [
                         ],
                         [
                             'text' => 'Subcircuito',
-                            'route' => 'asignaciones.index',
+                            'route' => 'asignacions.index',
                             'icon' => 'ti ti-plus',
                         ],
                         [
@@ -329,7 +329,7 @@ return [
             'route' => 'vehiculos.index',
         ],
         [
-            'text' => 'Asignación',
+            'text' => 'Asignación Subcircuito',
             'icon' => 'ti ti-home-check',
             'active' => ['asignacion'],
             'submenu' => [
@@ -388,7 +388,31 @@ return [
                     'icon' => 'ti ti-file-description',
                 ],
             ],
+        ],
+        [
+            'text' => 'Examen',
+            'icon' => 'ti ti-home-check',
+            'active' => ['asignacion'],
+            'submenu' => [
+                [
+                    'text' => 'Reclamos',
+                    'route' => 'reclamos.index',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Tipo Reclamos',
+                    'route' => 'treclamos.index',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Reporte Reclamos',
+                    'url' => 'reclamos',
+                    'icon' => 'ti ti-file-description',
+                ],
+                
+            ],
         ], 
+        
 
     ],
 

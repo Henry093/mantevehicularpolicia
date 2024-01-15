@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Canton;
+use App\Models\Circuito;
 use App\Models\Dependencia;
+use App\Models\Distrito;
+use App\Models\Estado;
 use App\Models\Parroquia;
+use App\Models\Provincia;
+use App\Models\Subcircuito;
 use Illuminate\Http\Request;
 
 /**
@@ -34,7 +39,15 @@ class DependenciaController extends Controller
     public function create()
     {
         $dependencia = new Dependencia();
-        return view('dependencia.create', compact('dependencia'));
+        $dprovincia = Provincia::all();
+        $dcanton = Canton::all();
+        $dparroquia = Parroquia::all();
+        $ddistrito = Distrito::all();
+        $dcircuito = Circuito::all();
+        $dsubcircuito = Subcircuito::all();
+        $destado = Estado::all();
+
+        return view('dependencia.create', compact('dependencia', 'dprovincia', 'dcanton', 'dparroquia', 'ddistrito', 'dcircuito', 'dsubcircuito', 'destado'));
     }
 
     /**
@@ -75,8 +88,15 @@ class DependenciaController extends Controller
     public function edit($id)
     {
         $dependencia = Dependencia::find($id);
+        $dprovincia = Provincia::all();
+        $dcanton = Canton::all();
+        $dparroquia = Parroquia::all();
+        $ddistrito = Distrito::all();
+        $dcircuito = Circuito::all();
+        $dsubcircuito = Subcircuito::all();
+        $destado = Estado::all();
 
-        return view('dependencia.edit', compact('dependencia'));
+        return view('dependencia.edit', compact('dependencia', 'dprovincia', 'dcanton', 'dparroquia', 'ddistrito', 'dcircuito', 'dsubcircuito', 'destado'));
     }
 
     /**
@@ -107,15 +127,5 @@ class DependenciaController extends Controller
 
         return redirect()->route('dependencias.index')
             ->with('success', 'Dependencia deleted successfully');
-    }
-
-    public function getCantones($provinciaId) {
-        $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
-        return response()->json($cantones);
-    }
-
-    public function getParroquias($cantonId) {
-        $parroquias = Parroquia::where('canton_id', $cantonId)->pluck('nombre', 'id')->toArray();
-        return response()->json($parroquias);
     }
 }

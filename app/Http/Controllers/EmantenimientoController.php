@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Emantenimiento;
+use App\Models\Rmantenimiento;
+use App\Models\Rvehiculo;
 use Illuminate\Http\Request;
 
 /**
@@ -32,6 +34,8 @@ class EmantenimientoController extends Controller
     public function create()
     {
         $emantenimiento = new Emantenimiento();
+
+
         return view('emantenimiento.create', compact('emantenimiento'));
     }
 

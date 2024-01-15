@@ -1,4 +1,4 @@
-<a href="https://github.com/takielias/tablar" class="btn" target="_blank" rel="noreferrer">
+{{-- <a href="https://github.com/takielias/tablar" class="btn" target="_blank" rel="noreferrer">
     <!-- Download SVG icon from http://tabler-icons.io/i/brand-github -->
     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
          viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -19,4 +19,4 @@
             d="M19.5 12.572l-7.5 7.428l-7.5 -7.428m0 0a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/>
     </svg>
     Sponsor
-</a>
+</a> --}}

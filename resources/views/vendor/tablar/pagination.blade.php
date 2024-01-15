@@ -1,5 +1,8 @@
 @if ($paginator->hasPages())
-    <p class="m-0 text-muted">Showing <span>{{ $paginator->firstItem() }}</span> to <span>{{ $paginator->lastItem() }}</span> of <span>{{ $paginator->total() }}</span> entries</p>
+    <p class="m-0 text-muted">@lang('Showing') 
+        <span>{{ $paginator->firstItem() }}</span> @lang('to') 
+        <span>{{ $paginator->lastItem() }}</span> @lang('of')
+        <span>{{ $paginator->total() }}</span> @lang('entries')</p>
     <ul class="pagination m-0 ms-auto">
         @if ($paginator->onFirstPage())
             <li class="page-item disabled">
@@ -11,7 +14,7 @@
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                         <polyline points="15 6 9 12 15 18"/>
                     </svg>
-                    Previous
+                    @lang('Previous')
                 </a>
             </li>
         @else
@@ -24,7 +27,7 @@
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                         <polyline points="15 6 9 12 15 18"/>
                     </svg>
-                    Previous
+                    @lang('Previous')
                 </a>
             </li>
         @endif
@@ -47,7 +50,7 @@
         @if ($paginator->hasMorePages())
             <li class="page-item">
                 <a class="page-link" href="{{ $paginator->nextPageUrl() }}">
-                    Next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                    @lang('Next') <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                          stroke-linejoin="round">
@@ -59,7 +62,7 @@
         @else
             <li class="page-item disabled">
                 <a class="page-link" href="#">
-                   Next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                   @lang('Next') <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                          stroke-linejoin="round">

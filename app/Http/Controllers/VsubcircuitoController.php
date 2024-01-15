@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asignacion;
+use App\Models\Dependencia;
+use App\Models\Estado;
+use App\Models\Usubcircuito;
+use App\Models\Vehiculo;
 use App\Models\Vsubcircuito;
 use Illuminate\Http\Request;
 
@@ -32,7 +37,13 @@ class VsubcircuitoController extends Controller
     public function create()
     {
         $vsubcircuito = new Vsubcircuito();
-        return view('vsubcircuito.create', compact('vsubcircuito'));
+        $dvehiculo = Vehiculo::all();
+        $ddependencia = Dependencia::all();
+        $dusubcircuito = Usubcircuito::all();
+        $dasignacion = Asignacion::all();
+        $destado = Estado::all();
+
+        return view('vsubcircuito.create', compact('vsubcircuito', 'dvehiculo', 'ddependencia', 'dusubcircuito', 'dasignacion', 'destado'));
     }
 
     /**
@@ -73,8 +84,14 @@ class VsubcircuitoController extends Controller
     public function edit($id)
     {
         $vsubcircuito = Vsubcircuito::find($id);
+        $dvehiculo = Vehiculo::all();
+        $ddependencia = Dependencia::all();
+        $dusubcircuito = Usubcircuito::all();
+        $dasignacion = Asignacion::all();
+        $destado = Estado::all();
 
-        return view('vsubcircuito.edit', compact('vsubcircuito'));
+
+        return view('vsubcircuito.edit', compact('vsubcircuito', 'dvehiculo', 'ddependencia', 'dusubcircuito', 'dasignacion', 'destado'));
     }
 
     /**

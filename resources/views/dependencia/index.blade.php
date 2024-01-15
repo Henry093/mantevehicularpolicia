@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-    Dependencia
+    @lang('Dependencia')
 @endsection
 
 @section('content')
@@ -12,10 +12,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        List
+                        @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Dependencia ') }}
+                        {{ __('Dependencia') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Create Dependencia
+                            @lang('Create Dependencia')
                         </a>
                     </div>
                 </div>
@@ -47,20 +47,20 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Dependencia</h3>
+                            <h3 class="card-title">@lang('Dependencia')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    Show
+                                    @lang('Show')
                                     <div class="mx-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm" value="10" size="3"
                                                aria-label="Invoices count">
                                     </div>
-                                    entries
+                                    @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    Search:
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm"
                                                aria-label="Search invoice">
@@ -85,19 +85,16 @@
                                         </svg>
                                     </th>
                                     
-										<th>Provincia Id</th>
-										<th>Num Distritos</th>
-										<th>Canton Id</th>
-										<th>Parroquia Id</th>
-										<th>Cod Distrito</th>
-										<th>Nom Distrito</th>
-										<th>Num Circuitos</th>
-										<th>Cod Circuito</th>
-										<th>Nom Circuito</th>
-										<th>Num Subcircuitos</th>
-										<th>Cod Subcircuito</th>
-										<th>Nom Subcircuito</th>
-										<th>Estado Id</th>
+										<th>Provincia</th>
+										<th>Cantón</th>
+										<th>Parroquia</th>
+										<th>Distrito</th>
+										<th>Cod. Distrito</th>
+										<th>Circuito</th>
+										<th>Cod. Circuito</th>
+										<th>Subcircuito</th>
+										<th>Cod. Subcircuito</th>
+										<th>Estado</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -110,35 +107,32 @@
                                                    aria-label="Select dependencia"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $dependencia->provincia_id }}</td>
-											<td>{{ $dependencia->num_distritos }}</td>
-											<td>{{ $dependencia->canton_id }}</td>
-											<td>{{ $dependencia->parroquia_id }}</td>
-											<td>{{ $dependencia->cod_distrito }}</td>
-											<td>{{ $dependencia->nom_distrito }}</td>
-											<td>{{ $dependencia->num_circuitos }}</td>
-											<td>{{ $dependencia->cod_circuito }}</td>
-											<td>{{ $dependencia->nom_circuito }}</td>
-											<td>{{ $dependencia->num_subcircuitos }}</td>
-											<td>{{ $dependencia->cod_subcircuito }}</td>
-											<td>{{ $dependencia->nom_subcircuito }}</td>
-											<td>{{ $dependencia->estado_id }}</td>
+											<td>{{ $dependencia->provincia->nombre }}</td>
+											<td>{{ $dependencia->canton->nombre }}</td>
+											<td>{{ $dependencia->parroquia->nombre }}</td>
+											<td>{{ $dependencia->distrito->nombre }}</td>
+											<td>{{ $dependencia->distrito->codigo }}</td>
+											<td>{{ $dependencia->circuito->nombre }}</td>
+											<td>{{ $dependencia->circuito->codigo }}</td>
+											<td>{{ $dependencia->subcircuito->nombre }}</td>
+											<td>{{ $dependencia->subcircuito->codigo }}</td>
+											<td>{{ $dependencia->estado->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                        Actions
+                                                        @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('dependencias.show',$dependencia->id) }}">
-                                                            View
+                                                            @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('dependencias.edit',$dependencia->id) }}">
-                                                            Edit
+                                                            @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('dependencias.destroy',$dependencia->id) }}"
@@ -149,7 +143,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                Delete
+                                                                @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
@@ -158,7 +152,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>No Data Found</td>
+                                    <td>@lang('No Data Found')</td>
                                 @endforelse
                                 </tbody>
 

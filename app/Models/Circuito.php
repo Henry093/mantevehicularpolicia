@@ -51,7 +51,7 @@ class Circuito extends Model
      */
     public function subcircuitos()
     {
-        return $this->hasMany('App\Models\Subcircuito', 'circuito_id', 'id');
+        return $this->hasMany(Circuito::class, 'App\Models\Subcircuito', 'circuito_id', 'id');
     }
     
 

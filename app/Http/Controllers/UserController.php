@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Canton;
+use App\Models\Estado;
+use App\Models\Grado;
+use App\Models\Parroquia;
+use App\Models\Provincia;
+use App\Models\Rango;
+use App\Models\Sangre;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -32,7 +39,15 @@ class UserController extends Controller
     public function create()
     {
         $user = new User();
-        return view('user.create', compact('user'));
+        $dsangre = Sangre::all();
+        $dprovincia = Provincia::all();
+        $dcanton = Canton::all();
+        $dparroquia = Parroquia::all();
+        $dgrado = Grado::all();
+        $drango = Rango::all();
+        $destado = Estado::all();
+
+        return view('user.create', compact('user', 'dsangre', 'dprovincia', 'dcanton', 'dparroquia', 'dgrado', 'drango', 'destado'));
     }
 
     /**
@@ -60,6 +75,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
+        $dsangre = Sangre::all();
 
         return view('user.show', compact('user'));
     }
@@ -73,8 +89,15 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
+        $dsangre = Sangre::all();
+        $dprovincia = Provincia::all();
+        $dcanton = Canton::all();
+        $dparroquia = Parroquia::all();
+        $dgrado = Grado::all();
+        $drango = Rango::all();
+        $destado = Estado::all();
 
-        return view('user.edit', compact('user'));
+        return view('user.edit', compact('user', 'dsangre', 'dprovincia', 'dcanton', 'dparroquia', 'dgrado', 'drango', 'destado'));
     }
 
     /**
@@ -89,6 +112,7 @@ class UserController extends Controller
         request()->validate(User::$rules);
 
         $user->update($request->all());
+        $dsangre = Sangre::all();
 
         return redirect()->route('users.index')
             ->with('success', 'User updated successfully');

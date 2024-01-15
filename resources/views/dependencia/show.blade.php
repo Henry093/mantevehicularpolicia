@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Dependencia')
+@section('title', __('validation.View Dependencia'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Dependencia ') }}
+                        {{ __('Dependencia') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Dependencia List
+                            @lang('Dependencia List')
                         </a>
                     </div>
                 </div>
@@ -45,61 +45,37 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Dependencia Details</h3>
+                            <h3 class="card-title">@lang('Dependencia Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Provincia Id:</strong>
-{{ $dependencia->provincia_id }}
+<strong>Provincia:</strong>
+{{ $dependencia->provincia->nombre }}
 </div>
 <div class="form-group">
-<strong>Num Distritos:</strong>
-{{ $dependencia->num_distritos }}
+<strong>Cantón:</strong>
+{{ $dependencia->canton->nombre }}
 </div>
 <div class="form-group">
-<strong>Canton Id:</strong>
-{{ $dependencia->canton_id }}
+<strong>Parroquia:</strong>
+{{ $dependencia->parroquia->parroquia }}
 </div>
 <div class="form-group">
-<strong>Parroquia Id:</strong>
-{{ $dependencia->parroquia_id }}
+<strong>Distrito:</strong>
+{{ $dependencia->distrito->nombre }}
 </div>
 <div class="form-group">
-<strong>Cod Distrito:</strong>
-{{ $dependencia->cod_distrito }}
+<strong>Circuito:</strong>
+{{ $dependencia->circuito->nombre }}
 </div>
 <div class="form-group">
-<strong>Nom Distrito:</strong>
-{{ $dependencia->nom_distrito }}
-</div>
-<div class="form-group">
-<strong>Num Circuitos:</strong>
-{{ $dependencia->num_circuitos }}
-</div>
-<div class="form-group">
-<strong>Cod Circuito:</strong>
-{{ $dependencia->cod_circuito }}
-</div>
-<div class="form-group">
-<strong>Nom Circuito:</strong>
-{{ $dependencia->nom_circuito }}
-</div>
-<div class="form-group">
-<strong>Num Subcircuitos:</strong>
-{{ $dependencia->num_subcircuitos }}
-</div>
-<div class="form-group">
-<strong>Cod Subcircuito:</strong>
-{{ $dependencia->cod_subcircuito }}
-</div>
-<div class="form-group">
-<strong>Nom Subcircuito:</strong>
-{{ $dependencia->nom_subcircuito }}
+<strong>Subcircuito:</strong>
+{{ $dependencia->subcircuito->nombre }}
 </div>
 <div class="form-group">
 <strong>Estado Id:</strong>
-{{ $dependencia->estado_id }}
+{{ $dependencia->estado->nombre }}
 </div>
 
                         </div>

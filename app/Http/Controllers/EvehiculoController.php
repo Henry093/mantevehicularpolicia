@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evehiculo;
+use App\Models\Rmantenimiento;
+use App\Models\Rvehiculo;
 use Illuminate\Http\Request;
 
 /**
@@ -32,7 +34,9 @@ class EvehiculoController extends Controller
     public function create()
     {
         $evehiculo = new Evehiculo();
-        return view('evehiculo.create', compact('evehiculo'));
+        $drmantenimiento = Rmantenimiento::all();
+        $drvehiculo = Rvehiculo::all();
+        return view('evehiculo.create', compact('evehiculo', 'drmantenimiento', 'drvehiculo'));
     }
 
     /**
@@ -73,8 +77,9 @@ class EvehiculoController extends Controller
     public function edit($id)
     {
         $evehiculo = Evehiculo::find($id);
-
-        return view('evehiculo.edit', compact('evehiculo'));
+        $drmantenimiento = Rmantenimiento::all();
+        $drvehiculo = Rvehiculo::all();
+        return view('evehiculo.edit', compact('evehiculo', 'drmantenimiento', 'drvehiculo'));
     }
 
     /**

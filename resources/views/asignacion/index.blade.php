@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-@lang('Asignacione')
+@lang('Asignacion')
 @endsection
 
 @section('content')
@@ -15,13 +15,13 @@
                         @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Asignacione') }}
+                        {{ __('Asignacion') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
                 <div class="col-12 col-md-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="{{ route('asignaciones.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('asignacions.create') }}" class="btn btn-primary d-none d-sm-inline-block">
                             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            @lang('Create Asignacione')
+                            @lang('Create Asignacion')
                         </a>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">@lang('Asignacione')</h3>
+                            <h3 class="card-title">@lang('Asignacion')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
@@ -92,13 +92,13 @@
                                 </thead>
 
                                 <tbody>
-                                @forelse ($asignaciones as $asignacione)
+                                @forelse ($asignacions as $asignacion)
                                     <tr>
                                         <td><input class="form-check-input m-0 align-middle" type="checkbox"
-                                                   aria-label="Select asignacione"></td>
+                                                   aria-label="Select asignacion"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $asignacione->nombre }}</td>
+											<td>{{ $asignacion->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
@@ -109,15 +109,15 @@
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
-                                                           href="{{ route('asignaciones.show',$asignacione->id) }}">
+                                                           href="{{ route('asignacions.show',$asignacion->id) }}">
                                                            @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
-                                                           href="{{ route('asignaciones.edit',$asignacione->id) }}">
+                                                           href="{{ route('asignacions.edit',$asignacion->id) }}">
                                                            @lang('Edit')
                                                         </a>
                                                         <form
-                                                            action="{{ route('asignaciones.destroy',$asignacione->id) }}"
+                                                            action="{{ route('asignacions.destroy',$asignacion->id) }}"
                                                             method="POST">
                                                             @csrf
                                                             @method('DELETE')
@@ -134,14 +134,14 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>@lang('No Data Found')</td>
+                                    <td>No Data Found</td>
                                 @endforelse
                                 </tbody>
 
                             </table>
                         </div>
                        <div class="card-footer d-flex align-items-center">
-                            {!! $asignaciones->links('tablar::pagination') !!}
+                            {!! $asignacions->links('tablar::pagination') !!}
                         </div>
                     </div>
                 </div>

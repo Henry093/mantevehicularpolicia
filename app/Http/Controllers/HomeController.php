@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dependencia;
+use App\Models\Reclamo;
+use App\Models\Rmantenimiento;
+use App\Models\User;
+use App\Models\Vehiculo;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +28,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $totalDependencias = Dependencia::count();
+        $totalUsuarios = User::count();
+        $totalVehiculos = Vehiculo::count();
+        $totalMantenimientos = Rmantenimiento::count();
+        $totalReclamos = Reclamo::count();
+        
+        return view('home', compact('totalDependencias', 'totalUsuarios', 'totalVehiculos', 'totalMantenimientos', 'totalReclamos'));
     }
 }

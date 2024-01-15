@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-    Rmantenimiento
+@lang('Rmantenimiento')
 @endsection
 
 @section('content')
@@ -12,10 +12,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        List
+                        @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Rmantenimiento ') }}
+                        {{ __('Rmantenimiento') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Create Rmantenimiento
+                            @lang('Create Rmantenimiento')
                         </a>
                     </div>
                 </div>
@@ -47,20 +47,20 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Rmantenimiento</h3>
+                            <h3 class="card-title">@lang('Rmantenimiento')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    Show
+                                    @lang('Show')
                                     <div class="mx-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm" value="10" size="3"
                                                aria-label="Invoices count">
                                     </div>
-                                    entries
+                                    @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    Search:
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm"
                                                aria-label="Search invoice">
@@ -85,12 +85,12 @@
                                         </svg>
                                     </th>
                                     
-										<th>Vsubcircuito Id</th>
+										<th>Placa del Vehículo</th>
 										<th>Fecha Inicio</th>
 										<th>Hora</th>
 										<th>Kilometraje</th>
-										<th>Observacion</th>
-										<th>Emantenimiento Id</th>
+										<th>Observación</th>
+										<th>Estado Mantenimiento</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -103,28 +103,28 @@
                                                    aria-label="Select rmantenimiento"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $rmantenimiento->vsubcircuito_id }}</td>
+											<td>{{ $rmantenimiento->vsubcircuito->vehiculo->nombre }}</td>
 											<td>{{ $rmantenimiento->fecha_inicio }}</td>
 											<td>{{ $rmantenimiento->hora }}</td>
 											<td>{{ $rmantenimiento->kilometraje }}</td>
 											<td>{{ $rmantenimiento->observacion }}</td>
-											<td>{{ $rmantenimiento->emantenimiento_id }}</td>
+											<td>{{ $rmantenimiento->emantenimiento->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                        Actions
+                                                            @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('rmantenimientos.show',$rmantenimiento->id) }}">
-                                                            View
+                                                           @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('rmantenimientos.edit',$rmantenimiento->id) }}">
-                                                            Edit
+                                                           @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('rmantenimientos.destroy',$rmantenimiento->id) }}"
@@ -135,7 +135,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                Delete
+                                                                    @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
@@ -144,7 +144,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>No Data Found</td>
+                                    <td>@lang('No Data Found')</td>
                                 @endforelse
                                 </tbody>
 

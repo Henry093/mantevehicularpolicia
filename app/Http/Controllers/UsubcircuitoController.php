@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asignacion;
+use App\Models\Dependencia;
+use App\Models\Estado;
+use App\Models\User;
 use App\Models\Usubcircuito;
 use Illuminate\Http\Request;
 
@@ -32,7 +36,12 @@ class UsubcircuitoController extends Controller
     public function create()
     {
         $usubcircuito = new Usubcircuito();
-        return view('usubcircuito.create', compact('usubcircuito'));
+        $duser = User::all();
+        $ddependencia = Dependencia::all();
+        $dasignacion = Asignacion:: all();
+        $destado = Estado::all();
+
+        return view('usubcircuito.create', compact('usubcircuito', 'duser', 'ddependencia', 'dasignacion', 'destado'));
     }
 
     /**
@@ -73,8 +82,12 @@ class UsubcircuitoController extends Controller
     public function edit($id)
     {
         $usubcircuito = Usubcircuito::find($id);
+        $duser = User::all();
+        $ddependencia = Dependencia::all();
+        $dasignacion = Asignacion:: all();
+        $destado = Estado::all();
 
-        return view('usubcircuito.edit', compact('usubcircuito'));
+        return view('usubcircuito.edit', compact('usubcircuito', 'duser', 'ddependencia', 'dasignacion', 'destado'));
     }
 
     /**

@@ -50,7 +50,7 @@ class User extends Authenticatable
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
     
     static $rules = [
-		'name' => 'required',
+		'name' => 'required|unique:users,name|max:50',
 		'lastname' => 'required',
 		'cedula' => 'required',
 		'fecha_nacimiento' => 'required',

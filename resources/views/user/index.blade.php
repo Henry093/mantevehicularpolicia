@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-    User
+@lang('User')
 @endsection
 
 @section('content')
@@ -12,10 +12,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        List
+                        @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('User ') }}
+                        {{ __('User') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Create User
+                            @lang('Create User')
                         </a>
                     </div>
                 </div>
@@ -47,20 +47,20 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">User</h3>
+                            <h3 class="card-title">@lang('User')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    Show
+                                    @lang('Show')
                                     <div class="mx-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm" value="10" size="3"
                                                aria-label="Invoices count">
                                     </div>
-                                    entries
+                                    @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    Search:
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm"
                                                aria-label="Search invoice">
@@ -85,19 +85,13 @@
                                         </svg>
                                     </th>
                                     
-										<th>Name</th>
-										<th>Lastname</th>
-										<th>Cedula</th>
-										<th>Fecha Nacimiento</th>
-										<th>Sangre Id</th>
-										<th>Provincia Id</th>
-										<th>Canton Id</th>
-										<th>Parroquia Id</th>
+										<th>Nombre</th>
+										<th>Cédula</th>
+										<th>Tipo Sangre</th>
+										<th>Ciudad Nacimiento</th>
 										<th>Telefono</th>
-										<th>Grado Id</th>
-										<th>Rango Id</th>
-										<th>Estado Id</th>
-										<th>Usuario</th>
+										<th>Grado</th>
+										<th>Rango</th>
 										<th>Email</th>
 
                                     <th class="w-1"></th>
@@ -111,19 +105,13 @@
                                                    aria-label="Select user"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $user->name }}</td>
-											<td>{{ $user->lastname }}</td>
+											<td>{{ $user->name }} {{ $user->lastname }}</td>
 											<td>{{ $user->cedula }}</td>
-											<td>{{ $user->fecha_nacimiento }}</td>
-											<td>{{ $user->sangre_id }}</td>
-											<td>{{ $user->provincia_id }}</td>
-											<td>{{ $user->canton_id }}</td>
-											<td>{{ $user->parroquia_id }}</td>
+											<td>{{ $user->sangre->nombre }}</td>
+											<td>{{ $user->parroquia->nombre }}</td>
 											<td>{{ $user->telefono }}</td>
-											<td>{{ $user->grado_id }}</td>
-											<td>{{ $user->rango_id }}</td>
-											<td>{{ $user->estado_id }}</td>
-											<td>{{ $user->usuario }}</td>
+											<td>{{ $user->grado->nombre }}</td>
+											<td>{{ $user->rango->nombre }}</td>
 											<td>{{ $user->email }}</td>
 
                                         <td>
@@ -131,16 +119,16 @@
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                        Actions
+                                                        @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('users.show',$user->id) }}">
-                                                            View
+                                                           @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('users.edit',$user->id) }}">
-                                                            Edit
+                                                           @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('users.destroy',$user->id) }}"
@@ -151,7 +139,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                Delete
+                                                                    @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
@@ -160,7 +148,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>No Data Found</td>
+                                    <td>@lang('No Data Found')</td>
                                 @endforelse
                                 </tbody>
 

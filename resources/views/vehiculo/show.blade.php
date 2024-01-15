@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Vehiculo')
+@section('title', __('validation.View Vehiculo'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Vehiculo ') }}
+                        {{ __('Vehiculo') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Vehiculo List
+                            @lang('Vehiculo List')
                         </a>
                     </div>
                 </div>
@@ -45,13 +45,13 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Vehiculo Details</h3>
+                            <h3 class="card-title">@lang('Vehiculo Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Tvehiculo Id:</strong>
-{{ $vehiculo->tvehiculo_id }}
+<strong>@lang('Tvehiculo'):</strong>
+{{ $vehiculo->tvehiculo->nombre }}
 </div>
 <div class="form-group">
 <strong>Placa:</strong>
@@ -62,12 +62,12 @@
 {{ $vehiculo->chasis }}
 </div>
 <div class="form-group">
-<strong>Marca Id:</strong>
-{{ $vehiculo->marca_id }}
+<strong>Marca:</strong>
+{{ $vehiculo->marca->nombre }}
 </div>
 <div class="form-group">
 <strong>Modelo Id:</strong>
-{{ $vehiculo->modelo_id }}
+{{ $vehiculo->modelo->nombre }}
 </div>
 <div class="form-group">
 <strong>Motor:</strong>
@@ -82,16 +82,16 @@
 {{ $vehiculo->cilindraje }}
 </div>
 <div class="form-group">
-<strong>Vcarga Id:</strong>
-{{ $vehiculo->vcarga_id }}
+<strong>@lang('Vcarga'):</strong>
+{{ $vehiculo->vcarga->nombre }}
 </div>
 <div class="form-group">
-<strong>Vpasajero Id:</strong>
-{{ $vehiculo->vpasajero_id }}
+<strong>@lang('Vpasajero'):</strong>
+{{ $vehiculo->vpasajero->nombre }}
 </div>
 <div class="form-group">
 <strong>Estado Id:</strong>
-{{ $vehiculo->estado_id }}
+{{ $vehiculo->estado->nombre }}
 </div>
 
                         </div>

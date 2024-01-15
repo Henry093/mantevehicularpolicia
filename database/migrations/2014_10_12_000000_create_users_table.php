@@ -93,11 +93,11 @@ return new class extends Migration
 
             Schema::create('distritos', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedBigInteger('provincia_id');
+                $table->unsignedBigInteger('canton_id');
                 $table->string('nombre', 20);
                 $table->string('codigo', 20);
                 $table->timestamps();
-                $table->foreign('provincia_id')->references('id')->on('provincias');
+                $table->foreign('canton_id')->references('id')->on('cantons');
             });
 
             Schema::create('circuitos', function (Blueprint $table) {
@@ -121,22 +121,19 @@ return new class extends Migration
             Schema::create('dependencias', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('provincia_id');
-                $table->integer('num_distritos')->nullable();
                 $table->unsignedBigInteger('canton_id');
                 $table->unsignedBigInteger('parroquia_id');
-                $table->string('cod_distrito', 20);
-                $table->string('nom_distrito', 20);
-                $table->integer('num_circuitos')->nullable();
-                $table->string('cod_circuito', 20);
-                $table->string('nom_circuito', 20);
-                $table->integer('num_subcircuitos')->nullable();
-                $table->string('cod_subcircuito', 20);
-                $table->string('nom_subcircuito', 20);
+                $table->unsignedBigInteger('distrito_id');
+                $table->unsignedBigInteger('circuito_id');
+                $table->unsignedBigInteger('subcircuito_id');
                 $table->unsignedBigInteger('estado_id');  
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');
                 $table->foreign('canton_id')->references('id')->on('cantons');
                 $table->foreign('parroquia_id')->references('id')->on('parroquias');
+                $table->foreign('distrito_id')->references('id')->on('distritos');
+                $table->foreign('circuito_id')->references('id')->on('circuitos');
+                $table->foreign('subcircuito_id')->references('id')->on('subcircuitos');
                 $table->foreign('estado_id')->references('id')->on('estados');
             });
     
@@ -197,7 +194,7 @@ return new class extends Migration
                 $table->foreign('estado_id')->references('id')->on('estados');
             });
     
-            Schema::create('asignaciones', function (Blueprint $table) {
+            Schema::create('asignacions', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('nombre', 50);
                 $table->timestamps();
@@ -212,7 +209,7 @@ return new class extends Migration
                 $table->timestamps();
                 $table->foreign('user_id')->references('id')->on('users');
                 $table->foreign('dependencia_id')->references('id')->on('dependencias');
-                $table->foreign('asignacion_id')->references('id')->on('asignaciones');
+                $table->foreign('asignacion_id')->references('id')->on('asignacions');
                 $table->foreign('estado_id')->references('id')->on('estados');
             });
     
@@ -228,7 +225,7 @@ return new class extends Migration
                 $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
                 $table->foreign('dependencia_id')->references('id')->on('dependencias');
                 $table->foreign('usubcircuito_id')->references('id')->on('usubcircuitos');
-                $table->foreign('asignacion_id')->references('id')->on('asignaciones');
+                $table->foreign('asignacion_id')->references('id')->on('asignacions');
                 $table->foreign('estado_id')->references('id')->on('estados');
             });
     
@@ -292,6 +289,34 @@ return new class extends Migration
                 $table->foreign('rmantenimiento_id')->references('id')->on('rmantenimientos');
                 $table->foreign('rvehiculo_id')->references('id')->on('rvehiculos');
             });
+
+            Schema::create('treclamos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('nombre');
+                $table->timestamps();
+            });
+
+
+            //Examen
+            Schema::create('reclamos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('circuito_id');
+                $table->unsignedBigInteger('subcircuito_id');
+                $table->unsignedBigInteger('treclamo_id');
+                $table->text('detalle');
+                $table->string('contacto');
+                $table->string('apellidos');
+                $table->string('nombres');
+                $table->timestamps();
+
+                $table->foreign('circuito_id')->references('id')->on('circuitos');
+                $table->foreign('subcircuito_id')->references('id')->on('subcircuitos');
+                $table->foreign('treclamo_id')->references('id')->on('treclamos');
+            });
+
+            
+
+
             
     }
 

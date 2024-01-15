@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View User')
+@section('title', __('validation.View User'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('User ') }}
+                        {{ __('User') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            User List
+                            @lang('User List')
                         </a>
                     </div>
                 </div>
@@ -45,20 +45,20 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">User Details</h3>
+                            <h3 class="card-title">@lang('User Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Name:</strong>
+<strong>@lang('Name'):</strong>
 {{ $user->name }}
 </div>
 <div class="form-group">
-<strong>Lastname:</strong>
+<strong>@lang('Lastname'):</strong>
 {{ $user->lastname }}
 </div>
 <div class="form-group">
-<strong>Cedula:</strong>
+<strong>Cédula:</strong>
 {{ $user->cedula }}
 </div>
 <div class="form-group">
@@ -66,36 +66,36 @@
 {{ $user->fecha_nacimiento }}
 </div>
 <div class="form-group">
-<strong>Sangre Id:</strong>
-{{ $user->sangre_id }}
+<strong>Tipo Sangre:</strong>
+{{ $user->sangre->nombre }}
 </div>
 <div class="form-group">
-<strong>Provincia Id:</strong>
-{{ $user->provincia_id }}
+<strong>Provincia:</strong>
+{{ $user->provincia->nombre }}
 </div>
 <div class="form-group">
-<strong>Canton Id:</strong>
-{{ $user->canton_id }}
+<strong>Cantón:</strong>
+{{ $user->canton->nombre }}
 </div>
 <div class="form-group">
-<strong>Parroquia Id:</strong>
-{{ $user->parroquia_id }}
+<strong>Parroquia:</strong>
+{{ $user->parroquia->nombre }}
 </div>
 <div class="form-group">
-<strong>Telefono:</strong>
+<strong>Teléfono:</strong>
 {{ $user->telefono }}
 </div>
 <div class="form-group">
-<strong>Grado Id:</strong>
-{{ $user->grado_id }}
+<strong>Grado:</strong>
+{{ $user->grado->nombre }}
 </div>
 <div class="form-group">
-<strong>Rango Id:</strong>
-{{ $user->rango_id }}
+<strong>Rango:</strong>
+{{ $user->rango->nombre }}
 </div>
 <div class="form-group">
-<strong>Estado Id:</strong>
-{{ $user->estado_id }}
+<strong>Estado:</strong>
+{{ $user->estado->nombre }}
 </div>
 <div class="form-group">
 <strong>Usuario:</strong>
