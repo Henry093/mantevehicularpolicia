@@ -21,7 +21,7 @@ class ReclamoController extends Controller
      */
     public function index()
     {
-        $reclamos = Reclamo::paginate(10);
+        $reclamos = Reclamo::paginate(14);
 
         return view('reclamo.index', compact('reclamos'))
             ->with('i', (request()->input('page', 1) - 1) * $reclamos->perPage());

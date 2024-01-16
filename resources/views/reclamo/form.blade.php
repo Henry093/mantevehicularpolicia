@@ -1,7 +1,7 @@
 <div class="form-group mb-3">
     <label class="form-label required">{{ Form::label('circuito_id', 'Circuito') }}</label>
     <div>
-        <select name="circuito_id" class="form-control form-control-rounded mb-2 
+        <select name="circuito_id"  required class="form-control form-control-rounded mb-2 
         {{ $errors->has('circuito_id') ? ' is-invalid' : '' }}" placeholder="Circuito">
             <option value="">Seleccionar Circuito..</option>
             @foreach($dcircuito as $circuito)
@@ -16,7 +16,7 @@
 <div class="form-group mb-3">
     <label class="form-label required" >{{ Form::label('subcircuito_id', 'Subcircuito') }}</label>
     <div>
-        <select name="subcircuito_id" class="form-control form-control-rounded mb-2 
+        <select name="subcircuito_id"  required class="form-control form-control-rounded mb-2 
         {{ $errors->has('subcircuito_id') ? ' is-invalid' : '' }}" placeholder="Subcircuito" >
         <option value="" >Seleccionar Subcircuito..</option>
             @foreach($dsubcircuito as $subcircuito)
@@ -31,7 +31,7 @@
 <div class="form-group mb-3">
     <label class="form-label required" >{{ Form::label('treclamo_id', 'Tipo Reclamo') }}</label>
     <div>
-        <select name="treclamo_id" class="form-control form-control-rounded mb-2 
+        <select name="treclamo_id"  required class="form-control form-control-rounded mb-2 
         {{ $errors->has('treclamo_id') ? ' is-invalid' : '' }}" placeholder="Tipo Reclamo" >
         <option value="" >Seleccionar Tipo Reclamo..</option>
             @foreach($dtreclamo as $treclamo)
@@ -47,7 +47,7 @@
     <label class="form-label">   {{ Form::label('detalle') }}</label>
     <div>
         {{ Form::textarea('detalle', $reclamo->detalle, ['class' => 'form-control' .
-        ($errors->has('detalle') ? ' is-invalid' : ''), 'placeholder' => 'Detalle']) }}
+        ($errors->has('detalle') ? ' is-invalid' : ''), 'placeholder' => 'Detalle',  'required']) }}
         {!! $errors->first('detalle', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>
@@ -55,7 +55,7 @@
     <label class="form-label">   {{ Form::label('contacto') }}</label>
     <div>
         {{ Form::text('contacto', $reclamo->contacto, ['class' => 'form-control' .
-        ($errors->has('contacto') ? ' is-invalid' : ''), 'placeholder' => 'Contacto']) }}
+        ($errors->has('contacto') ? ' is-invalid' : ''), 'placeholder' => 'Contacto',  'required']) }}
         {!! $errors->first('contacto', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>
@@ -63,7 +63,7 @@
     <label class="form-label">   {{ Form::label('apellidos') }}</label>
     <div>
         {{ Form::text('apellidos', $reclamo->apellidos, ['class' => 'form-control' .
-        ($errors->has('apellidos') ? ' is-invalid' : ''), 'placeholder' => 'Apellidos']) }}
+        ($errors->has('apellidos') ? ' is-invalid' : ''), 'placeholder' => 'Apellidos',  'required']) }}
         {!! $errors->first('apellidos', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>
@@ -71,7 +71,7 @@
     <label class="form-label">   {{ Form::label('nombres') }}</label>
     <div>
         {{ Form::text('nombres', $reclamo->nombres, ['class' => 'form-control' .
-        ($errors->has('nombres') ? ' is-invalid' : ''), 'placeholder' => 'Nombres']) }}
+        ($errors->has('nombres') ? ' is-invalid' : ''), 'placeholder' => 'Nombres',  'required']) }}
         {!! $errors->first('nombres', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

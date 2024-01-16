@@ -179,36 +179,44 @@
                         </div>
                     </div>
                 </div>
-            </form>
-        </tbody>
-        <script>
-            $(document).ready(function() {
-                // Cuando cambia la selección de circuito
-                $('select[name="circuito_id"]').change(function() {
-                    var circuitoId = $(this).val();
-                    if (circuitoId) {
-                        // Realizar una solicitud AJAX para obtener los subcircuitos correspondientes al circuito seleccionado
-                        $.ajax({
-                            url: '/obtener-subcircuitos/' + circuitoId,
-                            type: "GET",
-                            dataType: "json",
-                            success: function(data) {
-                                $('select[name="subcircuito_id"]').empty();
-                                $('select[name="subcircuito_id"]').append(
-                                    '<option value="">Seleccionar Subcircuito..</option>');
-                                $.each(data, function(key, value) {
-                                    $('select[name="subcircuito_id"]').append(
-                                        '<option value="' + key + '">' + value +
-                                        '</option>');
+
+                <script>
+                    $(document).ready(function() {
+                        // Cuando cambia la selección de circuito
+                        $('select[name="circuito_id"]').change(function() {
+                            var circuitoId = $(this).val();
+                            if (circuitoId) {
+                                // Realizar una solicitud AJAX para obtener los subcircuitos correspondientes al circuito seleccionado
+                                $.ajax({
+                                    url: '/obtener-subcircuitos/' + circuitoId,
+                                    type: "GET",
+                                    dataType: "json",
+                                    success: function(data) {
+                                        $('select[name="subcircuito_id"]').empty();
+                                        $('select[name="subcircuito_id"]').append('<option value="">Seleccionar Subcircuito..</option>');
+                                        $.each(data, function(key, value) {
+                                            $('select[name="subcircuito_id"]').append('<option value="' + key + '">' + value + '</option>');
+                                        });
+                                    }
                                 });
+                            } else {
+                                $('select[name="subcircuito_id"]').empty();
                             }
                         });
-                    } else {
-                        $('select[name="subcircuito_id"]').empty();
-                    }
-                });
-            });
-        </script>
+                    });
+                </script>
+            </form>
+
+            @if (session('success'))
+
+                <script>
+                    alert("{{session('success')}}");
+                </script>
+                
+            @endif
+        </tbody>
+        
+    
     </div>
 </body>
 

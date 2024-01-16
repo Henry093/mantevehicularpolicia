@@ -51,7 +51,8 @@ class FormularioController extends Controller
 
         $reclamo->save();
 
-        return redirect()->route('home');
+        return redirect()->route('reclamo.indexPublic')
+                ->with('success', 'Información enviada correctamente');
 
     }
 

@@ -352,5 +352,9 @@ return new class extends Migration
         Schema::dropIfExists('rmantenimientos');
         Schema::dropIfExists('rvehiculos');
         Schema::dropIfExists('evehiculos');
+        
+        Schema::dropIfExists('treclamos');
+        Schema::dropIfExists('reclamos');
+
     }
 };

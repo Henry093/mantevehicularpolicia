@@ -20,6 +20,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\RangoController;
 use App\Http\Controllers\ReclamoController;
+use App\Http\Controllers\ReclamosrController;
 use App\Http\Controllers\RmantenimientoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RvehiculoController;
@@ -55,20 +56,16 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Auth::routes();
+
 Route::get('formulario',[FormularioController::class, 'index'])->name('reclamo.indexPublic');
 Route::post('formulario',[FormularioController::class, 'store'])->name('reclamo.store');
 
 
-
-Route::get('reclamo',[ReclamoController::class, 'index'])->name('reclamo.index');
-Route::post('reclamo',[ReclamoController::class, 'store'])->name('examen.store');
-
-Auth::routes();
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
 Route::group(['middleware' => ['auth']], function(){
     
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
     Route::resource('users', UserController::class)->names('users');
     Route::resource('roles', RoleController::class)->names('roles');
     Route::resource('permissions', PermissionController::class)->names('permissions');
@@ -104,19 +101,27 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('treclamos', TreclamoController::class)->names('treclamos');
     
     Route::get('/obtener-cantones/{provinciaId}', [ParroquiaController::class, 'getCantones']);
+
     Route::get('/obtener-cantones/{provinciaId}', [DependenciaController::class, 'getCantones']);
     Route::get('/obtener-parroquias/{cantonId}', [DependenciaController::class, 'getParroquias']);
+
     Route::get('/obtener-cantones/{provinciaId}', [UserController::class, 'getCantones']);
     Route::get('/obtener-parroquias/{cantonId}', [UserController::class, 'getParroquias']);
     Route::get('/obtener-rangos/{gradoId}', [UserController::class, 'getRangos']);
 
+
+    //Obtener Circuitos y subcircuito para reclamos
     Route::get('/obtener-subcircuitos/{circuitoId}', [ReclamoController::class, 'getSubcircuitos']);
-    Route::get('/obtener-subcircuitos/{circuitoId}', [FormularioController::class, 'getSubcircuitos'])->name('obtener-subcircuitos');
+    Route::get('/obtener-subcircuitos/{circuitoId}', [FormularioController::class, 'getSubcircuitos']);
     
+
+
     Route::get('/rmantenimientos/{id}', [RmantenimientoController::class, 'show'])->name('rmantenimientos.show');
 
 
-Route::get('reclamosr',[FormularioController::class, 'index'])->name('reclamosr.index');
+    Route::get('reclamosr',[ReclamosrController::class, 'index'])->name('reclamo.reporteReclamo');
+    Route::get('/filtro', [ReclamosrController::class, 'filtro']);
+    
 
 });
 
