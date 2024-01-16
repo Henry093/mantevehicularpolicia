@@ -406,7 +406,7 @@ return [
                 ],
                 [
                     'text' => 'Reporte Reclamos',
-                    'url' => 'reclamos',
+                    'route' => 'reclamo.reporteReclamo',
                     'icon' => 'ti ti-file-description',
                 ],
                 

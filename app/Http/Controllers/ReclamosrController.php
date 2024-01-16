@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Reclamo;
+use App\Models\Subcircuito;
 use Illuminate\Http\Request;
+use App\Models\Circuito;
+use App\Models\Treclamo;
 
 class ReclamosrController extends Controller
 {
@@ -12,10 +16,10 @@ class ReclamosrController extends Controller
      */
     public function index()
     {
-        $reclamo = Reclamo::paginate(10);
+        $reclamos = Reclamo::paginate(20);
 
-        return view('reclamo.reporteReclamo', compact('reclamo'))
-        ->with('i', (request()->input('page', 1) - 1) * $reclamo->perPage());;
+        return view('reclamo.reporteReclamo', compact('reclamos'))
+        ->with('i', (request()->input('page', 1) - 1) * $reclamos->perPage());;
     }
 
     /**
@@ -64,5 +68,27 @@ class ReclamosrController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function filtro(Request $request){
+
+        $fechaIni = $request->fechaIni;
+        $fechaFin = $request->fechaFin;
+    
+        $reclamos = Reclamo::whereDate('created_at', '>=', $fechaIni)
+                            ->whereDate('created_at', '<=', $fechaFin)
+                            ->select('treclamo_id', 'circuito_id', 'subcircuito_id', DB::raw('count(*) as total'))
+                            ->groupBy('treclamo_id', 'circuito_id', 'subcircuito_id')
+                            ->paginate(10);
+    
+            return view('reclamo.reporteReclamo', compact('reclamos'))
+            ->with('i', (request()->input('page', 1) - 1) * $reclamos->perPage());;
+        
+
+    }
+
+    public function getSubcircuitos($circuitoId) {
+        $subcircuitos = Subcircuito::where('circuito_id', $circuitoId)->pluck('nombre', 'id')->toArray();
+        return response()->json($subcircuitos);
     }
 }
