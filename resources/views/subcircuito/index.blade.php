@@ -85,6 +85,8 @@
                                         </svg>
                                     </th>
                                     
+										<th>Provincia Id</th>
+										<th>Distrito Id</th>
 										<th>Circuito Id</th>
 										<th>Nombre</th>
 										<th>Codigo</th>
@@ -100,6 +102,8 @@
                                                    aria-label="Select subcircuito"></td>
                                         <td>{{ ++$i }}</td>
                                         
+											<td>{{ $subcircuito->provincia_id }}</td>
+											<td>{{ $subcircuito->distrito_id }}</td>
 											<td>{{ $subcircuito->circuito_id }}</td>
 											<td>{{ $subcircuito->nombre }}</td>
 											<td>{{ $subcircuito->codigo }}</td>

@@ -50,6 +50,14 @@
                         <div class="card-body">
                             
 <div class="form-group">
+<strong>Provincia Id:</strong>
+{{ $subcircuito->provincia_id }}
+</div>
+<div class="form-group">
+<strong>Distrito Id:</strong>
+{{ $subcircuito->distrito_id }}
+</div>
+<div class="form-group">
 <strong>Circuito Id:</strong>
 {{ $subcircuito->circuito_id }}
 </div>

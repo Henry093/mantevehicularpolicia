@@ -106,9 +106,4 @@ class SubcircuitoController extends Controller
         return redirect()->route('subcircuitos.index')
             ->with('success', 'Subcircuito deleted successfully');
     }
-
-    public function getSubcircuitos($circuitoId) {
-        $subcircuitos = Subcircuito::where('circuito_id', $circuitoId)->pluck('nombre', 'id')->toArray();
-        return response()->json($subcircuitos);
-    }
 }

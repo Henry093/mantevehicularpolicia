@@ -75,6 +75,7 @@
                                         <th>Grado</th>
                                         <th>Rango</th>
                                         <th>Email</th>
+                                        <th>Estatus</th>
 
                                         <th class="w-1"></th>
                                     </tr>
@@ -91,9 +92,10 @@
                                             <td>{{ $user->grado->nombre }}</td>
                                             <td>{{ $user->rango->nombre }}</td>
                                             <td>{{ $user->email }}</td>
+                                            <td>{{ $user->asignacion }}</td>
                                             
                                             <td>
-                                                <a  href="{{ route('asignar.edit', $user->id) }}" class="btn btn-pill">@lang('Asignar Rol')</a>
+                                                <a  href="{{ route('asignarsubcircuito.edit', $user->id) }}" class="btn btn-pill">@lang('Asignar Rol')</a>
                                             </td>
                                         </tr>
                                     @empty

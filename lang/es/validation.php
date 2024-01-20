@@ -318,4 +318,8 @@ return [
         'username'                 => 'usuario',
         'year'                     => 'año',
     ],
+    
+    'Create Subcircuito'                     => 'Crear Subcircuito',
+    'Update Subcircuito'                     => 'Editar Subcircuito',
+    'Show Subcircuito'                     => 'Ver Subcircuito',
 ];

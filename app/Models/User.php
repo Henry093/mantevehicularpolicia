@@ -50,19 +50,19 @@ class User extends Authenticatable
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
     
     static $rules = [
-		'name' => 'required|unique:users,name|max:50',
-		'lastname' => 'required',
-		'cedula' => 'required',
+		'name' => 'required|alpha|max:50',
+		'lastname' => 'required|alpha|max:50',
+		'cedula' => 'required|unique:users,cedula|max:10',
 		'fecha_nacimiento' => 'required',
 		'sangre_id' => 'required',
 		'provincia_id' => 'required',
 		'canton_id' => 'required',
 		'parroquia_id' => 'required',
-		'telefono' => 'required',
+		'telefono' => 'required|numeric|unique:users,telefono|max:9999999999',
 		'grado_id' => 'required',
 		'rango_id' => 'required',
 		'estado_id' => 'required',
-		'usuario' => 'required',
+		'usuario' => 'required|unique:users,usuario|max:10',
 		'email' => 'required',
     ];
 
@@ -73,7 +73,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['name','lastname','cedula','fecha_nacimiento','sangre_id','provincia_id','canton_id','parroquia_id','telefono','grado_id','rango_id','estado_id','usuario','email'];
+    protected $fillable = ['name','lastname','cedula','fecha_nacimiento','sangre_id','provincia_id','canton_id','parroquia_id','telefono','grado_id','rango_id','estado_id','usuario','email','password'];
 
 
     /**

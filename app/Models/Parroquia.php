@@ -45,7 +45,7 @@ class Parroquia extends Model
      */
     public function canton()
     {
-        return $this->hasOne( 'App\Models\Canton', 'id', 'canton_id');
+        return $this->hasOne('App\Models\Canton', 'id', 'canton_id');
     }
     
     /**
@@ -73,5 +73,4 @@ class Parroquia extends Model
     }
     
 
-    
 }

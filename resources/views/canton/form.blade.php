@@ -1,11 +1,12 @@
 
 
 <div class="form-group mb-3">
-    <label class="form-label">{{ Form::label('provincia_id', 'Provincia') }}</label>
+    <label class="form-label required">{{ Form::label('provincia_id', 'Provincia') }}</label>
     <div>
-        <select name="provincia_id" class="form-control form-control-rounded mb-2 {{ $errors->has('provincia_id') ? ' is-invalid' : '' }}" placeholder="Provincia">
+        <select name="provincia_id" required class="form-select form-control-rounded mb-2 
+        {{ $errors->has('provincia_id') ? ' is-invalid' : '' }}" placeholder="Provincia">
             <option value="" >Seleccionar Provincia..</option>
-            @foreach($provincias as $provincia)
+            @foreach($d_provincia as $provincia)
                <option value="{{ $provincia->id }}" {{ $canton->provincia_id == $provincia->id ? 'selected' : '' }}>
                     {{ $provincia->nombre }}
                 </option>
@@ -15,10 +16,10 @@
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('nombre') }}</label>
+    <label class="form-label required">   {{ Form::label('nombre', 'Nombre') }}</label>
     <div>
         {{ Form::text('nombre', $canton->nombre, ['class' => 'form-control' .
-        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre']) }}
+        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre del Cantón', 'required']) }}
         {!! $errors->first('nombre', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

@@ -22,7 +22,7 @@ class Role extends Model
 {
     
     static $rules = [
-		'name' => 'required',
+		'name' => 'required|unique:roles,name',
 		'guard_name' => 'required',
     ];
 

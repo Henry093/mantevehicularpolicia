@@ -1,5 +1,23 @@
 
 <div class="form-group mb-3">
+    <label class="form-label">   {{ Form::label('provincia_id') }}</label>
+    <div>
+        {{ Form::text('provincia_id', $subcircuito->provincia_id, ['class' => 'form-control' .
+        ($errors->has('provincia_id') ? ' is-invalid' : ''), 'placeholder' => 'Provincia Id']) }}
+        {!! $errors->first('provincia_id', '<div class="invalid-feedback">:message</div>') !!}
+        <small class="form-hint">subcircuito <b>provincia_id</b> instruction.</small>
+    </div>
+</div>
+<div class="form-group mb-3">
+    <label class="form-label">   {{ Form::label('distrito_id') }}</label>
+    <div>
+        {{ Form::text('distrito_id', $subcircuito->distrito_id, ['class' => 'form-control' .
+        ($errors->has('distrito_id') ? ' is-invalid' : ''), 'placeholder' => 'Distrito Id']) }}
+        {!! $errors->first('distrito_id', '<div class="invalid-feedback">:message</div>') !!}
+        <small class="form-hint">subcircuito <b>distrito_id</b> instruction.</small>
+    </div>
+</div>
+<div class="form-group mb-3">
     <label class="form-label">   {{ Form::label('circuito_id') }}</label>
     <div>
         {{ Form::text('circuito_id', $subcircuito->circuito_id, ['class' => 'form-control' .

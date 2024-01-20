@@ -88,7 +88,6 @@
 										<th>Placa Vehículo</th>
 										<th>Dependencia</th>
 										<th>Usuario Asignado</th>
-										<th>Asignacion</th>
 										<th>Estado</th>
 
                                     <th class="w-1"></th>
@@ -104,8 +103,8 @@
                                         
 											<td>{{ $vsubcircuito->vehiculo->placa }}</td>
 											<td>{{ $vsubcircuito->dependencia->subcircuito->nombre }}</td>
-											<td>{{ $vsubcircuito->usubcircuito->user->name }} {{ $vsubcircuito->usubcircuito->user->lastname }}</td>
-											<td>{{ $vsubcircuito->asignacion }}</td>
+											<td>{{ $vsubcircuito->usubcircuito->user->name }} 
+                                                {{ $vsubcircuito->usubcircuito->user->lastname }}</td>
 											<td>{{ $vsubcircuito->estado->nombre }}</td>
 
                                         <td>

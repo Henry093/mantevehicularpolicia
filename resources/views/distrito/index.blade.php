@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-    Distrito
+    @lang('Distrito')
 @endsection
 
 @section('content')
@@ -47,7 +47,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Distrito</h3>
+                            <h3 class="card-title">@lang('Distrito')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
@@ -60,7 +60,7 @@
                                     @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    @lang('Search:')'
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm"
                                                aria-label="Search invoice">
@@ -85,9 +85,11 @@
                                         </svg>
                                     </th>
                                     
+										<th>Provincia</th>
 										<th>Cantón</th>
+										<th>Parroquia Id</th>
 										<th>Nombre</th>
-										<th>Codigo</th>
+										<th>Código</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -100,7 +102,9 @@
                                                    aria-label="Select distrito"></td>
                                         <td>{{ ++$i }}</td>
                                         
+											<td>{{ $distrito->provincia->nombre }}</td>
 											<td>{{ $distrito->canton->nombre }}</td>
+											<td>{{ $distrito->parroquia->nombre }}</td>
 											<td>{{ $distrito->nombre }}</td>
 											<td>{{ $distrito->codigo }}</td>
 
@@ -109,16 +113,16 @@
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                            @lang('Actions')
+                                                        @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('distritos.show',$distrito->id) }}">
-                                                           @lang('View')
+                                                            @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('distritos.edit',$distrito->id) }}">
-                                                           @lang('Edit')
+                                                            @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('distritos.destroy',$distrito->id) }}"
@@ -129,7 +133,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                    @lang('Delete')
+                                                                @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>

@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-@lang('Parroquia')
+    @lang('Parroquia')
 @endsection
 
 @section('content')
@@ -109,16 +109,16 @@
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                            @lang('Actions')
+                                                        @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('parroquias.show',$parroquia->id) }}">
-                                                           @lang('View')
+                                                            @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('parroquias.edit',$parroquia->id) }}">
-                                                           @lang('Edit')
+                                                            @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('parroquias.destroy',$parroquia->id) }}"
@@ -129,7 +129,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                    @lang('Delete')
+                                                                @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
