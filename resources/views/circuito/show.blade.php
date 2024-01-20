@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', __('validation.View Circuito'))
+@section('title', 'View Circuito')
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        @lang('View')
+                        View
                     </div>
                     <h2 class="page-title">
-                        {{ __('Circuito') }}
+                        {{ __('Circuito ') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            @lang('Circuito List')
+                            Circuito List
                         </a>
                     </div>
                 </div>
@@ -45,20 +45,24 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">@lang('Circuito Details')</h3>
+                            <h3 class="card-title">Circuito Details</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Distrito:</strong>
-{{ $circuito->distrito->nombre }}
+<strong>Provincia Id:</strong>
+{{ $circuito->provincia_id }}
+</div>
+<div class="form-group">
+<strong>Distrito Id:</strong>
+{{ $circuito->distrito_id }}
 </div>
 <div class="form-group">
 <strong>Nombre:</strong>
 {{ $circuito->nombre }}
 </div>
 <div class="form-group">
-<strong>Código:</strong>
+<strong>Codigo:</strong>
 {{ $circuito->codigo }}
 </div>
 

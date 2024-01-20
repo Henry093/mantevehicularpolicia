@@ -2,9 +2,9 @@
     <div class="card-body">
         {!! Form::open(['route' => 'roles.store']) !!}
             <div class="form-group mb-3">
-                <label class="form-label"> {!! Form::label('name', 'Nombre') !!}</label>
+                <label class="form-label required"> {!! Form::label('name', 'Nombre') !!}</label>
                 {!! Form::text('name', null, ['class' => 'form-control '.
-                ($errors->has('name') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre del Rol']) !!}
+                ($errors->has('name') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre del Rol', 'required']) !!}
 
                     {!! $errors->first('name', '<div class="invalid-feedback">:message</div>') !!}
           
@@ -15,7 +15,7 @@
 
                 @foreach ($permissions as $permission)
                     <div>
-                        <label class="form-check">
+                        <label class="form-check ">
                             {!! Form::checkbox('permissions[]', $permission->id, null, ['class'=>'mr-1']) !!}
                                     {{ $permission->description }}
                         </label>
@@ -27,11 +27,3 @@
         {!! Form::close() !!}
     </div>
 </div> 
-
-    <div class="form-footer">
-        <div class="text-end">
-            <div class="d-flex">
-                <a href="/roles" class="btn btn-danger">@lang('Cancel')</a>
-            </div>
-        </div>
-    </div>

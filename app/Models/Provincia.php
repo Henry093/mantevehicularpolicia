@@ -40,7 +40,7 @@ class Provincia extends Model
      */
     public function cantones()
     {
-        return $this->hasMany(Canton::class, 'App\Models\Cantone', 'provincia_id', 'id');
+        return $this->hasMany(Canton::class, 'provincia_id', 'id');
     }
     
     /**

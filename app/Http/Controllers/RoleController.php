@@ -48,13 +48,18 @@ class RoleController extends Controller
         request()->validate([
             'name' => 'required'
         ]);
+        
+        $rol = Role::where('name', $request->input('name'))->first();
 
+        if($rol){
+            return redirect()->route('roles.create')->with('error', 'El Rol ya está registrado.');//validamos si el rol esta registrado
+        }
         $role = Role::create($request->all()); //creamos el rol
 
         $role->permissions()->sync($request->permissions); //asignamos los permisos al rol
 
         return redirect()->route('roles.index', $role)
-            ->with('success', 'Role created successfully.');
+            ->with('success', 'Rol creado exitosamente.');
     }
 
     /**
@@ -102,7 +107,7 @@ class RoleController extends Controller
         $role->permissions()->sync($request->permissions);
 
         return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully');
+            ->with('success', 'Rol actualizado exitosamente.');
     }
 
     /**
@@ -115,6 +120,6 @@ class RoleController extends Controller
         $role = Role::find($id)->delete();
 
         return redirect()->route('roles.index')
-            ->with('success', 'Role deleted successfully');
+            ->with('success', 'Rol borrado exitosamente.');
     }
 }

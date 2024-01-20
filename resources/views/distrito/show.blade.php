@@ -50,8 +50,16 @@
                         <div class="card-body">
                             
 <div class="form-group">
+<strong>Provincia:</strong>
+{{ $distrito->provincia->nombre }}
+</div>
+<div class="form-group">
 <strong>Cantón:</strong>
-{{ $distrito->canton_->nombre }}
+{{ $distrito->canton->nombre }}
+</div>
+<div class="form-group">
+<strong>Parroquia:</strong>
+{{ $distrito->parroquia->nombre }}
 </div>
 <div class="form-group">
 <strong>Nombre:</strong>

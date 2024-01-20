@@ -33,8 +33,8 @@ class CantonController extends Controller
     public function create()
     {
         $canton = new Canton();
-        $provincias = Provincia::all();
-        return view('canton.create', compact('canton', 'provincias'));
+        $d_provincia = Provincia::all();
+        return view('canton.create', compact('canton', 'd_provincia'));
     }
 
     /**
@@ -46,6 +46,11 @@ class CantonController extends Controller
     public function store(Request $request)
     {
         request()->validate(Canton::$rules);
+
+        $nombre = Canton::where('nombre', $request->input('nombre'))->first();
+        if($nombre){
+            return redirect()->route('cantons.create')->with('error', 'La cantón ya está registrado.');
+        }
 
         $canton = Canton::create($request->all());
 
@@ -75,9 +80,9 @@ class CantonController extends Controller
     public function edit($id)
     {
         $canton = Canton::find($id);
-        $provincias = Provincia::all();
+        $d_provincia = Provincia::all();
 
-        return view('canton.edit', compact('canton', 'provincias'));
+        return view('canton.edit', compact('canton', 'd_provincia'));
     }
 
     /**
@@ -109,4 +114,6 @@ class CantonController extends Controller
         return redirect()->route('cantons.index')
             ->with('success', 'Cantón borrado exitosamente.');
     }
+
+ 
 }

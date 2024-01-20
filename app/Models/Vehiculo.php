@@ -37,12 +37,12 @@ class Vehiculo extends Model
     
     static $rules = [
 		'tvehiculo_id' => 'required',
-		'placa' => 'required',
-		'chasis' => 'required',
+		'placa' => 'required|unique:vehiculos,placa|max:8',
+		'chasis' => 'required|unique:vehiculos,chasis',
 		'marca_id' => 'required',
 		'modelo_id' => 'required',
-		'motor' => 'required',
-		'kilometraje' => 'required',
+		'motor' => 'required|unique:vehiculos,motor',
+		'kilometraje' => 'required|numeric|max:999999',
 		'cilindraje' => 'required',
 		'vcarga_id' => 'required',
 		'vpasajero_id' => 'required',

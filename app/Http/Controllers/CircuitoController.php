@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Circuito;
 use App\Models\Distrito;
-use App\Models\Subcircuito;
+use App\Models\Provincia;
 use Illuminate\Http\Request;
 
 /**
@@ -34,9 +34,10 @@ class CircuitoController extends Controller
     public function create()
     {
         $circuito = new Circuito();
+        $d_provincia = Provincia::all();
+        $d_distrito = Distrito::all();
 
-        $distritos = Distrito::all();
-        return view('circuito.create', compact('circuito', 'distritos'));
+        return view('circuito.create', compact('circuito', 'd_provincia', 'd_distrito'));
     }
 
     /**
@@ -77,9 +78,10 @@ class CircuitoController extends Controller
     public function edit($id)
     {
         $circuito = Circuito::find($id);
-        $distritos = Distrito::all();
+        $d_provincia = Provincia::all();
+        $d_distrito = Distrito::all();
 
-        return view('circuito.edit', compact('circuito', 'distritos'));
+        return view('circuito.edit', compact('circuito', 'd_provincia', 'd_distrito'));
     }
 
     /**
@@ -111,9 +113,12 @@ class CircuitoController extends Controller
         return redirect()->route('circuitos.index')
             ->with('success', 'Circuito deleted successfully');
     }
-
-    public function getSubcircuitos($circuitoId) {
-        $subcircuitos = Subcircuito::where('circuito_id', $circuitoId)->pluck('nombre', 'id')->toArray();
-        return response()->json($subcircuitos);
+    
+    public function getDistritos($provinciaId) {
+        $distritos = Distrito::whereHas('canton', function($query) use ($provinciaId) {
+            $query->where('provincia_id', $provinciaId);
+        })->pluck('nombre', 'id')->toArray();
+    
+        return response()->json($distritos);
     }
 }

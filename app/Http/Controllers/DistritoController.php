@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Canton;
 use App\Models\Distrito;
+use App\Models\Parroquia;
+use App\Models\Provincia;
 use Illuminate\Http\Request;
 
 /**
@@ -33,9 +35,10 @@ class DistritoController extends Controller
     public function create()
     {
         $distrito = new Distrito();
-
-        $dcanton = Canton::all();
-        return view('distrito.create', compact('distrito', 'dcanton'));
+        $d_provincia = Provincia::all();
+        $d_canton = Canton::all();
+        $d_parroquia = Parroquia::all();
+        return view('distrito.create', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia'));
     }
 
     /**
@@ -63,9 +66,8 @@ class DistritoController extends Controller
     public function show($id)
     {
         $distrito = Distrito::find($id);
-        $dcanton = Canton::all();
 
-        return view('distrito.show', compact('distrito',  'dcanton'));
+        return view('distrito.show', compact('distrito'));
     }
 
     /**
@@ -77,8 +79,12 @@ class DistritoController extends Controller
     public function edit($id)
     {
         $distrito = Distrito::find($id);
+        $d_provincia = Provincia::all();
+        $d_canton = Canton::all();
+        $d_parroquia = Parroquia::all();
 
-        return view('distrito.edit', compact('distrito'));
+        return view('distrito.edit', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia'));
+
     }
 
     /**
@@ -109,5 +115,9 @@ class DistritoController extends Controller
 
         return redirect()->route('distritos.index')
             ->with('success', 'Distrito deleted successfully');
+    }
+    public function getCantones($provinciaId) {
+        $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
+        return response()->json($cantones);
     }
 }

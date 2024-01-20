@@ -51,7 +51,7 @@ class Canton extends Model
      */
     public function parroquias()
     {
-        return $this->hasMany(Parroquia::class, 'App\Models\Parroquia', 'canton_id', 'id');
+        return $this->hasMany(Parroquia::class, 'canton_id', 'id');
     }
     
     /**

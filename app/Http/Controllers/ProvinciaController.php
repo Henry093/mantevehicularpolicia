@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Canton;
 use App\Models\Provincia;
 use Illuminate\Http\Request;
 
@@ -18,7 +19,7 @@ class ProvinciaController extends Controller
      */
     public function index()
     {
-        $provincias = Provincia::paginate(10);
+        $provincias = Provincia::paginate(14);
 
         return view('provincia.index', compact('provincias'))
             ->with('i', (request()->input('page', 1) - 1) * $provincias->perPage());
@@ -48,7 +49,7 @@ class ProvinciaController extends Controller
         $provincia = Provincia::create($request->all());
 
         return redirect()->route('provincias.index')
-            ->with('success', 'Provincia created successfully.');
+            ->with('success', 'Provincia creada exitosamente.');
     }
 
     /**
@@ -91,7 +92,7 @@ class ProvinciaController extends Controller
         $provincia->update($request->all());
 
         return redirect()->route('provincias.index')
-            ->with('success', 'Provincia updated successfully');
+            ->with('success', 'Provincia actualizada exitosamente.');
     }
 
     /**
@@ -104,6 +105,16 @@ class ProvinciaController extends Controller
         $provincia = Provincia::find($id)->delete();
 
         return redirect()->route('provincias.index')
-            ->with('success', 'Provincia deleted successfully');
+            ->with('success', 'Provincia borrada exitosamente.');
+    }
+
+    public function getCantones($provinciaId) {
+        
+        try {
+            $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
+            return response()->json($cantones);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

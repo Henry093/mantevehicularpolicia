@@ -116,8 +116,5 @@ class ReclamoController extends Controller
             ->with('success', 'Reclamo deleted successfully');
     }
 
-    public function getSubcircuitos($circuitoId) {
-        $subcircuitos = Subcircuito::where('circuito_id', $circuitoId)->pluck('nombre', 'id')->toArray();
-        return response()->json($subcircuitos);
-    }
+    
 }

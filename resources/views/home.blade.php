@@ -42,7 +42,7 @@
                     <li><strong>{{ $totalUsuarios }}</strong> Persona(s)</li>
                   </ul>
                   <div class="text-center mt-4">
-                    <a href="/personas" class="btn w-100">Personas</a>
+                    <a href="/users" class="btn w-100">Personas</a>
                   </div>
                 </div>
               </div>
@@ -84,7 +84,7 @@
                     <li><strong>{{ $totalReclamos }}</strong> Reclamo(s)</li>
                   </ul>
                   <div class="text-center mt-4">
-                    <a href="/reclamos" class="btn w-100">Mantenimientos</a>
+                    <a href="/reclamos" class="btn w-100">Reclamos</a>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,9 @@ use App\Models\Provincia;
 use App\Models\Rango;
 use App\Models\Sangre;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 /**
  * Class UserController
@@ -39,15 +41,15 @@ class UserController extends Controller
     public function create()
     {
         $user = new User();
-        $dsangre = Sangre::all();
-        $dprovincia = Provincia::all();
-        $dcanton = Canton::all();
-        $dparroquia = Parroquia::all();
-        $dgrado = Grado::all();
-        $drango = Rango::all();
-        $destado = Estado::all();
+        $d_sangre = Sangre::all();
+        $d_provincia = Provincia::all();
+        $d_canton = Canton::all();
+        $d_parroquia = Parroquia::all();
+        $d_grado = Grado::all();
+        $d_rango = Rango::all();
+        $d_estado = Estado::all();
 
-        return view('user.create', compact('user', 'dsangre', 'dprovincia', 'dcanton', 'dparroquia', 'dgrado', 'drango', 'destado'));
+        return view('user.create', compact('user', 'd_sangre', 'd_provincia', 'd_canton', 'd_parroquia', 'd_grado', 'd_rango', 'd_estado'));
     }
 
     /**
@@ -60,10 +62,18 @@ class UserController extends Controller
     {
         request()->validate(User::$rules);
 
+        // Verificar si la contraseña ya está presente en la solicitud
+        $password = $request->input('password');
+
+        if (empty($password)) {
+            // Si no se proporciona una contraseña, establecer la contraseña predeterminada
+            $request->merge(['password' => bcrypt('policia12345')]);
+        }
+
         $user = User::create($request->all());
 
         return redirect()->route('users.index')
-            ->with('success', 'User created successfully.');
+            ->with('success', 'Usuario creado exitosamente.');
     }
 
     /**
@@ -75,9 +85,10 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        $dsangre = Sangre::all();
+        $d_rol = Role::all();
 
-        return view('user.show', compact('user'));
+
+        return view('user.show', compact('user', 'd_rol'));
     }
 
     /**
@@ -89,15 +100,15 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        $dsangre = Sangre::all();
-        $dprovincia = Provincia::all();
-        $dcanton = Canton::all();
-        $dparroquia = Parroquia::all();
-        $dgrado = Grado::all();
-        $drango = Rango::all();
-        $destado = Estado::all();
+        $d_sangre = Sangre::all();
+        $d_provincia = Provincia::all();
+        $d_canton = Canton::all();
+        $d_parroquia = Parroquia::all();
+        $d_grado = Grado::all();
+        $d_rango = Rango::all();
+        $d_estado = Estado::all();
 
-        return view('user.edit', compact('user', 'dsangre', 'dprovincia', 'dcanton', 'dparroquia', 'dgrado', 'drango', 'destado'));
+        return view('user.edit', compact('user', 'd_sangre', 'd_provincia', 'd_canton', 'd_parroquia', 'd_grado', 'd_rango', 'd_estado'));
     }
 
     /**
@@ -115,7 +126,7 @@ class UserController extends Controller
         $dsangre = Sangre::all();
 
         return redirect()->route('users.index')
-            ->with('success', 'User updated successfully');
+            ->with('success', 'Usuario actualizado exitosamente.');
     }
 
     /**
@@ -125,9 +136,43 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id)->delete();
+        $user = User::find($id);
 
-        return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully');
+        if (!$user) {
+            return redirect()->route('users.index')
+                ->with('error', 'El usuario no existe.');
+        }
+
+        try {
+            // Verificar si la persona está asignada a algún subcircuito
+            if ($user->usubcircuitos()->exists()) {
+                return redirect()->route('users.index')
+                    ->with('error', 'No se puede eliminar. El usuario está asignado a un subcircuito.');
+            }
+
+            $user->delete();
+
+            return redirect()->route('users.index')
+                ->with('success', 'Usuario borrado exitosamente.');
+        } catch (QueryException $e) {
+            // Captura cualquier otro error de la base de datos que pueda ocurrir durante la eliminación
+            return redirect()->route('users.index')
+                ->with('error', 'Hubo un problema al intentar eliminar al usuario.');
+        }
+    }
+    
+    public function getCantones($provinciaId) {
+        $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
+        return response()->json($cantones);
+    }
+
+    public function getParroquias($cantonId) {
+        $parroquias = Parroquia::where('canton_id', $cantonId)->pluck('nombre', 'id')->toArray();
+        return response()->json($parroquias);
+    }
+
+    public function getRangos($gradoId) {
+        $rangos = Rango::where('grado_id', $gradoId)->pluck('nombre', 'id')->toArray();
+        return response()->json($rangos);
     }
 }

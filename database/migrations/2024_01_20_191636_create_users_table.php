@@ -72,7 +72,7 @@ return new class extends Migration
             $table->unsignedBigInteger('provincia_id');
             $table->unsignedBigInteger('canton_id');
             $table->unsignedBigInteger('parroquia_id');
-            $table->string('telefono');
+            $table->string('telefono', 10);
             $table->unsignedBigInteger('grado_id');
             $table->unsignedBigInteger('rango_id');
             $table->unsignedBigInteger('estado_id');
@@ -93,28 +93,38 @@ return new class extends Migration
 
             Schema::create('distritos', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->unsignedBigInteger('provincia_id');
                 $table->unsignedBigInteger('canton_id');
+                $table->unsignedBigInteger('parroquia_id');
                 $table->string('nombre', 20);
                 $table->string('codigo', 20);
                 $table->timestamps();
+                $table->foreign('provincia_id')->references('id')->on('provincias');
                 $table->foreign('canton_id')->references('id')->on('cantons');
+                $table->foreign('parroquia_id')->references('id')->on('parroquias');
             });
 
             Schema::create('circuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->unsignedBigInteger('provincia_id');
                 $table->unsignedBigInteger('distrito_id');
                 $table->string('nombre', 20);
                 $table->string('codigo', 20);
                 $table->timestamps();
+                $table->foreign('provincia_id')->references('id')->on('provincias');
                 $table->foreign('distrito_id')->references('id')->on('distritos');
             });
     
             Schema::create('subcircuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->unsignedBigInteger('provincia_id');
+                $table->unsignedBigInteger('distrito_id');
                 $table->unsignedBigInteger('circuito_id');
                 $table->string('nombre', 20);
                 $table->string('codigo', 20);
                 $table->timestamps();
+                $table->foreign('provincia_id')->references('id')->on('provincias');
+                $table->foreign('distrito_id')->references('id')->on('distritos');
                 $table->foreign('circuito_id')->references('id')->on('circuitos');
             });
     

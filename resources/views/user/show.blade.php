@@ -70,15 +70,15 @@
 {{ $user->sangre->nombre }}
 </div>
 <div class="form-group">
-<strong>Provincia:</strong>
+<strong>Provincia de nacimiento:</strong>
 {{ $user->provincia->nombre }}
 </div>
 <div class="form-group">
-<strong>Cantón:</strong>
+<strong>Cantón de nacimiento:</strong>
 {{ $user->canton->nombre }}
 </div>
 <div class="form-group">
-<strong>Parroquia:</strong>
+<strong>Parroquia de nacimiento:</strong>
 {{ $user->parroquia->nombre }}
 </div>
 <div class="form-group">
@@ -105,6 +105,7 @@
 <strong>Email:</strong>
 {{ $user->email }}
 </div>
+
 
                         </div>
                     </div>

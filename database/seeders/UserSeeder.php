@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -43,15 +45,14 @@ class UserSeeder extends Seeder
 		Rango::create(['grado_id' => '2', 'nombre' => 'Cabo Segundo']);
 		Rango::create(['grado_id' => '2', 'nombre' => 'Policía']);
 
-        
 
         //Usuario 
 		User::create([
 			'name' => 'Henry A', 'lastname' => 'Ponce A', 'cedula' => '1700000000', 'fecha_nacimiento' => '2000-01-01',
 			'sangre_id' => '1', 'provincia_id' => '11', 'canton_id' => '1', 'parroquia_id' => '1',
 			'telefono' => '0999999991', 'grado_id' => '1', 'rango_id' => '1','usuario' => 'ecponcehe',
-			'email' => 'hbponce@policianacional.gob.ec', 'email_verified_at' => '2023-01-01', 'password' => Hash::make('test12345'), 'estado_id' => '1'
-		]); /*->assingRole('Administrador')*/
+			'email' => 'hbponce@policianacional.gob.ec',  'email_verified_at' => '2023-01-01', 'password' => Hash::make('test12345'),
+			 'estado_id' => '1']); /*->assingRole('Administrador')*/
 
 		User::create([
 			'name' => 'Henry B', 'lastname' => 'Ponce B', 'cedula' => '1700000002', 'fecha_nacimiento' => '1999-01-01',
@@ -115,6 +116,6 @@ class UserSeeder extends Seeder
 			'sangre_id' => '1', 'provincia_id' => '11', 'canton_id' => '1', 'parroquia_id' => '10',
 			'telefono' => '0999999910', 'grado_id' => '2', 'rango_id' => '10', 'usuario' => 'ecponcehe10',
 			'email' => 'hbponce10@policianacional.gob.ec', 'email_verified_at' => '2023-01-01', 'password' => Hash::make('test12345'), 'estado_id' => '1'
-        ]);
+        ]); 
     }
 }

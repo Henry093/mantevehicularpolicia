@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Canton;
-use App\Models\Cantone;
 use App\Models\Parroquia;
 use App\Models\Provincia;
 use Illuminate\Http\Request;
@@ -35,10 +34,9 @@ class ParroquiaController extends Controller
     public function create()
     {
         $parroquia = new Parroquia();
-
-        $dprovincias = Provincia::all();
-        $dcantons = Canton::all();
-        return view('parroquia.create', compact('parroquia', 'dprovincias', 'dcantons'));
+        $d_provincia = Provincia::all();
+        $d_canton = Canton::all();
+        return view('parroquia.create', compact('parroquia', 'd_provincia', 'd_canton'));
     }
 
     /**
@@ -53,8 +51,14 @@ class ParroquiaController extends Controller
 
         $parroquia = Parroquia::create($request->all());
 
+        $nombre = Parroquia::where('nombre', $request->input('nombre'))->first();
+
+        if($nombre){
+            return redirect()->route('parroquias.create')->with('error', 'La parroquia ya está registrada.');
+        }
+
         return redirect()->route('parroquias.index')
-            ->with('success', 'Parroquia created successfully.');
+            ->with('success', 'Parroquia creada exitosamente.');
     }
 
     /**
@@ -79,10 +83,10 @@ class ParroquiaController extends Controller
     public function edit($id)
     {
         $parroquia = Parroquia::find($id);
-        $dprovincias = Provincia::all();
-        $dcantons = Canton::all();
+        $d_provincia = Provincia::all();
+        $d_canton = Canton::all();
 
-        return view('parroquia.edit', compact('parroquia', 'dprovincias', 'dcantons'));
+        return view('parroquia.edit', compact('parroquia', 'd_provincia', 'd_canton'));
     }
 
     /**
@@ -95,11 +99,12 @@ class ParroquiaController extends Controller
     public function update(Request $request, Parroquia $parroquia)
     {
         request()->validate(Parroquia::$rules);
+        
 
         $parroquia->update($request->all());
 
         return redirect()->route('parroquias.index')
-            ->with('success', 'Parroquia updated successfully');
+            ->with('success', 'Parroquia actualizada exitosamente.');
     }
 
     /**
@@ -112,11 +117,6 @@ class ParroquiaController extends Controller
         $parroquia = Parroquia::find($id)->delete();
 
         return redirect()->route('parroquias.index')
-            ->with('success', 'Parroquia deleted successfully');
-    }
-
-    public function getCantones($provinciaId) {
-        $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
-        return response()->json($cantones);
+            ->with('success', 'Parroquia borrada exitosamente.');
     }
 }

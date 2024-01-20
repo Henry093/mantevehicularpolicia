@@ -343,6 +343,11 @@ return [
                     'route' => 'vsubcircuitos.index',
                     'icon' => 'ti ti-car',
                 ],
+                [
+                    'text' => 'User',
+                    'route' => 'asignarsubcircuito.index',
+                    'icon' => 'ti ti-car',
+                ],
             ],
         ],
         [
@@ -379,7 +384,7 @@ return [
             'submenu' => [
                 [
                     'text' => 'General',
-                    'url' => 'reportes',
+                    'url' => '#',
                     'icon' => 'ti ti-report-analytics',
                 ],
                 [
