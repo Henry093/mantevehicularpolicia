@@ -34,8 +34,8 @@ class ModeloController extends Controller
     {
         $modelo = new Modelo();
 
-        $marcas = Marca::all();
-        return view('modelo.create', compact('modelo', 'marcas'));
+        $d_marca = Marca::all();
+        return view('modelo.create', compact('modelo', 'd_marca'));
     }
 
     /**
@@ -51,7 +51,7 @@ class ModeloController extends Controller
         $modelo = Modelo::create($request->all());
 
         return redirect()->route('modelos.index')
-            ->with('success', 'Modelo created successfully.');
+            ->with('success', 'Modelo creado exitosamente.');
     }
 
     /**
@@ -77,8 +77,8 @@ class ModeloController extends Controller
     {
         $modelo = Modelo::find($id);
 
-        $marcas = Marca::all();
-        return view('modelo.edit', compact('modelo', 'marcas'));
+        $d_marca = Marca::all();
+        return view('modelo.edit', compact('modelo', 'd_marca'));
     }
 
     /**
@@ -95,7 +95,7 @@ class ModeloController extends Controller
         $modelo->update($request->all());
 
         return redirect()->route('modelos.index')
-            ->with('success', 'Modelo updated successfully');
+            ->with('success', 'Modelo actualizado exitosamente.');
     }
 
     /**
@@ -108,6 +108,6 @@ class ModeloController extends Controller
         $modelo = Modelo::find($id)->delete();
 
         return redirect()->route('modelos.index')
-            ->with('success', 'Modelo deleted successfully');
+            ->with('success', 'Modelo borrado exitosamente.');
     }
 }

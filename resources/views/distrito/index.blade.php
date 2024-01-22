@@ -87,9 +87,10 @@
                                     
 										<th>Provincia</th>
 										<th>Cantón</th>
-										<th>Parroquia Id</th>
-										<th>Nombre</th>
+										<th>Parroquia</th>
+										<th>Distrito</th>
 										<th>Código</th>
+										<th>Estado</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -107,6 +108,7 @@
 											<td>{{ $distrito->parroquia->nombre }}</td>
 											<td>{{ $distrito->nombre }}</td>
 											<td>{{ $distrito->codigo }}</td>
+											<td>{{ $distrito->estado->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
@@ -118,11 +120,11 @@
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('distritos.show',$distrito->id) }}">
-                                                            @lang('View')
+                                                           @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('distritos.edit',$distrito->id) }}">
-                                                            @lang('Edit')
+                                                           @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('distritos.destroy',$distrito->id) }}"
@@ -133,7 +135,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                @lang('Delete')
+                                                                    @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>

@@ -3,7 +3,7 @@
     <label class="form-label required">   {{ Form::label('nombre') }}</label>
     <div>
         {{ Form::text('nombre', $asignacion->nombre, ['class' => 'form-control' .
-        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre']) }}
+        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre de la asignación', 'required']) }}
         {!! $errors->first('nombre', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

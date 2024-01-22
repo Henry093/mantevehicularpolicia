@@ -13,12 +13,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property $parroquia_id
  * @property $nombre
  * @property $codigo
+ * @property $estado_id
  * @property $created_at
  * @property $updated_at
  *
  * @property Canton $canton
  * @property Circuito[] $circuitos
  * @property Dependencia[] $dependencias
+ * @property Estado $estado
  * @property Parroquia $parroquia
  * @property Provincia $provincia
  * @property Subcircuito[] $subcircuitos
@@ -43,7 +45,7 @@ class Distrito extends Model
      *
      * @var array
      */
-    protected $fillable = ['provincia_id','canton_id','parroquia_id','nombre','codigo'];
+    protected $fillable = ['provincia_id','canton_id','parroquia_id','nombre','codigo','estado_id'];
 
 
     /**
@@ -73,6 +75,14 @@ class Distrito extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
+    public function estado()
+    {
+        return $this->hasOne('App\Models\Estado', 'id', 'estado_id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function parroquia()
     {
         return $this->hasOne('App\Models\Parroquia', 'id', 'parroquia_id');
@@ -94,5 +104,8 @@ class Distrito extends Model
         return $this->hasMany('App\Models\Subcircuito', 'distrito_id', 'id');
     }
     
+    protected $hidden = [
+        'estado_id',
+    ];
 
 }

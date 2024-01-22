@@ -34,8 +34,8 @@ class RangoController extends Controller
     {
         $rango = new Rango();
 
-        $grados = Grado::all();
-        return view('rango.create', compact('rango', 'grados'));
+        $d_grado = Grado::all();
+        return view('rango.create', compact('rango', 'd_grado'));
     }
 
     /**
@@ -51,7 +51,7 @@ class RangoController extends Controller
         $rango = Rango::create($request->all());
 
         return redirect()->route('rangos.index')
-            ->with('success', 'Rango created successfully.');
+            ->with('success', 'Rango creado exitosamente.');
     }
 
     /**
@@ -77,9 +77,9 @@ class RangoController extends Controller
     {
         $rango = Rango::find($id);
 
-        $grados = Grado::all();
+        $d_grado = Grado::all();
 
-        return view('rango.edit', compact('rango', 'grados'));
+        return view('rango.edit', compact('rango', 'd_grado'));
     }
 
     /**
@@ -96,7 +96,7 @@ class RangoController extends Controller
         $rango->update($request->all());
 
         return redirect()->route('rangos.index')
-            ->with('success', 'Rango updated successfully');
+            ->with('success', 'Rango actualizado exitosamente.');
     }
 
     /**
@@ -109,6 +109,6 @@ class RangoController extends Controller
         $rango = Rango::find($id)->delete();
 
         return redirect()->route('rangos.index')
-            ->with('success', 'Rango deleted successfully');
+            ->with('success', 'Rango borrado exitosamente.');
     }
 }

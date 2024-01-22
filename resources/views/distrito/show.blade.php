@@ -62,12 +62,16 @@
 {{ $distrito->parroquia->nombre }}
 </div>
 <div class="form-group">
-<strong>Nombre:</strong>
+<strong>Distrito:</strong>
 {{ $distrito->nombre }}
 </div>
 <div class="form-group">
 <strong>Código:</strong>
 {{ $distrito->codigo }}
+</div>
+<div class="form-group">
+<strong>Estado:</strong>
+{{ $distrito->estado->nombre }}
 </div>
 
                         </div>

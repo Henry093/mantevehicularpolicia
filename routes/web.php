@@ -34,6 +34,7 @@ use App\Http\Controllers\UserSubcircuitoController;
 use App\Http\Controllers\UsubcircuitoController;
 use App\Http\Controllers\VcargaController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\VehisubcircuitoController;
 use App\Http\Controllers\VpasajeroController;
 use App\Http\Controllers\VsubcircuitoController;
 use App\Models\Circuito;
@@ -94,15 +95,23 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/obtener-cantones/{provinciaId}', [UserController::class, 'getCantones']);
     Route::get('/obtener-parroquias/{cantonId}', [UserController::class, 'getParroquias']);
 
-    
-    Route::resource('usuariossubcircuito', UserSubcircuitoController::class)->names('asignarsubcircuito');
+    //Distrito
+    Route::resource('distritos', DistritoController::class)->names('distritos');
+    Route::get('/obtener-cantones-d/{provinciaId}', [DistritoController::class, 'getCantonesd']);
+    Route::get('/obtener-parroquias-d/{cantonId}', [DistritoController::class, 'getParroquiasd']);
+    //Circuito
+    Route::resource('circuitos', CircuitoController::class)->names('circuitos');
+    Route::get('/obtener-cantones-c/{provinciaId}', [CircuitoController::class, 'getCantonesc']);
+    Route::get('/obtener-parroquias-c/{cantonId}', [CircuitoController::class, 'getParroquiasc']);
+    Route::get('/obtener-distritos-c/{parroquiaId}', [CircuitoController::class, 'getDistritosc']);
+    //Subcircuito
+    Route::resource('subcircuitos', SubcircuitoController::class)->names('subcircuitos');
+    Route::get('/obtener-cantones-s/{provinciaId}', [SubcircuitoController::class, 'getCantoness']);
+    Route::get('/obtener-parroquias-s/{cantonId}', [SubcircuitoController::class, 'getParroquiass']);
+    Route::get('/obtener-distritos-s/{parroquiaId}', [SubcircuitoController::class, 'getDistritoss']);
+    Route::get('/obtener-circuitos-s/{distritoId}', [SubcircuitoController::class, 'getCircuitoss']);
 
     //Dependencia
-    Route::resource('distritos', DistritoController::class)->names('distritos');
-    Route::get('/obtener-cantones/{provinciaId}', [DistritoController::class, 'getCantones']);
-    Route::resource('circuitos', CircuitoController::class)->names('circuitos');
-    Route::get('/obtener-distritos/{provinciaId}', [CircuitoController::class, 'getDistritos']);
-    Route::resource('subcircuitos', SubcircuitoController::class)->names('subcircuitos');
     Route::resource('dependencias', DependenciaController::class)->names('dependencias');
     Route::get('/obtener-cantones/{provinciaId}', [DependenciaController::class, 'getCantones']);
     Route::get('/obtener-parroquias/{cantonId}', [DependenciaController::class, 'getParroquias']);
@@ -120,9 +129,23 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/obtener-marcas/{tvehiculoId}', [VehiculoController::class, 'getMarcas']);
     Route::get('/obtener-modelos/{marcaId}', [VehiculoController::class, 'getModelos']);
 
-    //Asignacion Subcircuito
-    Route::resource('usubcircuitos', UsubcircuitoController::class)->names('usubcircuitos');//usuario subcircuito
-    Route::resource('vsubcircuitos', VsubcircuitoController::class)->names('vsubcircuitos');//vehiculo subcircuito
+    //Usuario Subcircuito
+    Route::resource('usersubcircuitos', UserSubcircuitoController::class)->names('usersubcircuitos');
+    Route::get('/obtener-cantones-us/{provinciaId}', [UsersubcircuitoController::class, 'getCantonesus']);
+    Route::get('/obtener-parroquias-us/{cantonId}', [UsersubcircuitoController::class, 'getParroquiasus']);
+    Route::get('/obtener-distritos-us/{parroquiaId}', [UsersubcircuitoController::class, 'getDistritosus']);
+    Route::get('/obtener-circuitos-us/{distritoId}', [UsersubcircuitoController::class, 'getCircuitosus']);
+    Route::get('/obtener-subcircuitos-us/{circuitoId}', [UsersubcircuitoController::class, 'getSubcircuitosus']);
+    Route::get('/obtener-informacion-usuario/{id}', [UsersubcircuitoController::class, 'getInformacionUsuario']);
+
+    //Vehículo Subcircuito
+    Route::resource('vehisubcircuitos', VehisubcircuitoController::class)->names('vehisubcircuitos');
+    Route::get('/obtener-cantones-vs/{provinciaId}', [VehisubcircuitoController::class, 'getCantonesvs']);
+    Route::get('/obtener-parroquias-vs/{cantonId}', [VehisubcircuitoController::class, 'getParroquiasvs']);
+    Route::get('/obtener-distritos-vs/{parroquiaId}', [VehisubcircuitoController::class, 'getDistritosvs']);
+    Route::get('/obtener-circuitos-vs/{distritoId}', [VehisubcircuitoController::class, 'getCircuitosvs']);
+    Route::get('/obtener-subcircuitos-vs/{circuitoId}', [VehisubcircuitoController::class, 'getSubcircuitosvs']);
+    Route::get('/obtener-informacion-vehiculo/{id}', [VehisubcircuitoController::class, 'getInformacionVehiculo']);
 
     //Mantenimientos
     Route::resource('tmantenimientos', TmantenimientoController::class)->names('tmantenimientos'); //tipo mantenimiento
@@ -158,3 +181,4 @@ Route::group(['middleware' => ['auth']], function(){
 });
 
 
+Route::resource('/vehisubcircuito', App\Http\Controllers\VehisubcircuitoController::class);

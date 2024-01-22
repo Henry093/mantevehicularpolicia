@@ -46,7 +46,6 @@ class Vehiculo extends Model
 		'cilindraje' => 'required',
 		'vcarga_id' => 'required',
 		'vpasajero_id' => 'required',
-		'estado_id' => 'required',
     ];
 
     protected $perPage = 20;
@@ -115,5 +114,8 @@ class Vehiculo extends Model
         return $this->hasMany('App\Models\Vsubcircuito', 'vehiculo_id', 'id');
     }
     
+    protected $hidden = [
+        'estado_id',
+    ];
 
 }

@@ -86,7 +86,7 @@
                                     </th>
                                     
 										<th>Tipo de Vehículo</th>
-										<th>Nombre</th>
+										<th>Marca</th>
 
                                     <th class="w-1"></th>
                                 </tr>

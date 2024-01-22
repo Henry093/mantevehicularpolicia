@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'Create Circuito')
+@section('title', __('validation.Create Circuito'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        Create
+                        @lang('Create')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Circuito ') }}
+                        {{ __('Circuito') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Circuito List
+                            @lang('Circuito List')
                         </a>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Circuito Details</h3>
+                            <h3 class="card-title">@lang('Circuito Details')</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('circuitos.store') }}" id="ajaxForm" role="form"

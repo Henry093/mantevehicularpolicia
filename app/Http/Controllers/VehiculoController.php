@@ -46,7 +46,9 @@ class VehiculoController extends Controller
         $d_pasajero = Vpasajero::all();
         $d_estado = Estado::all();
 
-        return view('vehiculo.create', compact('vehiculo', 'd_vehiculo', 'd_marca', 'd_modelo', 'd_carga', 'd_pasajero', 'd_estado'));
+        $edicion = false;
+
+        return view('vehiculo.create', compact('vehiculo', 'd_vehiculo', 'd_marca', 'd_modelo', 'd_carga', 'd_pasajero', 'd_estado', 'edicion'));
     }
 
     /**
@@ -70,10 +72,19 @@ class VehiculoController extends Controller
         }elseif($motor){
             return redirect()->route('vehiculos.create')->with('error', 'El motor ya está registrado.');
         }
+
+        // Verificar si el estado ya está presente en la solicitud
+        $estado = $request->input('estado_id');
+
+        if (empty($estado)) {
+            // Si no se proporciona una estado, en este caso 1 = Activo
+            $request->merge(['estado_id' => '1']);
+        }
+
         $vehiculo = Vehiculo::create($request->all());
 
         return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehiculo created successfully.');
+            ->with('success', 'Vehículo creado exitosamente.');
     }
 
     /**
@@ -105,7 +116,9 @@ class VehiculoController extends Controller
         $d_pasajero = Vpasajero::all();
         $d_estado = Estado::all();
 
-        return view('vehiculo.edit', compact('vehiculo', 'd_vehiculo', 'd_marca', 'd_modelo', 'd_carga', 'd_pasajero', 'd_estado'));
+        $edicion = true;
+
+        return view('vehiculo.edit', compact('vehiculo', 'd_vehiculo', 'd_marca', 'd_modelo', 'd_carga', 'd_pasajero', 'd_estado', 'edicion'));
     }
 
     /**
@@ -117,12 +130,26 @@ class VehiculoController extends Controller
      */
     public function update(Request $request, Vehiculo $vehiculo)
     {
-        request()->validate(Vehiculo::$rules);
+        $rules = [
+            'tvehiculo_id' => 'required',
+            'placa' => 'required|max:8',
+            'chasis' => 'required',
+            'marca_id' => 'required',
+            'modelo_id' => 'required',
+            'motor' => 'required',
+            'kilometraje' => 'required|numeric|max:999999',
+            'cilindraje' => 'required',
+            'vcarga_id' => 'required',
+            'vpasajero_id' => 'required',
+            'estado_id' => 'required',
+        ];
+        
+        request()->validate($rules);
 
         $vehiculo->update($request->all());
 
         return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehiculo updated successfully');
+            ->with('success', 'Vehículo actualizado exitosamente.');
     }
 
     /**

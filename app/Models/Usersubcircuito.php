@@ -5,40 +5,42 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Circuito
+ * Class Usersubcircuito
  *
  * @property $id
+ * @property $user_id
  * @property $provincia_id
  * @property $canton_id
  * @property $parroquia_id
  * @property $distrito_id
- * @property $nombre
- * @property $codigo
- * @property $estado_id
+ * @property $circuito_id
+ * @property $subcircuito_id
+ * @property $asignacion_id
  * @property $created_at
  * @property $updated_at
  *
+ * @property Asignacion $asignacion
  * @property Canton $canton
- * @property Dependencia[] $dependencias
+ * @property Circuito $circuito
  * @property Distrito $distrito
- * @property Estado $estado
  * @property Parroquia $parroquia
  * @property Provincia $provincia
- * @property Reclamo[] $reclamos
- * @property Subcircuito[] $subcircuitos
+ * @property Subcircuito $subcircuito
+ * @property User $user
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Circuito extends Model
+class Usersubcircuito extends Model
 {
     
     static $rules = [
+		'user_id' => 'required',
 		'provincia_id' => 'required',
 		'canton_id' => 'required',
 		'parroquia_id' => 'required',
 		'distrito_id' => 'required',
-		'nombre' => 'required',
-		'codigo' => 'required',
+		'circuito_id' => 'required',
+		'subcircuito_id' => 'required',
     ];
 
     protected $perPage = 20;
@@ -48,9 +50,17 @@ class Circuito extends Model
      *
      * @var array
      */
-    protected $fillable = ['provincia_id','canton_id','parroquia_id','distrito_id','nombre','codigo','estado_id'];
+    protected $fillable = ['user_id','provincia_id','canton_id','parroquia_id','distrito_id','circuito_id','subcircuito_id','asignacion_id'];
 
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function asignacion()
+    {
+        return $this->hasOne('App\Models\Asignacion', 'id', 'asignacion_id');
+    }
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -60,11 +70,11 @@ class Circuito extends Model
     }
     
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function dependencias()
+    public function circuito()
     {
-        return $this->hasMany('App\Models\Dependencia', 'circuito_id', 'id');
+        return $this->hasOne('App\Models\Circuito', 'id', 'circuito_id');
     }
     
     /**
@@ -73,14 +83,6 @@ class Circuito extends Model
     public function distrito()
     {
         return $this->hasOne('App\Models\Distrito', 'id', 'distrito_id');
-    }
-    
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function estado()
-    {
-        return $this->hasOne('App\Models\Estado', 'id', 'estado_id');
     }
     
     /**
@@ -100,22 +102,22 @@ class Circuito extends Model
     }
     
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function reclamos()
+    public function subcircuito()
     {
-        return $this->hasMany('App\Models\Reclamo', 'circuito_id', 'id');
+        return $this->hasOne('App\Models\Subcircuito', 'id', 'subcircuito_id');
     }
     
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function subcircuitos()
+    public function user()
     {
-        return $this->hasMany('App\Models\Subcircuito', 'circuito_id', 'id');
+        return $this->hasOne('App\Models\User', 'id', 'user_id');
     }
-    
     protected $hidden = [
-        'estado_id',
+        'asignacion_id',
     ];
+
 }

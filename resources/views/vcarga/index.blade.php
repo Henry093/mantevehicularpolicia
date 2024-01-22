@@ -85,7 +85,7 @@
                                         </svg>
                                     </th>
                                     
-										<th>Nombre</th>
+										<th>Cpacidad Carga</th>
 
                                     <th class="w-1"></th>
                                 </tr>

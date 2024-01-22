@@ -54,7 +54,7 @@
 {{ $marca->tvehiculo->nombre }}
 </div>
 <div class="form-group">
-<strong>Nombre:</strong>
+<strong>Marca:</strong>
 {{ $marca->nombre }}
 </div>
 

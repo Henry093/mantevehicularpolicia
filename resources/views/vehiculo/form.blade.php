@@ -134,6 +134,8 @@
         </div>
     </div>
 </div>
+
+@if ($edicion)
 <div class="form-group mb-3">
     <div class="row">
         <div class="col-md-6">
@@ -152,6 +154,8 @@
         </div>
     </div>
 </div>
+@endif
+
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">

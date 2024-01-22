@@ -48,7 +48,7 @@ class TmantenimientoController extends Controller
         $tmantenimiento = Tmantenimiento::create($request->all());
 
         return redirect()->route('tmantenimientos.index')
-            ->with('success', 'Tmantenimiento created successfully.');
+            ->with('success', 'Tipo de mantenimientocreado exitosamente.');
     }
 
     /**
@@ -91,7 +91,7 @@ class TmantenimientoController extends Controller
         $tmantenimiento->update($request->all());
 
         return redirect()->route('tmantenimientos.index')
-            ->with('success', 'Tmantenimiento updated successfully');
+            ->with('success', 'Tipo de mantenimiento actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +104,6 @@ class TmantenimientoController extends Controller
         $tmantenimiento = Tmantenimiento::find($id)->delete();
 
         return redirect()->route('tmantenimientos.index')
-            ->with('success', 'Tmantenimiento deleted successfully');
+            ->with('success', 'Tipo de mantenimiento borrado exitosamente.');
     }
 }

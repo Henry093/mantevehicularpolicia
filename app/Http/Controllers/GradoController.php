@@ -48,7 +48,7 @@ class GradoController extends Controller
         $grado = Grado::create($request->all());
 
         return redirect()->route('grados.index')
-            ->with('success', 'Grado created successfully.');
+            ->with('success', 'Grado creado exitosamente.');
     }
 
     /**
@@ -91,7 +91,7 @@ class GradoController extends Controller
         $grado->update($request->all());
 
         return redirect()->route('grados.index')
-            ->with('success', 'Grado updated successfully');
+            ->with('success', 'Grado actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +104,6 @@ class GradoController extends Controller
         $grado = Grado::find($id)->delete();
 
         return redirect()->route('grados.index')
-            ->with('success', 'Grado deleted successfully');
+            ->with('success', 'Grado borrado exitosamente.');
     }
 }

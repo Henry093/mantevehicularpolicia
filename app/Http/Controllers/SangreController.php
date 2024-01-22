@@ -57,7 +57,7 @@ class SangreController extends Controller
         $sangre = Sangre::create($request->all());
 
         return redirect()->route('sangres.index')
-            ->with('success', 'Sangre created successfully.');
+            ->with('success', 'Sangre creado exitosamente.');
     }
 
     /**
@@ -100,7 +100,7 @@ class SangreController extends Controller
         $sangre->update($request->all());
 
         return redirect()->route('sangres.index')
-            ->with('success', 'Sangre updated successfully');
+            ->with('success', 'Sangre actualizado exitosamente.');
     }
 
     /**
@@ -113,6 +113,6 @@ class SangreController extends Controller
         $sangre = Sangre::find($id)->delete();
 
         return redirect()->route('sangres.index')
-            ->with('success', 'Sangre deleted successfully');
+            ->with('success', 'Sangre borrado exitosamente.');
     }
 }
