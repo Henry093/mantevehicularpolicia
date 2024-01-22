@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Subcircuito')
+@section('title', __('validation.View Subcircuito'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Subcircuito ') }}
+                        {{ __('Subcircuito') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Subcircuito List
+                            @lang('Subcircuito List')
                         </a>
                     </div>
                 </div>
@@ -45,29 +45,41 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Subcircuito Details</h3>
+                            <h3 class="card-title">@lang('Subcircuito Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Provincia Id:</strong>
-{{ $subcircuito->provincia_id }}
+<strong>Provincia:</strong>
+{{ $subcircuito->provincia->nombre }}
 </div>
 <div class="form-group">
-<strong>Distrito Id:</strong>
-{{ $subcircuito->distrito_id }}
+<strong>Cantón:</strong>
+{{ $subcircuito->canton->nombre }}
 </div>
 <div class="form-group">
-<strong>Circuito Id:</strong>
-{{ $subcircuito->circuito_id }}
+<strong>Parroquia:</strong>
+{{ $subcircuito->parroquia->nombre }}
+</div>
+<div class="form-group">
+<strong>Distrito:</strong>
+{{ $subcircuito->distrito->nombre }}
+</div>
+<div class="form-group">
+<strong>Circuito:</strong>
+{{ $subcircuito->circuito->nombre }}
 </div>
 <div class="form-group">
 <strong>Nombre:</strong>
 {{ $subcircuito->nombre }}
 </div>
 <div class="form-group">
-<strong>Codigo:</strong>
+<strong>Código:</strong>
 {{ $subcircuito->codigo }}
+</div>
+<div class="form-group">
+<strong>Estado:</strong>
+{{ $subcircuito->estado->nombre }}
 </div>
 
                         </div>

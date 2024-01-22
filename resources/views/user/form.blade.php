@@ -150,6 +150,7 @@
                 {!! $errors->first('rango_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
+        @if ($edicion)
         <div class="col-md-6">
             <label class="form-label required" >{{ Form::label('estado_id', 'Estado') }}</label>
             <div>
@@ -164,28 +165,10 @@
                 {!! $errors->first('estado_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
+        @endif
     </div>
 </div>
-<div class="form-group mb-3">
-    <div class="row">
-        <div class="col-md-6">
-            <label class="form-label required">   {{ Form::label('usuario') }}</label>
-            <div>
-                {{ Form::text('usuario', $user->usuario, ['class' => 'form-control' .
-                ($errors->has('usuario') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el usuario', 'required']) }}
-                {!! $errors->first('usuario', '<div class="invalid-feedback">:message</div>') !!}
-            </div>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label required">   {{ Form::label('email') }}</label>
-            <div>
-                {{ Form::text('email', $user->email ?? '@policianacional.gob.ec',
-                 ['class' => 'form-control' . ($errors->has('email') ? ' is-invalid' : ''), 'placeholder' => 'Email', 'required']) }}
-                {!! $errors->first('email', '<div class="invalid-feedback">:message</div>') !!}
-            </div>            
-        </div>
-    </div>
-</div>
+
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">

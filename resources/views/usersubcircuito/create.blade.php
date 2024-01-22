@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', __('validation.Update Usubcircuito'))
+@section('title', __('validation.Create Usersubcircuito'))
 
 @section('content')
     <!-- Page header -->
@@ -10,16 +10,16 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        @lang('Update')
+                        @lang('Create')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Usubcircuito') }}
+                        {{ __('Usersubcircuito') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
                 <div class="col-12 col-md-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="{{ route('usubcircuitos.index') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('usersubcircuitos.index') }}" class="btn btn-primary d-none d-sm-inline-block">
                             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            @lang('Usubcircuito List')
+                            @lang('Usersubcircuito List')
                         </a>
                     </div>
                 </div>
@@ -45,15 +45,13 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">@lang('Usubcircuito Details')</h3>
+                            <h3 class="card-title">@lang('Usersubcircuito Details')</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST"
-                                  action="{{ route('usubcircuitos.update', $usubcircuito->id) }}" id="ajaxForm" role="form"
+                            <form method="POST" action="{{ route('usersubcircuitos.store') }}" id="ajaxForm" role="form"
                                   enctype="multipart/form-data">
-                                {{ method_field('PATCH') }}
                                 @csrf
-                                @include('usubcircuito.form')
+                                @include('usersubcircuito.form')
                             </form>
                         </div>
                     </div>
@@ -62,6 +60,4 @@
         </div>
     </div>
 @endsection
-
-
 

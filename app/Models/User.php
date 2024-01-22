@@ -50,20 +50,17 @@ class User extends Authenticatable
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
     
     static $rules = [
-		'name' => 'required|alpha|max:50',
-		'lastname' => 'required|alpha|max:50',
-		'cedula' => 'required|unique:users,cedula|max:10',
+		'name' => 'required|max:50',
+		'lastname' => 'required|max:50',
+		'cedula' => 'required|numeric|unique:users,cedula|digits:10',
 		'fecha_nacimiento' => 'required',
 		'sangre_id' => 'required',
 		'provincia_id' => 'required',
 		'canton_id' => 'required',
 		'parroquia_id' => 'required',
-		'telefono' => 'required|numeric|unique:users,telefono|max:9999999999',
+		'telefono' => 'required|numeric|unique:users,telefono|digits:10',
 		'grado_id' => 'required',
 		'rango_id' => 'required',
-		'estado_id' => 'required',
-		'usuario' => 'required|unique:users,usuario|max:10',
-		'email' => 'required',
     ];
 
     protected $perPage = 20;
@@ -148,6 +145,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'estado_id',
+        'usuario',
+        'email'
     ];
 
     /**

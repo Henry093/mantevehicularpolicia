@@ -4,7 +4,7 @@
     <div>
         <select name="grado_id" class="form-select form-control-rounded mb-2 {{ $errors->has('grado_id') ? ' is-invalid' : '' }}" placeholder="Grado">
             <option value="" >Seleccionar Grado..</option>
-            @foreach($grados as $grado)
+            @foreach($d_grado as $grado)
                 <option value="{{ $grado->id }}" {{ $rango->grado_id == $grado->id ? 'selected' : '' }}>
                     {{ $grado->nombre }}
                 </option>
@@ -17,7 +17,7 @@
     <label class="form-label">   {{ Form::label('nombre', 'Nombre') }}</label>
     <div>
         {{ Form::text('nombre', $rango->nombre, ['class' => 'form-control' .
-        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre del rango']) }}
+        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre del rango']) }}
         {!! $errors->first('nombre', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

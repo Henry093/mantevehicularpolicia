@@ -48,7 +48,7 @@ class TvehiculoController extends Controller
         $tvehiculo = Tvehiculo::create($request->all());
 
         return redirect()->route('tvehiculos.index')
-            ->with('success', 'Tvehiculo created successfully.');
+            ->with('success', 'Tipo de vehículo creado exitosamente.');
     }
 
     /**
@@ -91,7 +91,7 @@ class TvehiculoController extends Controller
         $tvehiculo->update($request->all());
 
         return redirect()->route('tvehiculos.index')
-            ->with('success', 'Tvehiculo updated successfully');
+            ->with('success', 'Tipo de vehículo actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +104,6 @@ class TvehiculoController extends Controller
         $tvehiculo = Tvehiculo::find($id)->delete();
 
         return redirect()->route('tvehiculos.index')
-            ->with('success', 'Tvehiculo deleted successfully');
+            ->with('success', 'Tipo de vehículo borrado exitosamente.');
     }
 }

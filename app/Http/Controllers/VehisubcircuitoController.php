@@ -9,17 +9,17 @@ use App\Models\Distrito;
 use App\Models\Parroquia;
 use App\Models\Provincia;
 use App\Models\Subcircuito;
-use App\Models\User;
-use App\Models\Usersubcircuito;
+use App\Models\Vehiculo;
+use App\Models\Vehisubcircuito;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Class UsersubcircuitoController
+ * Class VehisubcircuitoController
  * @package App\Http\Controllers
  */
-class UsersubcircuitoController extends Controller
+class VehisubcircuitoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,10 +28,10 @@ class UsersubcircuitoController extends Controller
      */
     public function index()
     {
-        $usersubcircuitos = Usersubcircuito::paginate(10);
+        $vehisubcircuitos = Vehisubcircuito::paginate(10);
 
-        return view('usersubcircuito.index', compact('usersubcircuitos'))
-            ->with('i', (request()->input('page', 1) - 1) * $usersubcircuitos->perPage());
+        return view('vehisubcircuito.index', compact('vehisubcircuitos'))
+            ->with('i', (request()->input('page', 1) - 1) * $vehisubcircuitos->perPage());
     }
 
     /**
@@ -42,11 +42,11 @@ class UsersubcircuitoController extends Controller
     public function create()
     {
         // Obtener todos los usuarios
-        $d_user = User::whereNotIn('id', Usersubcircuito::where('asignacion_id', 1)->pluck('user_id')->toArray())
-        ->whereNotIn('id', Usersubcircuito::where('asignacion_id', 2)->pluck('user_id')->toArray())
+        $d_vehiculo = Vehiculo::whereNotIn('id', Vehisubcircuito::where('asignacion_id', 1)->pluck('vehiculo_id')->toArray())
+        ->whereNotIn('id', Vehisubcircuito::where('asignacion_id', 2)->pluck('vehiculo_id')->toArray())
         ->get();
 
-        $usersubcircuito = new Usersubcircuito();
+        $vehisubcircuito = new Vehisubcircuito();
         $d_provincia = Provincia::all();
         $d_canton = Canton::all();
         $d_parroquia = Parroquia::all();
@@ -57,9 +57,9 @@ class UsersubcircuitoController extends Controller
         $edicion = false;
         $edicion2 = true;
 
-        return view('usersubcircuito.create', compact(
-            'usersubcircuito',
-            'd_user', 
+        return view('vehisubcircuito.create', compact(
+            'vehisubcircuito', 
+            'd_vehiculo', 
             'd_provincia', 
             'd_canton', 
             'd_parroquia', 
@@ -79,18 +79,18 @@ class UsersubcircuitoController extends Controller
      */
     public function store(Request $request)
     {
-        //request()->validate(Usersubcircuito::$rules);
-        // Validación personalizada para verificar si ya existe un registro para el usuario
-        $userId = $request->input('user_id');
-        $userEx = Usersubcircuito::where('user_id', $userId)->first();
+        //request()->validate(Vehisubcircuito::$rules);
 
-        if ($userEx) {
-            return redirect()->route('usersubcircuitos.create')
-                ->with('error', 'Ya existe un registro para este usuario.');
+        $vehiculoId = $request->input('vehiculo_id');
+        $VehiculoEx = Vehisubcircuito::where('vehiculo_id', $vehiculoId)->first();
+
+        if ($VehiculoEx) {
+            return redirect()->route('vehisubcircuitos.create')
+                ->with('error', 'Ya existe un registro para esta Placa.');
         }
 
         // Si no hay un registro existente, procede con la creación del nuevo registro
-        request()->validate(Usersubcircuito::$rules);
+        request()->validate(Vehisubcircuito::$rules);
 
 
         $estado = $request->input('asignacion_id');
@@ -99,11 +99,10 @@ class UsersubcircuitoController extends Controller
             // Si no se proporciona un estado, en este caso 1 = Activo
             $request->merge(['asignacion_id' => '1']);
         }
+        $vehisubcircuito = Vehisubcircuito::create($request->all());
 
-        $usersubcircuito = Usersubcircuito::create($request->all());
-
-        return redirect()->route('usersubcircuitos.create')
-            ->with('success', 'Usuario Subcircuito creado exitosamente.');
+        return redirect()->route('vehisubcircuitos.index')
+            ->with('success', 'Vehículo Subcircuito creado exitosamente.');
     }
 
     /**
@@ -114,9 +113,9 @@ class UsersubcircuitoController extends Controller
      */
     public function show($id)
     {
-        $usersubcircuito = Usersubcircuito::find($id);
+        $vehisubcircuito = Vehisubcircuito::find($id);
 
-        return view('usersubcircuito.show', compact('usersubcircuito'));
+        return view('vehisubcircuito.show', compact('vehisubcircuito'));
     }
 
     /**
@@ -127,8 +126,8 @@ class UsersubcircuitoController extends Controller
      */
     public function edit($id)
     {
-        $usersubcircuito = Usersubcircuito::find($id);
-        $d_user = User::all();
+        $vehisubcircuito = Vehisubcircuito::find($id);
+        $d_vehiculo = Vehiculo::all();
         $d_provincia = Provincia::all();
         $d_canton = Canton::all();
         $d_parroquia = Parroquia::all();
@@ -139,9 +138,9 @@ class UsersubcircuitoController extends Controller
 
         $edicion = true;
         $edicion2 = false;
-        return view('usersubcircuito.edit', compact(
-            'usersubcircuito',
-            'd_user',
+        return view('vehisubcircuito.edit', compact(
+            'vehisubcircuito',
+            'd_vehiculo',
             'd_provincia',
             'd_canton',
             'd_parroquia',
@@ -158,18 +157,14 @@ class UsersubcircuitoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  Usersubcircuito $usersubcircuito
+     * @param  Vehisubcircuito $vehisubcircuito
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Usersubcircuito $usersubcircuito)
+    public function update(Request $request, Vehisubcircuito $vehisubcircuito)
     {
-        /* request()->validate(Usersubcircuito::$rules);
-
-        $usersubcircuito->update($request->all()); */
-
         // Reglas de validación
         $rules = [
-            'user_id' => 'required',
+            'vehiculo_id' => 'required',
             'provincia_id' => 'required',
             'canton_id' => 'required',
             'parroquia_id' => 'required',
@@ -185,7 +180,7 @@ class UsersubcircuitoController extends Controller
         // Verificar si la asignación es igual a 2 (No Asignado)
         if ($request->input('asignacion_id') == 2) {
             // Actualizar los campos a "No Asignado" sin borrar el registro
-            $usersubcircuito->update([
+            $vehisubcircuito->update([
                 'provincia_id' => null,
                 'canton_id' => null,
                 'parroquia_id' => null,
@@ -196,13 +191,14 @@ class UsersubcircuitoController extends Controller
 
             ]);
 
-            return redirect()->route('usersubcircuitos.index')->with('success', 'Registro actualizado a "No Asignado".');
+            return redirect()->route('vehisubcircuitos.index')->with('success', 'Registro actualizado a "No Asignado".');
         }
 
         // Actualizar el Usersubcircuito con los nuevos datos
-        $usersubcircuito->update($validatedData);
-        return redirect()->route('usersubcircuitos.index')
-            ->with('success', 'Usuario Subcircuito actualizado exitosamente.');
+        $vehisubcircuito->update($validatedData);
+
+        return redirect()->route('vehisubcircuitos.index')
+            ->with('success', 'Vehículo Subcircuito actualizado exitosamente.');
     }
 
     /**
@@ -212,13 +208,13 @@ class UsersubcircuitoController extends Controller
      */
     public function destroy($id)
     {
-        $usersubcircuito = Usersubcircuito::find($id)->delete();
+        $vehisubcircuito = Vehisubcircuito::find($id)->delete();
 
-        return redirect()->route('usersubcircuitos.index')
-            ->with('success', 'Usuario Subcircuito borrado exitosamente.');
+        return redirect()->route('vehisubcircuitos.index')
+            ->with('success', 'Vehículo Subcircuito borrado exitosamente.');
     }
 
-    public function getCantonesus($provinciaId)
+    public function getCantonesvs($provinciaId)
     {
         try {
             $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
@@ -230,7 +226,7 @@ class UsersubcircuitoController extends Controller
         }
     }
 
-    public function getParroquiasus($cantonId)
+    public function getParroquiasvs($cantonId)
     {
         try {
             $parroquias = Parroquia::where('canton_id', $cantonId)->pluck('nombre', 'id')->toArray();
@@ -242,7 +238,7 @@ class UsersubcircuitoController extends Controller
         }
     }
 
-    public function getDistritosus($parroquiaId)
+    public function getDistritosvs($parroquiaId)
     {
         try {
             $distritos = Distrito::where('parroquia_id', $parroquiaId)->pluck('nombre', 'id')->toArray();
@@ -254,7 +250,7 @@ class UsersubcircuitoController extends Controller
         }
     }
 
-    public function getCircuitosus($distritoId)
+    public function getCircuitosvs($distritoId)
     {
         try {
             $circuitos = Circuito::where('distrito_id', $distritoId)->pluck('nombre', 'id')->toArray();
@@ -265,7 +261,7 @@ class UsersubcircuitoController extends Controller
             return new JsonResponse(['error' => 'Error interno del servidor'], 500);
         }
     }
-    public function getSubcircuitosus($circuitoId)
+    public function getSubcircuitosvs($circuitoId)
     {
         try {
             $subcircuitos = Subcircuito::where('circuito_id', $circuitoId)->pluck('nombre', 'id')->toArray();
@@ -277,18 +273,17 @@ class UsersubcircuitoController extends Controller
         }
     }
 
-    public function getInformacionUsuario($id)
+    public function getInformacionVehiculo($id)
     {
         try {
-            $user = User::with('grado', 'rango')->findOrFail($id);
+            $vehiculo = Vehiculo::findOrFail($id);
             return response()->json([
-                'name' => $user->name,
-                'lastname' => $user->lastname,
-                'email' => $user->email,
-                'grado' => $user->grado->nombre, // Accede al nombre del grado
-                'rango' => $user->rango->nombre, // Accede al nombre del rango
-                'cedula' => $user->cedula,
-                'telefono' => $user->telefono,
+                'tvehiculo' => $vehiculo->tvehiculo->nombre,
+                'placa' => $vehiculo->placa,
+                'marca' => $vehiculo->marca->nombre,
+                'modelo' => $vehiculo->modelo->nombre,
+                'vcarga' => $vehiculo->vcarga->nombre,
+                'vpasajero' => $vehiculo->vpasajero->nombre,  
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error interno del servidor'], 500);

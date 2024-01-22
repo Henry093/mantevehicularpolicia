@@ -48,7 +48,7 @@ class VpasajeroController extends Controller
         $vpasajero = Vpasajero::create($request->all());
 
         return redirect()->route('vpasajeros.index')
-            ->with('success', 'Vpasajero created successfully.');
+            ->with('success', 'Capacidad de pasajeros creado exitosamente.');
     }
 
     /**
@@ -91,7 +91,7 @@ class VpasajeroController extends Controller
         $vpasajero->update($request->all());
 
         return redirect()->route('vpasajeros.index')
-            ->with('success', 'Vpasajero updated successfully');
+            ->with('success', 'Capacidad de pasajeros actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +104,6 @@ class VpasajeroController extends Controller
         $vpasajero = Vpasajero::find($id)->delete();
 
         return redirect()->route('vpasajeros.index')
-            ->with('success', 'Vpasajero deleted successfully');
+            ->with('success', 'Capacidad de pasajeros borrado exitosamente.');
     }
 }

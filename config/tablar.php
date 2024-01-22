@@ -297,7 +297,7 @@ return [
                             'icon' => 'ti ti-plus',
                         ],
                         [
-                            'text' => 'Subcircuito',
+                            'text' => 'Asignación',
                             'route' => 'asignacions.index',
                             'icon' => 'ti ti-plus',
                         ],
@@ -334,20 +334,15 @@ return [
             'active' => ['asignacion'],
             'submenu' => [
                 [
-                    'text' => 'Personal',
-                    'route' => 'usubcircuitos.index',
+                    'text' => 'User',
+                    'route' => 'usersubcircuitos.index',
                     'icon' => 'ti ti-user',
                 ],
                 [
                     'text' => 'Vehículo',
-                    'route' => 'vsubcircuitos.index',
+                    'route' => 'vehisubcircuitos.index',
                     'icon' => 'ti ti-car',
-                ],
-                [
-                    'text' => 'User',
-                    'route' => 'asignarsubcircuito.index',
-                    'icon' => 'ti ti-car',
-                ],
+                ],  
             ],
         ],
         [

@@ -319,7 +319,13 @@ return [
         'year'                     => 'año',
     ],
     
-    'Create Subcircuito'                     => 'Crear Subcircuito',
-    'Update Subcircuito'                     => 'Editar Subcircuito',
-    'Show Subcircuito'                     => 'Ver Subcircuito',
+    'Create Subcircuito'            => 'Crear Subcircuito',
+    'Update Subcircuito'            => 'Editar Subcircuito',
+    'View Subcircuito'              => 'Ver Subcircuito',
+    'Create Usersubcircuito'        => 'Crear Usuario Subcircuito',
+    'Update Usersubcircuito'        => 'Editar Usuario Subcircuito',
+    'View Usersubcircuito'          => 'Ver Usuario Subcircuito',
+    'Create Vehisubcircuito'        => 'Crear Vehículo Subcircuito',
+    'Update Vehisubcircuito'        => 'Editar Vehículo Subcircuito',
+    'View Vehisubcircuito'          => 'Ver Vehículo Subcircuito',
 ];

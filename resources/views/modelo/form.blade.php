@@ -1,11 +1,12 @@
 
 <div class="form-group mb-3">
-    <label class="form-label">{{ Form::label('marca_id', 'Marca') }}</label>
+    <label class="form-label required">{{ Form::label('marca_id', 'Marca') }}</label>
     <div>
-        <select name="marca_id" class="form-select form-control-rounded mb-2 {{ $errors->has('marca_id') ? ' is-invalid' : '' }}" placeholder="Marca">
+        <select name="marca_id" required class="form-select form-control-rounded mb-2 
+        {{ $errors->has('marca_id') ? ' is-invalid' : '' }}" placeholder="Marca">
             <option value="" >Seleccionar Marca..</option>
-            @foreach($marcas as $marca)
-                <option value="{{ $marca->id }}" {{ $marca->marca_id == $marca->id ? 'selected' : '' }}>
+            @foreach($d_marca as $marca)
+                <option value="{{ $marca->id }}" {{ $modelo->marca_id == $marca->id ? 'selected' : '' }}>
                     {{ $marca->nombre }}
                 </option>
             @endforeach
@@ -15,10 +16,10 @@
 </div>
 
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('nombre', 'Nombre') }}</label>
+    <label class="form-label required">   {{ Form::label('nombre', 'Nombre') }}</label>
     <div>
         {{ Form::text('nombre', $modelo->nombre, ['class' => 'form-control' .
-        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre modelo']) }}
+        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre modelo', 'required']) }}
         {!! $errors->first('nombre', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Canton;
 use App\Models\Distrito;
+use App\Models\Estado;
 use App\Models\Parroquia;
 use App\Models\Provincia;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
@@ -38,7 +41,10 @@ class DistritoController extends Controller
         $d_provincia = Provincia::all();
         $d_canton = Canton::all();
         $d_parroquia = Parroquia::all();
-        return view('distrito.create', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia'));
+
+        $edicion = false;
+
+        return view('distrito.create', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia', 'edicion'));
     }
 
     /**
@@ -51,10 +57,18 @@ class DistritoController extends Controller
     {
         request()->validate(Distrito::$rules);
 
+        // Verificar si el estado ya está presente en la solicitud
+        $estado = $request->input('estado_id');
+
+        if (empty($estado)) {
+            // Si no se proporciona una estado, en este caso 1 = Activo
+            $request->merge(['estado_id' => '1']);
+        }
+
         $distrito = Distrito::create($request->all());
 
         return redirect()->route('distritos.index')
-            ->with('success', 'Distrito created successfully.');
+            ->with('success', 'Distrito creado exitosamente.');
     }
 
     /**
@@ -82,9 +96,11 @@ class DistritoController extends Controller
         $d_provincia = Provincia::all();
         $d_canton = Canton::all();
         $d_parroquia = Parroquia::all();
+        $d_estado = Estado::all();
 
-        return view('distrito.edit', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia'));
+        $edicion = true;
 
+        return view('distrito.edit', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia', 'd_estado', 'edicion'));
     }
 
     /**
@@ -101,7 +117,7 @@ class DistritoController extends Controller
         $distrito->update($request->all());
 
         return redirect()->route('distritos.index')
-            ->with('success', 'Distrito updated successfully');
+            ->with('success', 'Distrito actualizado exitosamente.');
     }
 
     /**
@@ -114,10 +130,32 @@ class DistritoController extends Controller
         $distrito = Distrito::find($id)->delete();
 
         return redirect()->route('distritos.index')
-            ->with('success', 'Distrito deleted successfully');
+            ->with('success', 'Distrito borrado exitosamente.');
     }
-    public function getCantones($provinciaId) {
-        $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
-        return response()->json($cantones);
+
+
+
+    public function getCantonesd($provinciaId) {
+        try {
+            $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
+            return response()->json($cantones);
+        } catch (ModelNotFoundException $e) {
+            return new JsonResponse(['error' => 'Cantones no encontrados'], 404);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Error interno del servidor'], 500);
+        }
     }
+    
+    public function getParroquiasd($cantonId) {
+        try {
+            $parroquias = Parroquia::where('canton_id', $cantonId)->pluck('nombre', 'id')->toArray();
+            return response()->json($parroquias);
+        } catch (ModelNotFoundException $e) {
+            return new JsonResponse(['error' => 'Parroquias no encontradas'], 404);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Error interno del servidor'], 500);
+        }
+    }
+
+    
 }

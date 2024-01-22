@@ -52,7 +52,7 @@ class EmantenimientoController extends Controller
         $emantenimiento = Emantenimiento::create($request->all());
 
         return redirect()->route('emantenimientos.index')
-            ->with('success', 'Emantenimiento created successfully.');
+            ->with('success', 'Estatus de mantenimiento creado exitosamente.');
     }
 
     /**
@@ -95,7 +95,7 @@ class EmantenimientoController extends Controller
         $emantenimiento->update($request->all());
 
         return redirect()->route('emantenimientos.index')
-            ->with('success', 'Emantenimiento updated successfully');
+            ->with('success', 'Estatus de mantenimiento actualizado exitosamente.');
     }
 
     /**
@@ -108,6 +108,6 @@ class EmantenimientoController extends Controller
         $emantenimiento = Emantenimiento::find($id)->delete();
 
         return redirect()->route('emantenimientos.index')
-            ->with('success', 'Emantenimiento deleted successfully');
+            ->with('success', 'Estatus de mantenimiento borrado exitosamente.');
     }
 }

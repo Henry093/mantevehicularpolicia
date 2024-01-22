@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Circuito')
+@section('title', __('validation.View Circuito'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Circuito ') }}
+                        {{ __('Circuito') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Circuito List
+                            @lang('Circuito List')
                         </a>
                     </div>
                 </div>
@@ -45,25 +45,37 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Circuito Details</h3>
+                            <h3 class="card-title">@lang('Circuito Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Provincia Id:</strong>
-{{ $circuito->provincia_id }}
+<strong>Provincia:</strong>
+{{ $circuito->provincia->nombre }}
 </div>
 <div class="form-group">
-<strong>Distrito Id:</strong>
-{{ $circuito->distrito_id }}
+<strong>Cantón:</strong>
+{{ $circuito->canton->nombre }}
+</div>
+<div class="form-group">
+<strong>Parroquia:</strong>
+{{ $circuito->parroquia->nombre }}
+</div>
+<div class="form-group">
+<strong>Distrito:</strong>
+{{ $circuito->distrito->nombre }}
 </div>
 <div class="form-group">
 <strong>Nombre:</strong>
 {{ $circuito->nombre }}
 </div>
 <div class="form-group">
-<strong>Codigo:</strong>
+<strong>Código:</strong>
 {{ $circuito->codigo }}
+</div>
+<div class="form-group">
+<strong>Estado:</strong>
+{{ $circuito->estado->nombre }}
 </div>
 
                         </div>

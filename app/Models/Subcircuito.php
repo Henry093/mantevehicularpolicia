@@ -9,16 +9,22 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $provincia_id
+ * @property $canton_id
+ * @property $parroquia_id
  * @property $distrito_id
  * @property $circuito_id
  * @property $nombre
  * @property $codigo
+ * @property $estado_id
  * @property $created_at
  * @property $updated_at
  *
+ * @property Canton $canton
  * @property Circuito $circuito
  * @property Dependencia[] $dependencias
  * @property Distrito $distrito
+ * @property Estado $estado
+ * @property Parroquia $parroquia
  * @property Provincia $provincia
  * @property Reclamo[] $reclamos
  * @package App
@@ -29,6 +35,8 @@ class Subcircuito extends Model
     
     static $rules = [
 		'provincia_id' => 'required',
+		'canton_id' => 'required',
+		'parroquia_id' => 'required',
 		'distrito_id' => 'required',
 		'circuito_id' => 'required',
 		'nombre' => 'required',
@@ -42,9 +50,17 @@ class Subcircuito extends Model
      *
      * @var array
      */
-    protected $fillable = ['provincia_id','distrito_id','circuito_id','nombre','codigo'];
+    protected $fillable = ['provincia_id','canton_id','parroquia_id','distrito_id','circuito_id','nombre','codigo','estado_id'];
 
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function canton()
+    {
+        return $this->hasOne('App\Models\Canton', 'id', 'canton_id');
+    }
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -72,6 +88,22 @@ class Subcircuito extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
+    public function estado()
+    {
+        return $this->hasOne('App\Models\Estado', 'id', 'estado_id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function parroquia()
+    {
+        return $this->hasOne('App\Models\Parroquia', 'id', 'parroquia_id');
+    }
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function provincia()
     {
         return $this->hasOne('App\Models\Provincia', 'id', 'provincia_id');
@@ -85,5 +117,7 @@ class Subcircuito extends Model
         return $this->hasMany('App\Models\Reclamo', 'subcircuito_id', 'id');
     }
     
-
+    protected $hidden = [
+        'estado_id',
+    ];
 }

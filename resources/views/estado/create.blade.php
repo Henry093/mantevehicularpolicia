@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', __('Create Estado'))
+@section('title', __('validation.Create Estado'))
 
 @section('content')
     <!-- Page header -->

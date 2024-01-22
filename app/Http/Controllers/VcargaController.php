@@ -48,7 +48,7 @@ class VcargaController extends Controller
         $vcarga = Vcarga::create($request->all());
 
         return redirect()->route('vcargas.index')
-            ->with('success', 'Vcarga created successfully.');
+            ->with('success', 'Capacidad de carga creado exitosamente.');
     }
 
     /**
@@ -91,7 +91,7 @@ class VcargaController extends Controller
         $vcarga->update($request->all());
 
         return redirect()->route('vcargas.index')
-            ->with('success', 'Vcarga updated successfully');
+            ->with('success', 'Capacidad de carga actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +104,6 @@ class VcargaController extends Controller
         $vcarga = Vcarga::find($id)->delete();
 
         return redirect()->route('vcargas.index')
-            ->with('success', 'Vcarga deleted successfully');
+            ->with('success', 'Capacidad de carga borrado exitosamente.');
     }
 }

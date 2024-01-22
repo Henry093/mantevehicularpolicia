@@ -1,9 +1,9 @@
 
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('nombre', 'Nombre') }}</label>
+    <label class="form-label required">   {{ Form::label('nombre', 'Nombre') }}</label>
     <div>
         {{ Form::text('nombre', $estado->nombre, ['class' => 'form-control' .
-        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Nombre estado']) }}
+        ($errors->has('nombre') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre del estado', 'required']) }}
         {!! $errors->first('nombre', '<div class="invalid-feedback">:message</div>') !!}
     </div>
 </div>

@@ -50,7 +50,7 @@
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Nombre:</strong>
+<strong>Capacidad Carga:</strong>
 {{ $vcarga->nombre }}
 </div>
 
