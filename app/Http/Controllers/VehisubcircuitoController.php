@@ -99,6 +99,7 @@ class VehisubcircuitoController extends Controller
             // Si no se proporciona un estado, en este caso 1 = Activo
             $request->merge(['asignacion_id' => '1']);
         }
+        
         $vehisubcircuito = Vehisubcircuito::create($request->all());
 
         return redirect()->route('vehisubcircuitos.index')

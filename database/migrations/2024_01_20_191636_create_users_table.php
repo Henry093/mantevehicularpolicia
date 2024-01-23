@@ -268,6 +268,15 @@ return new class extends Migration
                 $table->foreign('asignacion_id')->references('id')->on('asignacions');
             });
 
+            Schema::create('uservehiculos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('usersubcircuito_id');
+                $table->unsignedBigInteger('vehisubcircuito_id');
+                $table->timestamps();
+                $table->foreign('usersubcircuito_id')->references('id')->on('usersubcircuitos');
+                $table->foreign('vehisubcircuito_id')->references('id')->on('vehisubcircuitos');
+            });
+
             Schema::create('usubcircuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('user_id');
@@ -289,7 +298,6 @@ return new class extends Migration
                 $table->unsignedBigInteger('asignacion_id');
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
-    
                 $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
                 $table->foreign('dependencia_id')->references('id')->on('dependencias');
                 $table->foreign('usubcircuito_id')->references('id')->on('usubcircuitos');

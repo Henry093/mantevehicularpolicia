@@ -51,8 +51,23 @@
                             
 <div class="form-group">
 <strong>Nombre:</strong>
-{{ $usersubcircuito->user->name }} 
-{{ $usersubcircuito->user->lastname }}
+{{ $usersubcircuito->user->name }} {{ $usersubcircuito->user->lastname }}
+</div>
+<div class="form-group">
+<strong>Grado:</strong>
+{{ $usersubcircuito->user->grado->nombre }}
+</div>
+<div class="form-group">
+<strong>Rango:</strong>
+{{ $usersubcircuito->user->rango->nombre }}
+</div>
+<div class="form-group">
+<strong>Teléfono:</strong>
+{{ $usersubcircuito->user->telefono }}
+</div>
+<div class="form-group">
+<strong>Email:</strong>
+{{ $usersubcircuito->user->email }}
 </div>
 <div class="form-group">
 <strong>Provincia:</strong>
@@ -65,9 +80,9 @@
 <div class="form-group">
 <strong>Cantón:</strong>
 @if ($usersubcircuito->canton)
-         {{ $usersubcircuito->canton->nombre }}
+        {{ $usersubcircuito->canton->nombre }}
     @else
-         No Asignado
+        No Asignado
 @endif
 </div>
 <div class="form-group">
@@ -81,7 +96,7 @@
 <div class="form-group">
 <strong>Distrito:</strong>
 @if ($usersubcircuito->distrito)
-        {{ $usersubcircuito->distrito->nombre }}
+         {{ $usersubcircuito->distrito->nombre }}
     @else
         No Asignado
 @endif
@@ -89,7 +104,7 @@
 <div class="form-group">
 <strong>Circuito:</strong>
 @if ($usersubcircuito->circuito)
-        {{ $usersubcircuito->circuito->nombre }}
+         {{ $usersubcircuito->circuito->nombre }}
     @else
         No Asignado
 @endif
@@ -98,8 +113,8 @@
 <strong>Subcircuito:</strong>
 @if ($usersubcircuito->subcircuito)
          {{ $usersubcircuito->subcircuito->nombre }}
-    @else
-        No Asignado
+     @else
+         No Asignado
 @endif
 </div>
 <div class="form-group">
