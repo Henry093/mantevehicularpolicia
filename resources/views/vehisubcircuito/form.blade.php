@@ -25,7 +25,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Detalle del Vehículo</h3>
                     </div>
-                    <div class="modal-body vehiculo-info">
+                    <div class="card-body vehiculo-info">
                         <div class="form-group mb-3">
                             <div class="row">
                                 <div class="col-md-6">

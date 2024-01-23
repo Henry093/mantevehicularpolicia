@@ -342,7 +342,13 @@ return [
                     'text' => 'Vehículo',
                     'route' => 'vehisubcircuitos.index',
                     'icon' => 'ti ti-car',
-                ],  
+                ], 
+                [
+                    'text' => 'Vehículo',
+                    //'route' => 'uservehiculos.index',
+                    'icon' => 'ti ti-car',
+                ], 
+                
             ],
         ],
         [

@@ -31,10 +31,12 @@ use App\Http\Controllers\TreclamoController;
 use App\Http\Controllers\TvehiculoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSubcircuitoController;
+use App\Http\Controllers\UservehiculoController;
 use App\Http\Controllers\UsubcircuitoController;
 use App\Http\Controllers\VcargaController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\VehisubcircuitoController;
+use App\Http\Controllers\VehiusersubcircuitoController;
 use App\Http\Controllers\VpasajeroController;
 use App\Http\Controllers\VsubcircuitoController;
 use App\Models\Circuito;
@@ -147,6 +149,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/obtener-subcircuitos-vs/{circuitoId}', [VehisubcircuitoController::class, 'getSubcircuitosvs']);
     Route::get('/obtener-informacion-vehiculo/{id}', [VehisubcircuitoController::class, 'getInformacionVehiculo']);
 
+    //Vehículo Users
+
+
     //Mantenimientos
     Route::resource('tmantenimientos', TmantenimientoController::class)->names('tmantenimientos'); //tipo mantenimiento
     Route::resource('nmantenimientos', NmantenimientoController::class)->names('nmantenimientos');//reporte novedad
@@ -181,4 +186,4 @@ Route::group(['middleware' => ['auth']], function(){
 });
 
 
-Route::resource('/vehisubcircuito', App\Http\Controllers\VehisubcircuitoController::class);
+

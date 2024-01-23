@@ -28,7 +28,7 @@
                         <div class="card-header">
                             <h3 class="card-title">@lang('Details')</h3>
                         </div>
-                        <div class="modal-body user-info">
+                        <div class="card-body user-info">
                             <div class="form-group mb-3">
                                 <div class="row">
                                     <div class="col-md-6">
