@@ -25,11 +25,11 @@ class AsignarvehiculoController extends Controller
     {
         $asignarvehiculos = Asignarvehiculo::with('user')->paginate(10);
         $d_vehiculo = Vehisubcircuito::paginate(10);
-        $d_user = Usersubcircuito::whereHas('subcircuito')->whereDoesntHave('asignar')->get();
-
+        $d_user = Usersubcircuito::whereHas('subcircuito')->get(); // Obtener todos los usuarios que pertenecen a un subcircuito
+    
         // Obtener información de subcircuito para cada vehículo
         $subcircuitos = Vehisubcircuito::pluck('subcircuito_id', 'id');
-
+    
         return view('asignarvehiculo.index', compact('asignarvehiculos', 'd_vehiculo', 'd_user', 'subcircuitos'))
             ->with('i', (request()->input('page', 1) - 1) * $asignarvehiculos->perPage());
     }
@@ -57,7 +57,7 @@ class AsignarvehiculoController extends Controller
             'usuarios' => 'required|array|max:4',
             'usuarios.*' => 'exists:usersubcircuitos,id',
         ]);
-
+    
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
@@ -70,15 +70,26 @@ class AsignarvehiculoController extends Controller
             // Paso 1: Recuperar el vehículo y usuarios seleccionados
             $vehiculo = Vehisubcircuito::findOrFail($request->input('vehisubcircuito_id'));
             $usuariosIds = $request->input('usuarios');
-    
+
+            // Verificar que los usuarios pertenezcan al mismo subcircuito que el vehículo
+            $subcircuitoId = $vehiculo->subcircuito_id;
+            $usuariosSubcircuito = Usersubcircuito::whereIn('id', $usuariosIds)->where('subcircuito_id', $subcircuitoId)->get();
+
+            if ($usuariosSubcircuito->count() < count($usuariosIds)) {
+                return redirect()->route('asignarvehiculos.index')
+                    ->with('error', 'Uno o más usuarios no pertenecen al mismo subcircuito que el vehículo');
+            }
             // Paso 2: Verificar si los usuarios ya están asignados a otro vehículo
-            $usuariosAsignados = Asignarvehiculo::whereIn('user_id', $usuariosIds)->get();
+            $usuariosAsignados = Asignarvehiculo::whereIn('user_id', $usuariosIds)
+            ->where('vehisubcircuito_id', '<>', $vehiculo->id)
+            ->whereHas('vehisubcircuito', function ($query) use ($subcircuitoId) {
+                $query->where('subcircuito_id', $subcircuitoId);
+            })
+            ->get();
     
-            foreach ($usuariosAsignados as $asignacion) {
-                if ($asignacion->vehisubcircuito_id != $vehiculo->id) {
-                    return redirect()->route('asignarvehiculos.index')
-                        ->with('error', 'Uno o más usuarios ya están asignados a otro vehículo');
-                }
+            if ($usuariosAsignados->isNotEmpty()) {
+                return redirect()->route('asignarvehiculos.index')
+                    ->with('error', 'Uno o más usuarios ya están asignados a otro vehículo del mismo subcircuito');
             }
     
             // Paso 3: Verificar límite de asignación
@@ -94,7 +105,7 @@ class AsignarvehiculoController extends Controller
             foreach ($usuariosIds as $usuarioId) {
                 $asignacion = new Asignarvehiculo();
                 $asignacion->vehisubcircuito_id = $vehiculo->id;
-                $asignacion->user_id = $usuarioId; 
+                $asignacion->user_id = Usersubcircuito::findOrFail($usuarioId)->user_id; // Obtener el ID del usuario correspondiente
                 $asignacion->save();
             }
     
@@ -154,19 +165,19 @@ class AsignarvehiculoController extends Controller
     {
         $request->validate([
             'usuarios' => 'required|array',
-            'usuarios.*' => 'exists:usersubcircuitos,id',
+            'usuarios.*' => 'exists:asignarvehiculos,user_id',
         ]);
     
         try {
-            // Paso 1: Obtener el modelo del vehículo
+            // Obtener el modelo del vehículo
             $vehiculo = Vehisubcircuito::findOrFail($id);
     
-            // Paso 2: Desasignar usuarios del vehículo eliminando las asignaciones
+            // Desasignar usuarios del vehículo eliminando las asignaciones existentes
             $usuariosIds = $request->input('usuarios');
             $vehiculo->asignar()->whereIn('user_id', $usuariosIds)->delete();
     
             DB::commit();
-            // Paso 3: Redirigir con éxito
+            // Redirigir con éxito
             return back()->with('success', 'Desasignación exitosa');
         } catch (ModelNotFoundException $e) {
             // Manejar la excepción específica para el caso en que el vehículo no existe

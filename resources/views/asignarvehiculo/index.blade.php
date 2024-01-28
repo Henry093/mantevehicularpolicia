@@ -173,23 +173,32 @@
                                                                                 <form action="{{ route('asignarvehiculos.store') }}" method="post">
                                                                                     @csrf
                                                                                     <input type="hidden" name="vehisubcircuito_id" value="{{ $vehisubcircuito->id }}">
-                                                                                    
                                                                                     <h4>Seleccionar Usuarios (hasta 4):</h4>
                                                                                     @php $count = 0; @endphp
-                                                                                    @forelse($d_user as $usuario)
-                                                                                        @if ($count < 4 && $usuario->subcircuito && $usuario->subcircuito_id == $vehisubcircuito->subcircuito->id)
-                                                                                            @php $usuarioSubcircuitoId = $usuario->subcircuito_id; @endphp
-                                                                                            <li>
-                                                                                                <label>
-                                                                                                    <input type="checkbox" name="usuarios[]" value="{{ $usuario->id }}" checked>
-                                                                                                    {{ $usuario->user_id }} {{ $usuario->user->name }} {{ $usuario->user->lastname }}
-                                                                                                </label>
-                                                                                            </li>
-                                                                                            @php $count++; @endphp
-                                                                                        @endif 
-                                                                                    @empty
-                                                                                        <li>No hay usuarios registrados en el mismo subcircuito.</li>
-                                                                                    @endforelse
+                                                                                    @foreach($d_user as $usuario)
+                                                                                    @php
+                                                                                        // Verificar si el usuario ya está asignado a otro vehículo en el mismo subcircuito
+                                                                                        $usuarioAsignado = DB::table('asignarvehiculos')
+                                                                                            ->where('user_id', $usuario->user_id)
+                                                                                            ->join('vehisubcircuitos', 'asignarvehiculos.vehisubcircuito_id', '=', 'vehisubcircuitos.id')
+                                                                                            ->where('vehisubcircuitos.subcircuito_id', $vehisubcircuito->subcircuito->id)
+                                                                                            ->exists();
+                                                                                    @endphp
+                                                                                
+                                                                                    @if (!$usuarioAsignado && $count < 4 && $usuario->subcircuito && $usuario->subcircuito_id == $vehisubcircuito->subcircuito->id)
+                                                                                        <li>
+                                                                                            <label>
+                                                                                                <input type="checkbox" name="usuarios[]" value="{{ $usuario->id }}">
+                                                                                                {{ $usuario->user_id }} {{ $usuario->user->name }} {{ $usuario->user->lastname }}
+                                                                                            </label>
+                                                                                        </li>
+                                                                                        @php $count++; @endphp
+                                                                                    @endif
+                                                                                @endforeach
+                                                                                
+                                                                                @if ($count == 0)
+                                                                                    <li>No hay usuarios registrados en el mismo subcircuito.</li>
+                                                                                @endif
                                                                                     
                                                                                     <button type="submit" class="btn btn-primary" style="float: right;">Guardar Asignación</button>
                                                                                 </form>

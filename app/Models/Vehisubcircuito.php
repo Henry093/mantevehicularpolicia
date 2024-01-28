@@ -131,4 +131,9 @@ class Vehisubcircuito extends Model
 {
     return $this->hasMany(Asignarvehiculo::class);
 }
+
+public function asignaciones()
+{
+    return $this->hasMany(Asignarvehiculo::class);
+}
 }
