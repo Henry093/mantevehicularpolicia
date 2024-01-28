@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Mantetipo;
 use App\Models\Marca;
 use App\Models\Modelo;
 use App\Models\Tmantenimiento;
 use App\Models\Tvehiculo;
 use App\Models\Vcarga;
+use App\Models\Vehiculo;
 use App\Models\Vpasajero;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,18 +21,18 @@ class VehiculoSeeder extends Seeder
     public function run(): void
     {
         //Tipo Mantenimiento
-        Tmantenimiento::create(['nombre' => 'Mantenimiento 1', 'valor' => '43.59',
+        Mantetipo::create(['nombre' => 'Mantenimiento 1', 'valor' => '43.59',
          'descripcion' => 'Cambio de aceite - Revisión y cambio de pastillas - Líquido de frenos - Filtro de combustible.']);
         
-        Tmantenimiento::create(['nombre' => 'Mantenimiento 2 - Vehículo', 'valor' => '60',
+        Mantetipo::create(['nombre' => 'Mantenimiento 2 - Vehículo', 'valor' => '60',
          'descripcion' => 'Cambio de aceite - Revisión y cambio de pastillas - Líquido de frenos - Filtro de combustible - Cambio de filtro de aire - Cambio del líquido refrigerante - Cambio de luces delanteras - Cambio de luces posteriores.']);
         
-        Tmantenimiento::create(['nombre' => 'Mantenimiento 2 - Motocicleta', 'valor' => '45',
+        Mantetipo::create(['nombre' => 'Mantenimiento 2 - Motocicleta', 'valor' => '45',
           'descripcion' => 'Cambio de aceite - Revisión y cambio de pastillas - Líquido de frenos - Filtro de combustible - Cambio del líquido refrigerante - Cambio de luces delanteras - Cambio de luces posteriores.']);
         
-        Tmantenimiento::create(['nombre' => 'Mantenimiento 3', 'valor' => '180',
+        Mantetipo::create(['nombre' => 'Mantenimiento 3', 'valor' => '180',
            'descripcion' => 'Cambio de aceite - Revisión y cambio de pastillas - Líquido de frenos - Filtro de combustible - Cambio del líquido refrigerante - Cambio de luces delanteras - Cambio de luces posteriores - Cambio de batería - Ajustes en el sistema eléctrico.']);
-
+ 
         //Tipo de Vehículos
         Tvehiculo::create(['nombre' => 'Automovil']);
         Tvehiculo::create(['nombre' => 'Camioneta']);
@@ -41,29 +43,29 @@ class VehiculoSeeder extends Seeder
         Marca::create(['tvehiculo_id' => '1', 'nombre' => 'KIA']);
         Marca::create(['tvehiculo_id' => '1', 'nombre' => 'Chevrolet']);
         Marca::create(['tvehiculo_id' => '1', 'nombre' => 'Volkswagen']);
+        //Modelo Automovil
+        Modelo::create(['marca_id' => '1', 'nombre' => 'Rio 2023']);
+        Modelo::create(['marca_id' => '2', 'nombre' => 'Aveo']);
+        Modelo::create(['marca_id' => '3', 'nombre' => 'Volkswagen ID.5']);
         //Marca Camioneta
         Marca::create(['tvehiculo_id' => '2', 'nombre' => 'Ford']);
         Marca::create(['tvehiculo_id' => '2', 'nombre' => 'Chevrolet']);
         Marca::create(['tvehiculo_id' => '2', 'nombre' => 'Toyota']);
+        //Modelo Camioneta
+        Modelo::create(['marca_id' => '4', 'nombre' => 'F-150']);
+        Modelo::create(['marca_id' => '5', 'nombre' => 'Chevrolet S10']);
+        Modelo::create(['marca_id' => '6', 'nombre' => 'Hilux']);
         //Marca Motocicleta    
         Marca::create(['tvehiculo_id' => '3', 'nombre' => 'Yamaha']);
         Marca::create(['tvehiculo_id' => '3', 'nombre' => 'Honda']);
         Marca::create(['tvehiculo_id' => '3', 'nombre' => 'Suzuki']);
         Marca::create(['tvehiculo_id' => '3', 'nombre' => 'Kawasaki']);
-        //Modelo Automovil
-        Modelo::create(['marca_id' => '1', 'nombre' => 'Rio 2023']);
-        Modelo::create(['marca_id' => '2', 'nombre' => 'Aveo']);
-        Modelo::create(['marca_id' => '3', 'nombre' => 'Volkswagen ID.5']);
-        //Modelo Camioneta
-        Modelo::create(['marca_id' => '1', 'nombre' => 'F-150']);
-        Modelo::create(['marca_id' => '2', 'nombre' => 'Chevrolet S10']);
-        Modelo::create(['marca_id' => '3', 'nombre' => 'Hilux']);
         //Modelo Motocicleta 
-        Modelo::create(['marca_id' => '1', 'nombre' => 'R 125']);
-        Modelo::create(['marca_id' => '2', 'nombre' => 'Cb 300r']);
-        Modelo::create(['marca_id' => '3', 'nombre' => 'GSX-S 125']);
-        Modelo::create(['marca_id' => '4', 'nombre' => 'Ninja ZX']);
-
+        Modelo::create(['marca_id' => '7', 'nombre' => 'R 125']);
+        Modelo::create(['marca_id' => '8', 'nombre' => 'Cb 300r']);
+        Modelo::create(['marca_id' => '9', 'nombre' => 'GSX-S 125']);
+        Modelo::create(['marca_id' => '10', 'nombre' => 'Ninja ZX']);
+        
         //Capacidad Carga
         Vcarga::create(['nombre' => '100 KG']);
         Vcarga::create(['nombre' => '200 KG']);
@@ -84,6 +86,17 @@ class VehiculoSeeder extends Seeder
         Vpasajero::create(['nombre' => '4 Personas']);
         Vpasajero::create(['nombre' => '5 Personas']);
         Vpasajero::create(['nombre' => '6 Personas']);
+
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8525', 'chasis' => '1G1RC6E42BUXXXXXX', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30 C',
+        'kilometraje' => '123', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8515', 'chasis' => '1G1RC6E42BUXXXX55', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30 FD',
+        'kilometraje' => '123111', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8577', 'chasis' => '1G1RC6E42BUXXXX44', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30ASS',
+        'kilometraje' => '12', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8523', 'chasis' => '1G1RC6E42BUXXXX77', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EEA',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8545', 'chasis' => '1G1RC6E42BUXXXX66', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EEWE',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
         
     }
 }

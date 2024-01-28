@@ -224,17 +224,15 @@ return new class extends Migration
                 $table->timestamps();
             });
 
-            
-
             Schema::create('usersubcircuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('user_id');
-                $table->unsignedBigInteger('provincia_id')->nullable();
-                $table->unsignedBigInteger('canton_id')->nullable();
-                $table->unsignedBigInteger('parroquia_id')->nullable();
-                $table->unsignedBigInteger('distrito_id')->nullable();
-                $table->unsignedBigInteger('circuito_id')->nullable();
-                $table->unsignedBigInteger('subcircuito_id')->nullable();
+                $table->unsignedBigInteger('provincia_id');
+                $table->unsignedBigInteger('canton_id');
+                $table->unsignedBigInteger('parroquia_id');
+                $table->unsignedBigInteger('distrito_id');
+                $table->unsignedBigInteger('circuito_id');
+                $table->unsignedBigInteger('subcircuito_id');
                 $table->unsignedBigInteger('asignacion_id');
                 $table->timestamps();
                 $table->foreign('user_id')->references('id')->on('users');
@@ -250,12 +248,12 @@ return new class extends Migration
             Schema::create('vehisubcircuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('vehiculo_id');
-                $table->unsignedBigInteger('provincia_id')->nullable();
-                $table->unsignedBigInteger('canton_id')->nullable();
-                $table->unsignedBigInteger('parroquia_id')->nullable();
-                $table->unsignedBigInteger('distrito_id')->nullable();
-                $table->unsignedBigInteger('circuito_id')->nullable();
-                $table->unsignedBigInteger('subcircuito_id')->nullable();
+                $table->unsignedBigInteger('provincia_id');
+                $table->unsignedBigInteger('canton_id');
+                $table->unsignedBigInteger('parroquia_id');
+                $table->unsignedBigInteger('distrito_id');
+                $table->unsignedBigInteger('circuito_id');
+                $table->unsignedBigInteger('subcircuito_id');
                 $table->unsignedBigInteger('asignacion_id');
                 $table->timestamps();
                 $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
@@ -268,104 +266,107 @@ return new class extends Migration
                 $table->foreign('asignacion_id')->references('id')->on('asignacions');
             });
 
-            Schema::create('uservehiculos', function (Blueprint $table) {
+            Schema::create('asignarvehiculos', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedBigInteger('usersubcircuito_id');
                 $table->unsignedBigInteger('vehisubcircuito_id');
-                $table->timestamps();
-                $table->foreign('usersubcircuito_id')->references('id')->on('usersubcircuitos');
-                $table->foreign('vehisubcircuito_id')->references('id')->on('vehisubcircuitos');
-            });
-
-            Schema::create('usubcircuitos', function (Blueprint $table) {
-                $table->bigIncrements('id');
                 $table->unsignedBigInteger('user_id');
-                $table->unsignedBigInteger('dependencia_id');
-                $table->unsignedBigInteger('asignacion_id');
-                $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
+                $table->foreign('vehisubcircuito_id')->references('id')->on('vehisubcircuitos');
                 $table->foreign('user_id')->references('id')->on('users');
-                $table->foreign('dependencia_id')->references('id')->on('dependencias');
-                $table->foreign('asignacion_id')->references('id')->on('asignacions');
-                $table->foreign('estado_id')->references('id')->on('estados');
-            });
-
-            Schema::create('vsubcircuitos', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->unsignedBigInteger('vehiculo_id');
-                $table->unsignedBigInteger('dependencia_id');
-                $table->unsignedBigInteger('usubcircuito_id');
-                $table->unsignedBigInteger('asignacion_id');
-                $table->unsignedBigInteger('estado_id');
-                $table->timestamps();
-                $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
-                $table->foreign('dependencia_id')->references('id')->on('dependencias');
-                $table->foreign('usubcircuito_id')->references('id')->on('usubcircuitos');
-                $table->foreign('asignacion_id')->references('id')->on('asignacions');
-                $table->foreign('estado_id')->references('id')->on('estados');
             });
     
-            Schema::create('emantenimientos', function (Blueprint $table) {
+            //Estado mantenimiento
+            Schema::create('mantestados', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('nombre', 11);
                 $table->timestamps();
             });
-    
-            Schema::create('tmantenimientos', function (Blueprint $table) {
+
+            Schema::create('mantenimientos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('user_id');
+                $table->unsignedBigInteger('vehiculo_id');
+                $table->date('fecha');
+                $table->time('hora');
+                $table->integer('kilometraje');
+                $table->text('observaciones')->nullable();
+                $table->unsignedBigInteger('mantestado_id');
+                $table->timestamps();
+            
+                $table->foreign('user_id')->references('id')->on('users');
+                $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
+                $table->foreign('mantestado_id')->references('id')->on('mantestados');
+            });
+
+            Schema::create('novedades', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('user_id');
+                $table->text('mensaje');
+                $table->boolean('atendida')->default(false);
+                $table->timestamps();
+            
+                $table->foreign('user_id')->references('id')->on('users');
+            });
+
+            
+            //Registrar Mantenimiento Policia
+            Schema::create('manteregistros', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('asignarvehiculos_id');
+                $table->date('fecha_inicio');
+                $table->time('hora');
+                $table->integer('kilometraje');
+                $table->string('observacion', 255); 
+                $table->unsignedBigInteger('mantestados_id');
+                $table->text('novedad')->nullable();
+                $table->timestamps();
+                $table->foreign('asignarvehiculos_id')->references('id')->on('asignarvehiculos');
+                $table->foreign('mantestados_id')->references('id')->on('mantestados');
+            });
+
+            
+            //Tipo mantenimiento
+            Schema::create('mantetipos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('nombre', 50);
-                $table->decimal('valor', 5, 2)->nullable();
+                $table->decimal('valor', 5, 2);
                 $table->text('descripcion');
                 $table->timestamps();
             });
-            Schema::create('nmantenimientos', function (Blueprint $table) {
+
+            //Registrar Mantenimiento en taller
+            Schema::create('vehiregistros', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->text('novedad');
-                $table->timestamps();
-            });
-            Schema::create('rmantenimientos', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->unsignedBigInteger('vsubcircuito_id');
-                $table->date('fecha_inicio');
-                $table->time('hora');
-                $table->integer('kilometraje')->nullable();
-                $table->string('observacion', 255); 
-                $table->unsignedBigInteger('emantenimiento_id');
-                $table->timestamps();
-                $table->foreign('vsubcircuito_id')->references('id')->on('vsubcircuitos');
-                $table->foreign('emantenimiento_id')->references('id')->on('emantenimientos');
-            });
-    
-            Schema::create('rvehiculos', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->unsignedBigInteger('rmantenimiento_id');
+                $table->unsignedBigInteger('manteregistros_id');
                 $table->date('fecha_ingreso');
                 $table->time('hora_ingreso');
                 $table->integer('kilometraje')->nullable();
                 $table->text('asunto');
                 $table->text('detalle'); 
-                $table->unsignedBigInteger('tmantenimiento_id');
+                $table->unsignedBigInteger('mantetipos_id');
                 $table->string('imagen'); 
                 $table->timestamps();
-                $table->foreign('rmantenimiento_id')->references('id')->on('rmantenimientos');
-                $table->foreign('tmantenimiento_id')->references('id')->on('tmantenimientos');
+                $table->foreign('manteregistros_id')->references('id')->on('manteregistros');
+                $table->foreign('mantetipos_id')->references('id')->on('mantetipos');
                 
             });
-    
-            Schema::create('evehiculos', function (Blueprint $table) {
+            //Entregar vehiculo posterior al mantenimiento
+            Schema::create('vehientregas', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedBigInteger('rmantenimiento_id');
-                $table->unsignedBigInteger('rvehiculo_id');
+                $table->unsignedBigInteger('manteregistros_id');
+                $table->unsignedBigInteger('vehiregistros_id');
                 $table->date('fecha_entrega');
                 $table->string('p_retiro', 255); 
                 $table->integer('km_actual')->nullable();
                 $table->integer('km_proximo')->nullable();
                 $table->text('observaciones');
                 $table->timestamps();
-                $table->foreign('rmantenimiento_id')->references('id')->on('rmantenimientos');
-                $table->foreign('rvehiculo_id')->references('id')->on('rvehiculos');
+                $table->foreign('manteregistros_id')->references('id')->on('manteregistros');
+                $table->foreign('vehiregistros_id')->references('id')->on('vehiregistros');
             });
+ 
 
+            //Examen
             Schema::create('treclamos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('nombre');

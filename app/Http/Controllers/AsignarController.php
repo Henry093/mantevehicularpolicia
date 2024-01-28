@@ -15,7 +15,7 @@ class AsignarController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::with('roles')->paginate(10);
 
         return view('user.sistem.assign', compact('users'))
         ->with('i', (request()->input('page', 1) - 1) * $users->perPage());;
