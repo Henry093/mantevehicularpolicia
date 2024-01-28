@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DatosSeeder::class);
         $this->call(GeograficoSeeder::class);
         $this->call(UserSeeder::class);
-        $this->call(RolSeeder::class);
         $this->call(VehiculoSeeder::class);
         $this->call(DependenciaSeeder::class);
         $this->call(ReclamoSeeder::class);

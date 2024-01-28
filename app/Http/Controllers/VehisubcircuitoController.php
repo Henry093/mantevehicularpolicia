@@ -209,10 +209,27 @@ class VehisubcircuitoController extends Controller
      */
     public function destroy($id)
     {
-        $vehisubcircuito = Vehisubcircuito::find($id)->delete();
-
-        return redirect()->route('vehisubcircuitos.index')
-            ->with('success', 'Vehículo Subcircuito borrado exitosamente.');
+        try {
+            // Buscar el vehisubcircuito
+            $vehisubcircuito = Vehisubcircuito::findOrFail($id);
+    
+            // Eliminar las referencias en asignarvehiculos
+            $vehisubcircuito->asignarvehiculos()->delete();
+    
+            // Eliminar el vehisubcircuito
+            $vehisubcircuito->delete();
+    
+            return redirect()->route('vehisubcircuitos.index')
+                ->with('success', 'Vehículo Subcircuito borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            // Manejar la excepción si no se encuentra el registro
+            return redirect()->route('vehisubcircuitos.index')
+                ->with('error', 'Vehículo Subcircuito no encontrado.');
+        } catch (\Exception $e) {
+            // Manejar otras excepciones
+            return redirect()->route('vehisubcircuitos.index')
+                ->with('error', 'Error al borrar Vehículo Subcircuito.');
+        }
     }
 
     public function getCantonesvs($provinciaId)

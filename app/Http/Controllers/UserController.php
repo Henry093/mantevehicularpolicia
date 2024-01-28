@@ -20,6 +20,16 @@ use Spatie\Permission\Models\Role;
  */
 class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('can:users.index')->only('index');
+        $this->middleware('can:users.create')->only('create', 'store');
+        $this->middleware('can:users.edit')->only('edit', 'update');
+        $this->middleware('can:users.show')->only('show');
+        $this->middleware('can:users.destroy')->only('destroy');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -96,6 +106,18 @@ class UserController extends Controller
 
 
         $user = User::create($request->all());
+
+         // Asignar el rol "Policia" al usuario
+        $rolPolicia = Role::where('name', 'Policia')->first();
+        
+        if ($rolPolicia) {
+            $user->assignRole($rolPolicia);
+        } else {
+            // Manejar el caso donde el rol "Policia" no existe
+            return redirect()->route('users.index')
+                ->with('error', 'Error: El rol "Policia" no está definido.');
+        }
+
 
         return redirect()->route('users.index')
             ->with('success', 'Usuario creado exitosamente.');

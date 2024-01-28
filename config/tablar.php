@@ -222,6 +222,7 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Tipo Sangre',
+                            //'can' => 'Tipo Sangre',
                             'route' => 'sangres.index',
                             'icon' => 'ti ti-plus',
                         ],
@@ -276,12 +277,7 @@ return [
                     'submenu' => [
                         [
                             'text' => 'Tipo Mantenimiento',
-                            'route' => 'tmantenimientos.index',
-                            'icon' => 'ti ti-plus',
-                        ],
-                        [
-                            'text' => 'Novedad Mantenimiento',
-                            'route' => 'nmantenimientos.index',
+                            'route' => 'mantetipos.index',
                             'icon' => 'ti ti-plus',
                         ],
                     ],
@@ -303,7 +299,7 @@ return [
                         ],
                         [
                             'text' => 'Mantenimiento',
-                            'route' => 'emantenimientos.index',
+                            'route' => 'mantestados.index',
                             'icon' => 'ti ti-plus',
                         ],
                     ],
@@ -342,10 +338,10 @@ return [
                     'text' => 'Vehículo',
                     'route' => 'vehisubcircuitos.index',
                     'icon' => 'ti ti-car',
-                ], 
+                ],
                 [
-                    'text' => 'Vehículo',
-                    //'route' => 'uservehiculos.index',
+                    'text' => 'Vehículo - Usuario',
+                    'route' => 'asignarvehiculos.index',
                     'icon' => 'ti ti-car',
                 ], 
                 
@@ -357,23 +353,33 @@ return [
             'active' => ['mantenimiento'],
             'submenu' => [
                 [
+                    'text' => 'Mantenimientos',
+                    'route' => 'mantenimientos.create',
+                    'icon' => 'ti ti-plus',
+                ],
+                [
+                    'text' => 'Novedades',
+                    'route' => 'novedades.create',
+                    'icon' => 'ti ti-plus',
+                ],
+                [
                     'text' => 'Registrar',
-                    'route' => 'rmantenimientos.create',
+                    'route' => 'manteregistros.create',
                     'icon' => 'ti ti-plus',
                 ],
                 [
                     'text' => 'Ver Solicitud',
-                    'route' => 'rmantenimientos.index',
+                    'route' => 'manteregistros.index',
                     'icon' => 'ti ti-eye-search',
                 ],
                 [
                     'text' => 'Recepción',
-                    'route' => 'rvehiculos.index',
+                    'route' => 'vehiregistros.index',
                     'icon' => 'ti ti-receipt',
                 ],
                 [
                     'text' => 'Entrega',
-                    'route' => 'evehiculos.index',
+                    'route' => 'vehientregas.index',
                     'icon' => 'ti ti-checklist',
                 ],
             ],

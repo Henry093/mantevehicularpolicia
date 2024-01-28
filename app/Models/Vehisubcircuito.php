@@ -121,4 +121,14 @@ class Vehisubcircuito extends Model
         'asignacion_id',
     ];
 
+
+    public function users()
+    {
+        return $this->hasManyThrough(User::class, Usersubcircuito::class, 'subcircuito_id', 'id', 'subcircuito_id', 'user_id');
+    }
+
+    public function asignar()
+{
+    return $this->hasMany(Asignarvehiculo::class);
+}
 }

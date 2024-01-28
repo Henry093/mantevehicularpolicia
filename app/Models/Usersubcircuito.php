@@ -119,5 +119,14 @@ class Usersubcircuito extends Model
     protected $hidden = [
         'asignacion_id',
     ];
+    
+    public function asignar()
+{
+    return $this->hasMany(Asignarvehiculo::class, 'user_id');
+}
 
+public function asignaciones()
+    {
+        return $this->hasMany(Asignarvehiculo::class, 'user_id');
+    }
 }
