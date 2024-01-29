@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Mantenimiento')
+@section('title', __('validation.View Mantenimiento'))
 
 @section('content')
     <!-- Page header -->
@@ -10,12 +10,13 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Mantenimiento ') }}
+                        {{ __('Mantenimiento') }}
                     </h2>
                 </div>
+
                 <!-- Page title actions -->
                 <div class="col-12 col-md-auto ms-auto d-print-none">
                     <div class="btn-list">
@@ -28,41 +29,45 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Mantenimiento List
+                            @lang('Mantenimiento List')
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+                    
     <!-- Page body -->
     <div class="page-body">
-        <div class="container-xl">
+        <div class="container-xl">        
+            @if(config('tablar','display_alert'))
+            @include('tablar::common.alert')
+            @endif
             <div class="row row-deck row-cards">
                 <div class="col-12">
-                    @if(config('tablar','display_alert'))
-                        @include('tablar::common.alert')
-                    @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Mantenimiento Details</h3>
+                            <h3 class="card-title">@lang('Mantenimiento Details')</h3>
                         </div>
                         <div class="card-body">
-                            
+                            <div class="form-group text-center">
+                                <h1>Parte Policial</h1>
+                            </div>
 <div class="form-group">
-<strong>User Id:</strong>
-{{ $mantenimiento->user_id }}
+<strong>Nombre:</strong>
+{{ $mantenimiento->user->name }} {{ $mantenimiento->user->lastname }}
 </div>
 <div class="form-group">
-<strong>Vehiculo Id:</strong>
-{{ $mantenimiento->vehiculo_id }}
+<strong>Vehiculo:</strong>
+{{ $mantenimiento->vehiculo->placa }}
 </div>
 <div class="form-group">
-<strong>Fecha:</strong>
+<strong>Fecha Inicio:</strong>
 {{ $mantenimiento->fecha }}
 </div>
 <div class="form-group">
-<strong>Hora:</strong>
+<strong>Hora Inicio:</strong>
 {{ $mantenimiento->hora }}
 </div>
 <div class="form-group">
@@ -74,8 +79,8 @@
 {{ $mantenimiento->observaciones }}
 </div>
 <div class="form-group">
-<strong>Mantestado Id:</strong>
-{{ $mantenimiento->mantestado_id }}
+<strong>Estado:</strong>
+{{ $mantenimiento->mantestado->nombre }}
 </div>
 
                         </div>
@@ -83,6 +88,16 @@
                 </div>
             </div>
         </div>
+    </div> 
+    
+    <!-- Agregar los botones aquí -->
+    <div class="d-flex justify-content-center mt-5">
+        <a href="{{ route('mantenimientos.create') }}" class="btn btn-primary me-3">
+            @lang('Return')
+        </a>
+        <button type="button" class="btn btn-secondary" onclick="window.print();">
+            @lang('Print')
+        </button>
     </div>
 @endsection
 

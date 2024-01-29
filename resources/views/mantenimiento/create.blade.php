@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'Create Mantenimiento')
+@section('title', __('validation.Create Mantenimiento'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        Create
+                        @lang('Create')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Mantenimiento ') }}
+                        {{ __('Mantenimiento') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Mantenimiento List
+                            @lang('Mantenimiento List')
                         </a>
                     </div>
                 </div>
@@ -45,15 +45,16 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <h3 class="card-title">Manteregistro Details</h3>
+                            <h3 class="card-title">@lang('Manteregistro Details')</h3>
                             <div class="text-end">
-                                <strong>Bienvenido </strong> {{ $user->name }} {{ $user->lastname }}
+                                <strong>@lang('Welcome')</strong> {{ $user->name }} {{ $user->lastname }}
                             </div>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('mantenimientos.store') }}" id="ajaxForm" role="form"
                                   enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                                 @include('mantenimiento.form')
                             </form>
                         </div>

@@ -280,6 +280,11 @@ return [
                             'route' => 'mantetipos.index',
                             'icon' => 'ti ti-plus',
                         ],
+                        [
+                            'text' => 'Tipo Novedades',
+                            'route' => 'tnovedades.index',
+                            'icon' => 'ti ti-plus',
+                        ],
                     ],
                 ],
                 [
@@ -363,13 +368,8 @@ return [
                     'icon' => 'ti ti-plus',
                 ],
                 [
-                    'text' => 'Registrar',
-                    'route' => 'manteregistros.create',
-                    'icon' => 'ti ti-plus',
-                ],
-                [
                     'text' => 'Ver Solicitud',
-                    'route' => 'manteregistros.index',
+                    'route' => 'mantenimientos.index',
                     'icon' => 'ti ti-eye-search',
                 ],
                 [

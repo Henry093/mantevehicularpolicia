@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Novedade')
+@section('title', __('validation.View Novedade'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Novedade ') }}
+                        {{ __('Novedade') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Novedade List
+                            @lang('Novedade List')
                         </a>
                     </div>
                 </div>
@@ -45,21 +45,21 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Novedade Details</h3>
+                            <h3 class="card-title">@lang('Novedade Details')</h3>
                         </div>
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>User Id:</strong>
-{{ $novedade->user_id }}
+<strong>Nombre:</strong>
+{{ $novedade->user->name }} {{ $novedade->user->lastname }}
 </div>
 <div class="form-group">
 <strong>Mensaje:</strong>
 {{ $novedade->mensaje }}
 </div>
 <div class="form-group">
-<strong>Atendida:</strong>
-{{ $novedade->atendida }}
+<strong>Estatus:</strong>
+{{ $novedade->tnovedad->nombre }}
 </div>
 
                         </div>

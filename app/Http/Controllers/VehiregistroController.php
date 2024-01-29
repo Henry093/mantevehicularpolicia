@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mantenimiento;
+use App\Models\Mantetipo;
 use App\Models\Vehiregistro;
 use Illuminate\Http\Request;
 
@@ -19,6 +21,7 @@ class VehiregistroController extends Controller
     public function index()
     {
         $vehiregistros = Vehiregistro::paginate(10);
+        
 
         return view('vehiregistro.index', compact('vehiregistros'))
             ->with('i', (request()->input('page', 1) - 1) * $vehiregistros->perPage());
@@ -32,7 +35,11 @@ class VehiregistroController extends Controller
     public function create()
     {
         $vehiregistro = new Vehiregistro();
-        return view('vehiregistro.create', compact('vehiregistro'));
+
+        $d_mantenimientos = Mantenimiento::all();
+        $d_mantetipos = Mantetipo::all();
+
+        return view('vehiregistro.create', compact('vehiregistro', 'd_mantenimientos', 'd_mantetipos'));
     }
 
     /**
@@ -43,12 +50,48 @@ class VehiregistroController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Vehiregistro::$rules);
-
-        $vehiregistro = Vehiregistro::create($request->all());
-
-        return redirect()->route('vehiregistros.index')
-            ->with('success', 'Vehiregistro created successfully.');
+        $request->validate([
+            'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // ajusta los formatos y tamaños según necesites
+        ]);
+    
+        $input = $request->all();
+    
+        if ($request->hasFile('imagen')) {
+            $image = $request->file('imagen');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = public_path('images') . '/' . $imageName;
+    
+            if ($image->move(public_path('images'), $imageName)) {
+                // Guardar la ruta de la imagen en el array de entrada
+                $input['imagen'] = 'images/' . $imageName;
+    
+                // Crear el nuevo registro de Vehiregistro
+                $vehiregistro = Vehiregistro::create($input);
+    
+                // Verificar si la ruta de la imagen se guardó correctamente en la base de datos
+                if ($vehiregistro->imagen == 'images/' . $imageName) {
+                    return redirect()->route('vehiregistros.index')
+                        ->with('success', 'Vehiregistro created successfully.');
+                } else {
+                    // Si la ruta no se guardó correctamente, eliminar la imagen del servidor
+                    unlink($imagePath);
+    
+                    // Devolver un mensaje de error
+                    return redirect()->route('vehiregistros.index')
+                        ->with('error', 'Error al guardar la imagen en la base de datos.');
+                }
+            } else {
+                // Si la imagen no se guardó correctamente, devolver un mensaje de error
+                return redirect()->route('vehiregistros.index')
+                    ->with('error', 'Error al guardar la imagen en el servidor.');
+            }
+        } else {
+            // Crear el nuevo registro de Vehiregistro sin imagen
+            $vehiregistro = Vehiregistro::create($request->all());
+    
+            return redirect()->route('vehiregistros.index')
+                ->with('success', 'Vehiregistro created successfully.');
+        }
     }
 
     /**
@@ -84,16 +127,20 @@ class VehiregistroController extends Controller
      * @param  Vehiregistro $vehiregistro
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Vehiregistro $vehiregistro)
+    public function update(Request $request, Mantenimiento $mantenimiento)
     {
-        request()->validate(Vehiregistro::$rules);
-
-        $vehiregistro->update($request->all());
-
-        return redirect()->route('vehiregistros.index')
-            ->with('success', 'Vehiregistro updated successfully');
+        $request->validate([
+            'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // ajusta los formatos y tamaños según necesites
+        ]);
+    
+        $request = $this->getUserAndVehicleInfo($request);
+    
+        $mantenimiento->update($request->all());
+        $this->saveImage($request, $mantenimiento);
+    
+        return redirect()->route('mantenimientos.index')
+            ->with('success', 'Mantenimiento updated successfully');
     }
-
     /**
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse

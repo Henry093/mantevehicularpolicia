@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Novedade;
+use App\Models\Tnovedade;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class NovedadeController
@@ -32,7 +34,11 @@ class NovedadeController extends Controller
     public function create()
     {
         $novedade = new Novedade();
-        return view('novedade.create', compact('novedade'));
+        $d_tnovedad = Tnovedade::all();
+        $user = auth()->user();
+
+        $edicion = false;
+        return view('novedade.create', compact('novedade', 'edicion', 'd_tnovedad', 'user'));
     }
 
     /**
@@ -45,10 +51,21 @@ class NovedadeController extends Controller
     {
         request()->validate(Novedade::$rules);
 
+        $estado = $request->input('tnovedad_id');
+
+        if (empty($estado)) {
+            // Si no se proporciona un estado, en este caso 1 = Activo
+            $request->merge(['tnovedad_id' => '1']);
+        }
+
+        // Obtener el ID del usuario autenticado
+        $user_id = Auth::id();
+        $request->merge(['user_id' => $user_id]);
+        
         $novedade = Novedade::create($request->all());
 
-        return redirect()->route('novedades.index')
-            ->with('success', 'Novedade created successfully.');
+        return redirect()->route('mantenimientos.create')
+            ->with('success', 'Novedad creado exitosamente.');
     }
 
     /**
@@ -73,8 +90,11 @@ class NovedadeController extends Controller
     public function edit($id)
     {
         $novedade = Novedade::find($id);
+        $d_tnovedad = Tnovedade::all();
 
-        return view('novedade.edit', compact('novedade'));
+        $edicion = true;
+
+        return view('novedade.edit', compact('novedade', 'edicion', 'd_tnovedad'));
     }
 
     /**
@@ -91,7 +111,7 @@ class NovedadeController extends Controller
         $novedade->update($request->all());
 
         return redirect()->route('novedades.index')
-            ->with('success', 'Novedade updated successfully');
+            ->with('success', 'Novedad actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +124,6 @@ class NovedadeController extends Controller
         $novedade = Novedade::find($id)->delete();
 
         return redirect()->route('novedades.index')
-            ->with('success', 'Novedade deleted successfully');
+            ->with('success', 'Novedad borrado exitosamente.');
     }
 }

@@ -1,11 +1,11 @@
 
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('manteregistros_id') }}</label>
+    <label class="form-label">   {{ Form::label('mantenimientos_id') }}</label>
     <div>
-        {{ Form::text('manteregistros_id', $vehientrega->manteregistros_id, ['class' => 'form-control' .
-        ($errors->has('manteregistros_id') ? ' is-invalid' : ''), 'placeholder' => 'Manteregistros Id']) }}
-        {!! $errors->first('manteregistros_id', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">vehientrega <b>manteregistros_id</b> instruction.</small>
+        {{ Form::text('mantenimientos_id', $vehientrega->mantenimientos_id, ['class' => 'form-control' .
+        ($errors->has('mantenimientos_id') ? ' is-invalid' : ''), 'placeholder' => 'Mantenimientos Id']) }}
+        {!! $errors->first('mantenimientos_id', '<div class="invalid-feedback">:message</div>') !!}
+        <small class="form-hint">vehientrega <b>mantenimientos_id</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">

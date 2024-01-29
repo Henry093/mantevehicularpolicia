@@ -29,6 +29,7 @@ use App\Http\Controllers\ReclamosrController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SangreController;
 use App\Http\Controllers\SubcircuitoController;
+use App\Http\Controllers\TnovedadeController;
 use App\Http\Controllers\TreclamoController;
 use App\Http\Controllers\TvehiculoController;
 use App\Http\Controllers\UserController;
@@ -45,6 +46,7 @@ use App\Models\Dependencia;
 use App\Models\Mantestado;
 use App\Models\Parroquia;
 use App\Models\Reclamo;
+use App\Models\Tnovedade;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -156,11 +158,13 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('mantestados', MantestadoController::class)->names('mantestados');
     
     Route::resource('mantenimientos', MantenimientoController::class)->names('mantenimientos');;
+    
+    Route::resource('tnovedades', TnovedadeController::class)->names('tnovedades');;
     Route::resource('novedades', NovedadeController::class)->names('novedades');;
 
 
     Route::resource('mantetipos', MantetipoController::class)->names('mantetipos');
-    Route::resource('manteregistros', ManteregistroController::class)->names('manteregistros');
+   
     Route::resource('vehiregistros', VehiregistroController::class)->names('vehiregistros');
     Route::resource('vehientregas', VehientregaController::class)->names('vehientregas');
 
@@ -186,5 +190,4 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('reclamosr',[ReclamosrController::class, 'index'])->name('reclamo.reporteReclamo');
     Route::get('/filtro', [ReclamosrController::class, 'filtro']);
     
-
 });

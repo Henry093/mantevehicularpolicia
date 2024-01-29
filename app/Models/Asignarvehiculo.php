@@ -24,7 +24,6 @@ class Asignarvehiculo extends Model
     static $rules = [
 		'vehisubcircuito_id' => 'required',
 		'user_id' => 'required',
-        'orden_asignacion',
     ];
 
     protected $perPage = 20;
@@ -42,7 +41,7 @@ class Asignarvehiculo extends Model
      */
     public function user()
     {
-        return $this->hasOne('App\Models\User', 'id', 'user_id');
+        return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
     
     /**
@@ -50,12 +49,12 @@ class Asignarvehiculo extends Model
      */
     public function vehisubcircuito()
     {
-        return $this->hasOne('App\Models\Vehisubcircuito', 'id', 'vehisubcircuito_id');
+        return $this->belongsTo('App\Models\Vehisubcircuito', 'vehisubcircuito_id', 'id');
     }
     
     public function asignar()
     {
-        return $this->hasMany('App\Models\Asignarvehiculo', 'vehisubcircuito_id', 'id');
+        return $this->belongsToMany('App\Models\Vehisubcircuito', 'asignarvehiculos', 'user_id', 'vehisubcircuito_id');
     }
 
 }

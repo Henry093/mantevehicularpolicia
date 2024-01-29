@@ -50,8 +50,8 @@
                         <div class="card-body">
                             
 <div class="form-group">
-<strong>Manteregistros Id:</strong>
-{{ $vehientrega->manteregistros_id }}
+<strong>Mantenimientos Id:</strong>
+{{ $vehientrega->mantenimientos_id }}
 </div>
 <div class="form-group">
 <strong>Vehiregistros Id:</strong>

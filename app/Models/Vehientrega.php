@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Vehientrega
  *
  * @property $id
- * @property $manteregistros_id
+ * @property $mantenimientos_id
  * @property $vehiregistros_id
  * @property $fecha_entrega
  * @property $p_retiro
@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $created_at
  * @property $updated_at
  *
- * @property Manteregistro $manteregistro
+ * @property Mantenimiento $mantenimiento
  * @property Vehiregistro $vehiregistro
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
@@ -27,10 +27,12 @@ class Vehientrega extends Model
 {
     
     static $rules = [
-		'manteregistros_id' => 'required',
+		'mantenimientos_id' => 'required',
 		'vehiregistros_id' => 'required',
 		'fecha_entrega' => 'required',
 		'p_retiro' => 'required',
+		'km_actual' => 'required',
+		'km_proximo' => 'required',
 		'observaciones' => 'required',
     ];
 
@@ -41,15 +43,15 @@ class Vehientrega extends Model
      *
      * @var array
      */
-    protected $fillable = ['manteregistros_id','vehiregistros_id','fecha_entrega','p_retiro','km_actual','km_proximo','observaciones'];
+    protected $fillable = ['mantenimientos_id','vehiregistros_id','fecha_entrega','p_retiro','km_actual','km_proximo','observaciones'];
 
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function manteregistro()
+    public function mantenimiento()
     {
-        return $this->hasOne('App\Models\Manteregistro', 'id', 'manteregistros_id');
+        return $this->hasOne('App\Models\Mantenimiento', 'id', 'mantenimientos_id');
     }
     
     /**

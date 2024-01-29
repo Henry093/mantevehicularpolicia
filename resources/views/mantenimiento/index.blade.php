@@ -12,10 +12,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        List
+                        @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Mantenimiento ') }}
+                        {{ __('Mantenimiento') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Create Mantenimiento
+                            @lang('Create Mantenimiento')
                         </a>
                     </div>
                 </div>
@@ -47,20 +47,20 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Mantenimiento</h3>
+                            <h3 class="card-title">@lang('Mantenimiento')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    Show
+                                    @lang('Show')
                                     <div class="mx-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm" value="10" size="3"
                                                aria-label="Invoices count">
                                     </div>
-                                    entries
+                                    @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    Search:
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm"
                                                aria-label="Search invoice">
@@ -85,13 +85,13 @@
                                         </svg>
                                     </th>
                                     
-										<th>User Id</th>
-										<th>Vehiculo Id</th>
-										<th>Fecha</th>
-										<th>Hora</th>
+										<th>Nombre</th>
+										<th>Vehículo</th>
+										<th>Fecha Inicio</th>
+										<th>Hora Inicio</th>
 										<th>Kilometraje</th>
 										<th>Observaciones</th>
-										<th>Mantestado Id</th>
+										<th>Estado</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -104,29 +104,30 @@
                                                    aria-label="Select mantenimiento"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $mantenimiento->user_id }}</td>
-											<td>{{ $mantenimiento->vehiculo_id }}</td>
+											<td>{{ $mantenimiento->user->name }} 
+                                                {{ $mantenimiento->user->lastname }}</td>
+											<td>{{ $mantenimiento->vehiculo->placa }}</td>
 											<td>{{ $mantenimiento->fecha }}</td>
 											<td>{{ $mantenimiento->hora }}</td>
 											<td>{{ $mantenimiento->kilometraje }}</td>
 											<td>{{ $mantenimiento->observaciones }}</td>
-											<td>{{ $mantenimiento->mantestado_id }}</td>
+											<td>{{ $mantenimiento->mantestado->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                        Actions
+                                                            @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('mantenimientos.show',$mantenimiento->id) }}">
-                                                            View
+                                                           @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('mantenimientos.edit',$mantenimiento->id) }}">
-                                                            Edit
+                                                           @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('mantenimientos.destroy',$mantenimiento->id) }}"
@@ -137,7 +138,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                Delete
+                                                                    @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
@@ -146,7 +147,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>No Data Found</td>
+                                    <td>@lang('No Data Found')</td>
                                 @endforelse
                                 </tbody>
 

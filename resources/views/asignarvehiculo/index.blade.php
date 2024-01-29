@@ -200,7 +200,7 @@
                                                                                     <li>No hay usuarios registrados en el mismo subcircuito.</li>
                                                                                 @endif
                                                                                     
-                                                                                    <button type="submit" class="btn btn-primary" style="float: right;">Guardar Asignación</button>
+                                                                                    <button type="submit" class="btn btn-primary" style="float: right;">Guardar</button>
                                                                                 </form>
                                                                             </div>
                                                                         </div>
@@ -246,7 +246,7 @@
                                                                                     @endforelse
                                                                                 </ul>
                                                                                 
-                                                                                <button type="submit" class="btn btn-primary">Desasignar Usuarios</button>
+                                                                                <button type="submit" class="btn btn-primary" style="float: right;">Guardar</button>
                                                                             </form>
                                                                         </div>
                                                                     </div>

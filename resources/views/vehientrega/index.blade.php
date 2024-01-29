@@ -85,7 +85,7 @@
                                         </svg>
                                     </th>
                                     
-										<th>Manteregistros Id</th>
+										<th>Mantenimientos Id</th>
 										<th>Vehiregistros Id</th>
 										<th>Fecha Entrega</th>
 										<th>P Retiro</th>
@@ -104,7 +104,7 @@
                                                    aria-label="Select vehientrega"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $vehientrega->manteregistros_id }}</td>
+											<td>{{ $vehientrega->mantenimientos_id }}</td>
 											<td>{{ $vehientrega->vehiregistros_id }}</td>
 											<td>{{ $vehientrega->fecha_entrega }}</td>
 											<td>{{ $vehientrega->p_retiro }}</td>

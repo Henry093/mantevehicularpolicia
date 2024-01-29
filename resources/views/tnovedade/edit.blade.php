@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'Create Manteregistro')
+@section('title', __('validation.Update Tnovedade'))
 
 @section('content')
     <!-- Page header -->
@@ -10,16 +10,16 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        Create
+                        @lang('Update')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Manteregistro ') }}
+                        {{ __('Tnovedade') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
                 <div class="col-12 col-md-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="{{ route('manteregistros.index') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('tnovedades.index') }}" class="btn btn-primary d-none d-sm-inline-block">
                             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Manteregistro List
+                            @lang('Tnovedade List')
                         </a>
                     </div>
                 </div>
@@ -45,13 +45,15 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Manteregistro Details</h3>
+                            <h3 class="card-title">@lang('Tnovedade Details')</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('manteregistros.store') }}" id="ajaxForm" role="form"
+                            <form method="POST"
+                                  action="{{ route('tnovedades.update', $tnovedade->id) }}" id="ajaxForm" role="form"
                                   enctype="multipart/form-data">
+                                {{ method_field('PATCH') }}
                                 @csrf
-                                @include('manteregistro.form')
+                                @include('tnovedade.form')
                             </form>
                         </div>
                     </div>
@@ -60,4 +62,6 @@
         </div>
     </div>
 @endsection
+
+
 
