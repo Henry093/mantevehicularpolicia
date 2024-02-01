@@ -340,4 +340,10 @@ return [
     'Create Vehiregistro'        => 'Crear Registro Vehículo',
     'Update Vehiregistro'        => 'Editar Registro Vehículo',
     'View Vehiregistro'          => 'Ver Registro Vehículo',
+    'Create Vehirecepcione'        => 'Crear Recepción Vehículo',
+    'Update Vehirecepcione'        => 'Editar Recepción Vehículo',
+    'View Vehirecepcione'          => 'Ver Recepción Vehículo',
+    'Create Vehientrega'        => 'Crear Entrega Vehículo',
+    'Update Vehientrega'        => 'Editar Entrega Vehículo',
+    'View Vehientrega'          => 'Ver Entrega Vehículo',
 ];

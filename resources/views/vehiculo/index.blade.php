@@ -85,7 +85,7 @@
                                         </svg>
                                     </th>
                                     
-										<th>@lang('Tvehiculo')</th>
+										<th>Tipo</th>
 										<th>Placa</th>
 										<th>Chasis</th>
 										<th>Marca</th>
@@ -93,8 +93,8 @@
 										<th>Motor</th>
 										<th>Kilometraje</th>
 										<th>Cilindraje</th>
-										<th>@lang('Vcarga')</th>
-										<th>@lang('Vpasajero')</th>
+										<th>Cap. Carga</th>
+										<th>Cap. Pasajero</th>
 										<th>Estado</th>
 
                                     <th class="w-1"></th>

@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-@lang('Vehiregistro')
+@lang('Vehirecepcione')
 @endsection
 
 @section('content')
@@ -15,13 +15,13 @@
                         @lang('List')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Vehiregistro') }}
+                        {{ __('Vehirecepcione') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
                 <div class="col-12 col-md-auto ms-auto d-print-none">
                     <div class="btn-list">
-                        <a href="{{ route('vehiregistros.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                        <a href="{{ route('vehirecepciones.create') }}" class="btn btn-primary d-none d-sm-inline-block">
                             <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            @lang('Create Vehiregistro')
+                            @lang('Create Vehirecepcione')
                         </a>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">@lang('Vehiregistro')</h3>
+                            <h3 class="card-title">@lang('Vehirecepcione')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
@@ -85,6 +85,7 @@
                                         </svg>
                                     </th>
                                     
+										<th>Orden</th>
 										<th>Placa</th>
 										<th>Fecha Ingreso</th>
 										<th>Hora Ingreso</th>
@@ -98,38 +99,39 @@
                                 </thead>
 
                                 <tbody>
-                                @forelse ($vehiregistros as $vehiregistro)
+                                @forelse ($vehirecepciones as $vehirecepcione)
                                     <tr>
                                         <td><input class="form-check-input m-0 align-middle" type="checkbox"
-                                                   aria-label="Select vehiregistro"></td>
+                                                   aria-label="Select vehirecepcione"></td>
                                         <td>{{ ++$i }}</td>
                                         
-											<td>{{ $vehiregistro->mantenimiento->vehiculo->placa }}</td>
-											<td>{{ $vehiregistro->fecha_ingreso }}</td>
-											<td>{{ $vehiregistro->hora_ingreso }}</td>
-											<td>{{ $vehiregistro->kilometraje }}</td>
-											<td>{{ $vehiregistro->asunto }}</td>
-											<td>{{ $vehiregistro->detalle }}</td>
-											<td>{{ $vehiregistro->mantetipo->nombre }}</td>
+											<td>{{ $vehirecepcione->mantenimiento->orden }}</td>
+											<td>{{ $vehirecepcione->mantenimiento->vehiculo->placa }}</td>
+											<td>{{ $vehirecepcione->fecha_ingreso }}</td>
+											<td>{{ $vehirecepcione->hora_ingreso }}</td>
+											<td>{{ $vehirecepcione->kilometraje }}</td>
+											<td>{{ $vehirecepcione->asunto }}</td>
+											<td>{{ $vehirecepcione->detalle }}</td>
+											<td>{{ $vehirecepcione->mantetipo->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                            @lang('Actions')
+                                                        @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
-                                                           href="{{ route('vehiregistros.show',$vehiregistro->id) }}">
+                                                           href="{{ route('vehirecepciones.show',$vehirecepcione->id) }}">
                                                            @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
-                                                           href="{{ route('vehiregistros.edit',$vehiregistro->id) }}">
+                                                           href="{{ route('vehirecepciones.edit',$vehirecepcione->id) }}">
                                                            @lang('Edit')
                                                         </a>
                                                         <form
-                                                            action="{{ route('vehiregistros.destroy',$vehiregistro->id) }}"
+                                                            action="{{ route('vehirecepciones.destroy',$vehirecepcione->id) }}"
                                                             method="POST">
                                                             @csrf
                                                             @method('DELETE')
@@ -153,7 +155,7 @@
                             </table>
                         </div>
                        <div class="card-footer d-flex align-items-center">
-                            {!! $vehiregistros->links('tablar::pagination') !!}
+                            {!! $vehirecepciones->links('tablar::pagination') !!}
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Dependencia;
 use App\Models\Reclamo;
 use App\Models\Rmantenimiento;
+use App\Models\Subcircuito;
 use App\Models\User;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $totalDependencias = Dependencia::count();
+        $totalDependencias = Subcircuito::count();
         $totalUsuarios = User::count();
         $totalVehiculos = Vehiculo::count();
         //$totalMantenimientos = Rmantenimiento::count();

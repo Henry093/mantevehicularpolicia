@@ -54,6 +54,9 @@
                             <div class="form-group text-center">
                                 <h1>Parte Policial</h1>
                             </div>
+                            <div class="form-group text-center">
+                                <h3>Orden # {{ $mantenimiento->orden }}</h3>
+                            </div>
 <div class="form-group">
 <strong>Nombre:</strong>
 {{ $mantenimiento->user->name }} {{ $mantenimiento->user->lastname }}
@@ -79,7 +82,7 @@
 {{ $mantenimiento->observaciones }}
 </div>
 <div class="form-group">
-<strong>Estado:</strong>
+<strong>Estado Mantenimiento:</strong>
 {{ $mantenimiento->mantestado->nombre }}
 </div>
 

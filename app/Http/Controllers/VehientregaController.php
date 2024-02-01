@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vehientrega;
+use App\Models\Vehirecepcione;
 use Illuminate\Http\Request;
 
 /**
@@ -32,7 +33,12 @@ class VehientregaController extends Controller
     public function create()
     {
         $vehientrega = new Vehientrega();
-        return view('vehientrega.create', compact('vehientrega'));
+        $d_vehirecepciones = Vehirecepcione::all();
+    
+        // Obtener las órdenes ya seleccionadas
+        $ordenesSeleccionadas = Vehientrega::pluck('vehirecepciones_id')->toArray();
+    
+        return view('vehientrega.create', compact('vehientrega', 'd_vehirecepciones', 'ordenesSeleccionadas'));
     }
 
     /**
@@ -43,10 +49,20 @@ class VehientregaController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Vehientrega::$rules);
+        $validatedData = $request->validate(Vehientrega::$rules);
 
-        $vehientrega = Vehientrega::create($request->all());
+        // Lógica de cálculo de km_proximo
+        $mantetipo = Vehirecepcione::find($validatedData['vehirecepciones_id'])->mantetipo;
 
+        if ($mantetipo->id == 1 || $mantetipo->id == 2 || $mantetipo->id == 4) {
+            $validatedData['km_proximo'] = $validatedData['km_actual'] + 5000;
+        } elseif ($mantetipo->id == 3) {
+            $validatedData['km_proximo'] = $validatedData['km_actual'] + 2000;
+        }
+
+        $vehientrega = Vehientrega::create($validatedData);
+
+        
         return redirect()->route('vehientregas.index')
             ->with('success', 'Vehientrega created successfully.');
     }
@@ -86,9 +102,18 @@ class VehientregaController extends Controller
      */
     public function update(Request $request, Vehientrega $vehientrega)
     {
-        request()->validate(Vehientrega::$rules);
+        $validatedData = $request->validate(Vehientrega::$rules);
 
-        $vehientrega->update($request->all());
+        // Lógica de cálculo de km_proximo
+        $mantetipo = Vehirecepcione::find($validatedData['vehirecepciones_id'])->mantetipo;
+
+        if ($mantetipo->id == 1 || $mantetipo->id == 2 || $mantetipo->id == 4) {
+            $validatedData['km_proximo'] = $validatedData['km_actual'] + 5000;
+        } elseif ($mantetipo->id == 3) {
+            $validatedData['km_proximo'] = $validatedData['km_actual'] + 2000;
+        }
+
+        $vehientrega->update($validatedData);
 
         return redirect()->route('vehientregas.index')
             ->with('success', 'Vehientrega updated successfully');

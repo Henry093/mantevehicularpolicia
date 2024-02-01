@@ -9,6 +9,7 @@ use App\Http\Controllers\DependenciaController;
 use App\Http\Controllers\DistritoController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\FormularioController;
+use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MantenimientoController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\UservehiculoController;
 use App\Http\Controllers\VcargaController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\VehientregaController;
+use App\Http\Controllers\VehirecepcioneController;
 use App\Http\Controllers\VehiregistroController;
 use App\Http\Controllers\VehisubcircuitoController;
 use App\Http\Controllers\VpasajeroController;
@@ -76,6 +78,10 @@ Route::group(['middleware' => ['auth']], function(){
     
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+    //Reportes
+    
+    Route::get('/general', [GeneralController::class, 'index'])->name('general');
+
     //Estados
     Route::resource('estados', EstadoController::class)->names('estados');
     Route::resource('asignacions', AsignacionController::class)->names('asignacions');
@@ -85,7 +91,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('cantons', CantonController::class)->names('cantons');
     Route::resource('parroquias', ParroquiaController::class)->names('parroquias');
     Route::get('/obtener-cantones/{provinciaId}', [ParroquiaController::class, 'getCantones']);
-
+    
     //Roles y permisos
     Route::resource('roles', RoleController::class)->names('roles');
     Route::resource('permissions', PermissionController::class)->names('permissions');
@@ -108,11 +114,6 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/obtener-circuitos-s/{distritoId}', [SubcircuitoController::class, 'getCircuitoss']);
     //Dependencia
     Route::resource('dependencias', DependenciaController::class)->names('dependencias');
-    Route::get('/obtener-cantones/{provinciaId}', [DependenciaController::class, 'getCantones']);
-    Route::get('/obtener-parroquias/{cantonId}', [DependenciaController::class, 'getParroquias']);
-    Route::get('/obtener-distritos/{cantonId}', [DependenciaController::class, 'getDistritos']);
-    Route::get('/obtener-circuitos/{distritoId}', [DependenciaController::class, 'getCircuitos']);
-    Route::get('/obtener-subcircuitos/{circuitoId}', [DependenciaController::class, 'getSubcircuitos']);    
 
     //Registro de Usuarios
     Route::resource('sangres', SangreController::class)->names('sangres');
@@ -156,37 +157,20 @@ Route::group(['middleware' => ['auth']], function(){
 
     //Mantenimientos
     Route::resource('mantestados', MantestadoController::class)->names('mantestados');
-    
-    Route::resource('mantenimientos', MantenimientoController::class)->names('mantenimientos');;
-    
-    Route::resource('tnovedades', TnovedadeController::class)->names('tnovedades');;
-    Route::resource('novedades', NovedadeController::class)->names('novedades');;
-
-
     Route::resource('mantetipos', MantetipoController::class)->names('mantetipos');
-   
-    Route::resource('vehiregistros', VehiregistroController::class)->names('vehiregistros');
+    Route::resource('mantenimientos', MantenimientoController::class)->names('mantenimientos');
+    Route::resource('tnovedades', TnovedadeController::class)->names('tnovedades');
+    Route::resource('novedades', NovedadeController::class)->names('novedades');
+    Route::resource('vehirecepciones', VehirecepcioneController::class)->names('vehirecepciones');
     Route::resource('vehientregas', VehientregaController::class)->names('vehientregas');
 
     //Examen
     Route::resource('reclamos', ReclamoController::class)->names('reclamos');
     Route::resource('treclamos', TreclamoController::class)->names('treclamos');
-    
-
-
-    Route::get('/obtener-cantones/{provinciaId}', [ParroquiaController::class, 'getCantones']);
-
-    Route::get('/obtener-cantones/{provinciaId}', [DependenciaController::class, 'getCantones']);
-    Route::get('/obtener-parroquias/{cantonId}', [DependenciaController::class, 'getParroquias']);
-
-    
-
 
     //Obtener Circuitos y subcircuito para reclamos
     Route::get('/obtener-subcircuitos/{circuitoId}', [ReclamoController::class, 'getSubcircuitos']);
     Route::get('/obtener-subcircuitos/{circuitoId}', [FormularioController::class, 'getSubcircuitos']);
-
-
     Route::get('reclamosr',[ReclamosrController::class, 'index'])->name('reclamo.reporteReclamo');
     Route::get('/filtro', [ReclamosrController::class, 'filtro']);
     

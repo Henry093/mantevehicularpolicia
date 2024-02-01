@@ -132,9 +132,9 @@ class User extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function usubcircuitos()
+    public function usersubcircuitos()
     {
-        return $this->hasMany('App\Models\Usubcircuito', 'user_id', 'id');
+        return $this->hasMany('App\Models\Usersubcircuito', 'user_id', 'id');
     }
 
      /**

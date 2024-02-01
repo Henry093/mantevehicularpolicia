@@ -361,7 +361,7 @@
     "Vehiculo": "Vehículo",
     "Verify Email Address": "Confirme su correo electrónico",
     "Verify Your Email Address": "Verifique su dirección de correo electrónico",
-    "View": "Vista",
+    "View": "Ver",
     "View :name": "Ver :name",
     "Vpasajero": "Capacidad Pasajero",
     "Vpasajero Details": "Detalle de Capacidad Pasajero",
@@ -394,5 +394,16 @@
     "Update Vehiregistro": "Actualizar Registro Vehículo",
     "Vehiregistro Details": "Detalle Registro Vehículo",
     "Vehiregistro List": "Lista Registro Vehículo",
-    "Vehiregistro": "Registro Vehículo"
+    "Vehiregistro": "Registro Vehículo",
+    "Create Vehirecepcione": "Crear Recepción Vehículo",
+    "Update Vehirecepcione": "Actualizar Recepción Vehículo",
+    "Vehirecepcione Details": "Detalle Recepción Vehículo",
+    "Vehirecepcione List": "Lista Recepción Vehículo",
+    "Vehirecepcione": "Recepción Vehículo",
+    "Create Vehientrega": "Crear Entrega Vehículo",
+    "Update Vehientrega": "Actualizar Entrega Vehículo",
+    "Vehientrega Details": "Detalle Entrega Vehículo",
+    "Vehientrega List": "Lista Entrega Vehículo",
+    "Vehientrega": "Entrega Vehículo",
+    "View Dependencia": "Ver Dependencia"
 }

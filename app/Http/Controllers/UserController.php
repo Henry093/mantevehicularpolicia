@@ -229,7 +229,7 @@ class UserController extends Controller
 
         try {
             // Verificar si la persona está asignada a algún subcircuito
-            if ($user->usubcircuitos()->exists()) {
+            if ($user->usersubcircuitos()->exists()) {
                 return redirect()->route('users.index')
                     ->with('error', 'No se puede eliminar. El usuario está asignado a un subcircuito.');
             }

@@ -14,6 +14,8 @@
         </div>
     </div>
 
+    <input type="hidden" name="orden" id="orden" value="{{ old('orden', $mantenimiento->orden ?? '') }}">
+    
     <div class="form-group mb-3">
         <div class="row">
             <div class="col-md-6">
