@@ -85,6 +85,7 @@
                                         </svg>
                                     </th>
                                     
+										<th>Orden</th>
 										<th>Nombre</th>
 										<th>Vehículo</th>
 										<th>Fecha Inicio</th>
@@ -104,6 +105,7 @@
                                                    aria-label="Select mantenimiento"></td>
                                         <td>{{ ++$i }}</td>
                                         
+											<td>{{ $mantenimiento->orden }} 
 											<td>{{ $mantenimiento->user->name }} 
                                                 {{ $mantenimiento->user->lastname }}</td>
 											<td>{{ $mantenimiento->vehiculo->placa }}</td>

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Vehiregistro
+ * Class Vehirecepcione
  *
  * @property $id
  * @property $mantenimientos_id
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Vehiregistro extends Model
+class Vehirecepcione extends Model
 {
     
     static $rules = [
@@ -70,7 +70,7 @@ class Vehiregistro extends Model
      */
     public function vehientregas()
     {
-        return $this->hasMany('App\Models\Vehientrega', 'vehiregistros_id', 'id');
+        return $this->hasMany('App\Models\Vehientrega', 'vehirecepciones_id', 'id');
     }
     
 

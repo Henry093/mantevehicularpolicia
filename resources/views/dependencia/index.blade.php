@@ -18,22 +18,6 @@
                         {{ __('Dependencia') }}
                     </h2>
                 </div>
-                <!-- Page title actions -->
-                <div class="col-12 col-md-auto ms-auto d-print-none">
-                    <div class="btn-list">
-                        <a href="{{ route('dependencias.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            @lang('Create Dependencia')
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -95,6 +79,7 @@
 										<th>Subcircuito</th>
 										<th>Cod. Subcircuito</th>
 										<th>Estado</th>
+										<th>Acciones</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -114,42 +99,14 @@
 											<td>{{ $dependencia->distrito->codigo }}</td>
 											<td>{{ $dependencia->circuito->nombre }}</td>
 											<td>{{ $dependencia->circuito->codigo }}</td>
-											<td>{{ $dependencia->subcircuito->nombre }}</td>
-											<td>{{ $dependencia->subcircuito->codigo }}</td>
+											<td>{{ $dependencia->nombre }}</td>
+											<td>{{ $dependencia->codigo }}</td>
 											<td>{{ $dependencia->estado->nombre }}</td>
+                                            <td>
+                                                <a  href="{{ route('dependencias.show', $dependencia->id) }}" class="btn btn-pill">@lang('View Dependencia')</a>
+                                            </td>
 
                                         <td>
-                                            <div class="btn-list flex-nowrap">
-                                                <div class="dropdown">
-                                                    <button class="btn dropdown-toggle align-text-top"
-                                                            data-bs-toggle="dropdown">
-                                                        @lang('Actions')
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <a class="dropdown-item"
-                                                           href="{{ route('dependencias.show',$dependencia->id) }}">
-                                                            @lang('View')
-                                                        </a>
-                                                        <a class="dropdown-item"
-                                                           href="{{ route('dependencias.edit',$dependencia->id) }}">
-                                                            @lang('Edit')
-                                                        </a>
-                                                        <form
-                                                            action="{{ route('dependencias.destroy',$dependencia->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                    onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
-                                                                    class="dropdown-item text-red"><i
-                                                                    class="fa fa-fw fa-trash"></i>
-                                                                @lang('Delete')
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
                                     </tr>
                                 @empty
                                     <td>@lang('No Data Found')</td>

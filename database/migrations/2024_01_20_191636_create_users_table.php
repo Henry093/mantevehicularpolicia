@@ -142,25 +142,6 @@ return new class extends Migration
                 $table->foreign('estado_id')->references('id')->on('estados');
             });
     
-            Schema::create('dependencias', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->unsignedBigInteger('provincia_id');
-                $table->unsignedBigInteger('canton_id');
-                $table->unsignedBigInteger('parroquia_id');
-                $table->unsignedBigInteger('distrito_id');
-                $table->unsignedBigInteger('circuito_id');
-                $table->unsignedBigInteger('subcircuito_id');
-                $table->unsignedBigInteger('estado_id');  
-                $table->timestamps();
-                $table->foreign('provincia_id')->references('id')->on('provincias');
-                $table->foreign('canton_id')->references('id')->on('cantons');
-                $table->foreign('parroquia_id')->references('id')->on('parroquias');
-                $table->foreign('distrito_id')->references('id')->on('distritos');
-                $table->foreign('circuito_id')->references('id')->on('circuitos');
-                $table->foreign('subcircuito_id')->references('id')->on('subcircuitos');
-                $table->foreign('estado_id')->references('id')->on('estados');
-            });
-    
             Schema::create('tvehiculos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('nombre', 50);
@@ -275,6 +256,14 @@ return new class extends Migration
                 $table->foreign('user_id')->references('id')->on('users');
             });
     
+            //Tipo mantenimiento
+            Schema::create('mantetipos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('nombre', 50);
+                $table->decimal('valor', 5, 2);
+                $table->text('descripcion');
+                $table->timestamps();
+            });
             //Estado mantenimiento
             Schema::create('mantestados', function (Blueprint $table) {
                 $table->bigIncrements('id');
@@ -286,6 +275,7 @@ return new class extends Migration
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('user_id');
                 $table->unsignedBigInteger('vehiculo_id');
+                $table->integer('orden')->unsigned();
                 $table->date('fecha');
                 $table->time('hora');
                 $table->integer('kilometraje');
@@ -297,33 +287,9 @@ return new class extends Migration
                 $table->foreign('mantestado_id')->references('id')->on('mantestados');
             });
 
-            Schema::create('tnovedades', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->string('nombre', 11);
-                $table->timestamps();
-            });
-
-            Schema::create('novedades', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->unsignedBigInteger('user_id');
-                $table->text('mensaje');
-                $table->unsignedBigInteger('tnovedad_id');
-                $table->timestamps();
-                $table->foreign('user_id')->references('id')->on('users');
-                $table->foreign('tnovedad_id')->references('id')->on('tnovedades');
-            });
-
-            //Tipo mantenimiento
-            Schema::create('mantetipos', function (Blueprint $table) {
-                $table->bigIncrements('id');
-                $table->string('nombre', 50);
-                $table->decimal('valor', 5, 2);
-                $table->text('descripcion');
-                $table->timestamps();
-            });
 
             //Registrar Mantenimiento en taller
-            Schema::create('vehiregistros', function (Blueprint $table) {
+            Schema::create('vehirecepciones', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('mantenimientos_id');
                 $table->date('fecha_ingreso');
@@ -341,18 +307,31 @@ return new class extends Migration
             //Entregar vehiculo posterior al mantenimiento
             Schema::create('vehientregas', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->unsignedBigInteger('mantenimientos_id');
-                $table->unsignedBigInteger('vehiregistros_id');
+                $table->unsignedBigInteger('vehirecepciones_id');
                 $table->date('fecha_entrega');
                 $table->string('p_retiro'); 
                 $table->integer('km_actual');
                 $table->integer('km_proximo');
                 $table->text('observaciones');
                 $table->timestamps();
-                $table->foreign('mantenimientos_id')->references('id')->on('mantenimientos');
-                $table->foreign('vehiregistros_id')->references('id')->on('vehiregistros');
+                $table->foreign('vehirecepciones_id')->references('id')->on('vehirecepciones');
             });
- 
+
+            Schema::create('tnovedades', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('nombre', 11);
+                $table->timestamps();
+            });
+
+            Schema::create('novedades', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('user_id');
+                $table->text('mensaje');
+                $table->unsignedBigInteger('tnovedad_id');
+                $table->timestamps();
+                $table->foreign('user_id')->references('id')->on('users');
+                $table->foreign('tnovedad_id')->references('id')->on('tnovedades');
+            });
 
             //Examen
             Schema::create('treclamos', function (Blueprint $table) {

@@ -36,17 +36,25 @@ class Mantenimiento extends Model
     ];
 
     protected $hidden = [
+        'orden',
         'mantestado_id',
     ];
 
     protected $perPage = 20;
 
     /**
+     * Indica si las columnas incrementables deben ser incrementadas automáticamente.
+     *
+     * @var bool
+     */
+    public $incrementing = true;
+    
+    /**
      * Attributes that should be mass-assignable.
      *
      * @var array
      */
-    protected $fillable = ['user_id','vehiculo_id','fecha','hora','kilometraje','observaciones','mantestado_id'];
+    protected $fillable = ['user_id','vehiculo_id', 'orden', 'fecha','hora','kilometraje','observaciones','mantestado_id'];
 
 
     /**

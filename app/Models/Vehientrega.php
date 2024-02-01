@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Vehientrega
  *
  * @property $id
- * @property $mantenimientos_id
- * @property $vehiregistros_id
+ * @property $vehirecepciones_id
  * @property $fecha_entrega
  * @property $p_retiro
  * @property $km_actual
@@ -18,8 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property $created_at
  * @property $updated_at
  *
- * @property Mantenimiento $mantenimiento
- * @property Vehiregistro $vehiregistro
+ * @property Vehirecepcione $vehirecepcione
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
@@ -27,12 +25,10 @@ class Vehientrega extends Model
 {
     
     static $rules = [
-		'mantenimientos_id' => 'required',
-		'vehiregistros_id' => 'required',
+		'vehirecepciones_id' => 'required',
 		'fecha_entrega' => 'required',
 		'p_retiro' => 'required',
 		'km_actual' => 'required',
-		'km_proximo' => 'required',
 		'observaciones' => 'required',
     ];
 
@@ -43,24 +39,35 @@ class Vehientrega extends Model
      *
      * @var array
      */
-    protected $fillable = ['mantenimientos_id','vehiregistros_id','fecha_entrega','p_retiro','km_actual','km_proximo','observaciones'];
-
+    protected $fillable = ['vehirecepciones_id','fecha_entrega','p_retiro','km_actual','km_proximo','observaciones'];
+    
+    protected $hidden = [
+      'km_proximo',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function mantenimiento()
+    public function vehirecepcione()
     {
-        return $this->hasOne('App\Models\Mantenimiento', 'id', 'mantenimientos_id');
+        return $this->hasOne('App\Models\Vehirecepcione', 'id', 'vehirecepciones_id');
     }
     
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function vehiregistro()
+    // Evento que se ejecuta antes de guardar el modelo
+    protected static function boot()
     {
-        return $this->hasOne('App\Models\Vehiregistro', 'id', 'vehiregistros_id');
+        parent::boot();
+
+        static::saving(function ($vehientrega) {
+            $mantetipo = $vehientrega->vehirecepcione->mantetipo; // Obtén el tipo de mantenimiento asociado
+
+            // Lógica para calcular km_proximo
+            if ($mantetipo->id == 1 || $mantetipo->id == 2 || $mantetipo->id == 4) {
+                $vehientrega->km_proximo = $vehientrega->km_actual + 5000;
+            } elseif ($mantetipo->id == 3) {
+                $vehientrega->km_proximo = $vehientrega->km_actual + 2000;
+            }
+        });
     }
-    
 
 }

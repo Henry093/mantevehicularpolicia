@@ -72,6 +72,15 @@ class MantenimientoController extends Controller
             $request->merge(['mantestado_id' => '1']);
         }
     
+        // Obtener el último valor del campo "orden" de la tabla "mantenimientos"
+        $lastOrder = Mantenimiento::latest('orden')->value('orden');
+    
+        // Incrementar el último valor del campo "orden" en 1
+        $newOrder = $lastOrder + 1;
+    
+        // Asignar el nuevo valor al atributo "orden" del objeto $request
+        $request->merge(['orden' => $newOrder]);
+    
         $mantenimiento = Mantenimiento::create($request->all());
     
         return redirect()->route('mantenimientos.show', ['mantenimiento' => $mantenimiento->id])

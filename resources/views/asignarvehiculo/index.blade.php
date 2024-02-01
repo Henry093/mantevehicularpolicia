@@ -128,10 +128,6 @@
                                                                                 <h3 class="card-title">@lang('Vehisubcircuito Details')</h3>
                                                                             </div>
                                                                             <div class="card-body">
-                                                                                <div class="form-group">
-                                                                                    <strong>Placa del Vehículo:</strong>
-                                                                                    {{ $vehisubcircuito->vehiculo->id }}
-                                                                                </div>
                                                                                     <div class="form-group">
                                                                                         <strong>Placa del Vehículo:</strong>
                                                                                         {{ $vehisubcircuito->vehiculo->placa }}
@@ -189,7 +185,7 @@
                                                                                         <li>
                                                                                             <label>
                                                                                                 <input type="checkbox" name="usuarios[]" value="{{ $usuario->id }}">
-                                                                                                {{ $usuario->user_id }} {{ $usuario->user->name }} {{ $usuario->user->lastname }}
+                                                                                                {{ $usuario->user->name }} {{ $usuario->user->lastname }}
                                                                                             </label>
                                                                                         </li>
                                                                                         @php $count++; @endphp
@@ -238,7 +234,7 @@
                                                                                             <input type="hidden" name="asignacion_ids[]" value="{{ $asignacion->id }}">
                                                                                             <label>
                                                                                                 <input type="checkbox" name="usuarios[]" value="{{ $asignacion->user->id }}" checked>
-                                                                                                {{ $asignacion->user_id }} {{ $asignacion->user->name }} {{ $asignacion->user->lastname }}
+                                                                                                {{ $asignacion->user->name }} {{ $asignacion->user->lastname }}
                                                                                             </label>
                                                                                         </li>
                                                                                     @empty

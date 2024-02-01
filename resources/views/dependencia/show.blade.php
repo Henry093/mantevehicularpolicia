@@ -66,15 +66,27 @@
 {{ $dependencia->distrito->nombre }}
 </div>
 <div class="form-group">
+<strong>Código Distrito:</strong>
+{{ $dependencia->distrito->codigo }}
+</div>
+<div class="form-group">
 <strong>Circuito:</strong>
 {{ $dependencia->circuito->nombre }}
 </div>
 <div class="form-group">
-<strong>Subcircuito:</strong>
-{{ $dependencia->subcircuito->nombre }}
+<strong>Código Circuito:</strong>
+{{ $dependencia->circuito->codigo }}
 </div>
 <div class="form-group">
-<strong>Estado Id:</strong>
+<strong>Subcircuito:</strong>
+{{ $dependencia->nombre }}
+</div>
+<div class="form-group">
+<strong>Código Subcircuito:</strong>
+{{ $dependencia->codigo }}
+</div>
+<div class="form-group">
+<strong>Estado:</strong>
 {{ $dependencia->estado->nombre }}
 </div>
 

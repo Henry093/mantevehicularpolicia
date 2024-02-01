@@ -198,21 +198,6 @@ return [
                             'route' => 'parroquias.index',
                             'icon' => 'ti ti-plus',
                         ],
-                        [
-                            'text' => 'Distrito',
-                            'route' => 'distritos.index',
-                            'icon' => 'ti ti-plus',
-                        ],
-                        [
-                            'text' => 'Circuito',
-                            'route' => 'circuitos.index',
-                            'icon' => 'ti ti-plus',
-                        ],
-                        [
-                            'text' => 'Subcircuito',
-                            'route' => 'subcircuitos.index',
-                            'icon' => 'ti ti-plus',
-                        ],
                     ],
                 ],
                 [
@@ -315,7 +300,28 @@ return [
             'text' => 'Dependencia',
             'icon' => 'ti ti-home-star',
             'active' => ['dependencias'],
-            'route' => 'dependencias.index',
+            'submenu' => [
+                [
+                    'text' => 'Distrito',
+                    'route' => 'distritos.index',
+                    'icon' => 'ti ti-plus',
+                ],
+                [
+                    'text' => 'Circuito',
+                    'route' => 'circuitos.index',
+                    'icon' => 'ti ti-plus',
+                ],
+                [
+                    'text' => 'Subcircuito',
+                    'route' => 'subcircuitos.index',
+                    'icon' => 'ti ti-plus',
+                ],
+                [
+                    'text' => 'Lista Dependencias',
+                    'route' => 'dependencias.index',
+                    'icon' => 'ti ti-plus',
+                ],
+            ],
         ],
         [
             'text' => 'Personal',
@@ -373,12 +379,12 @@ return [
                     'icon' => 'ti ti-eye-search',
                 ],
                 [
-                    'text' => 'Recepción',
-                    'route' => 'vehiregistros.index',
+                    'text' => 'Recepción Vehículo',
+                    'route' => 'vehirecepciones.index',
                     'icon' => 'ti ti-receipt',
                 ],
                 [
-                    'text' => 'Entrega',
+                    'text' => 'Entrega Vehículo',
                     'route' => 'vehientregas.index',
                     'icon' => 'ti ti-checklist',
                 ],
@@ -391,11 +397,36 @@ return [
             'submenu' => [
                 [
                     'text' => 'General',
-                    'url' => '#',
+                    'url' => 'general',
                     'icon' => 'ti ti-report-analytics',
                 ],
                 [
-                    'text' => 'Modulos',
+                    'text' => 'Dependencias',
+                    'url' => '#',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Personas',
+                    'url' => '#',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Vehículos',
+                    'url' => '#',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Mantenimientos',
+                    'url' => '#',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Recepción Vehículo',
+                    'url' => '#',
+                    'icon' => 'ti ti-file-description',
+                ],
+                [
+                    'text' => 'Entrega Vehículo',
                     'url' => '#',
                     'icon' => 'ti ti-file-description',
                 ],
