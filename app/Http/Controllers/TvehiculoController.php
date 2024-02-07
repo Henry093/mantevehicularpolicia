@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class TvehiculoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:tvehiculos.index')->only('index');
+        $this->middleware('can:tvehiculos.create')->only('create', 'store');
+        $this->middleware('can:tvehiculos.edit')->only('edit', 'update');
+        $this->middleware('can:tvehiculos.show')->only('show');
+        $this->middleware('can:tvehiculos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,15 @@ class TvehiculoController extends Controller
      */
     public function index()
     {
-        $tvehiculos = Tvehiculo::paginate(10);
+        $search = request('search');
+        $query = Tvehiculo::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $tvehiculos = $query->paginate(12);
 
         return view('tvehiculo.index', compact('tvehiculos'))
             ->with('i', (request()->input('page', 1) - 1) * $tvehiculos->perPage());

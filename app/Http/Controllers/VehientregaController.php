@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
  */
 class VehientregaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:vehientregas.index')->only('index');
+        $this->middleware('can:vehientregas.create')->only('create', 'store');
+        $this->middleware('can:vehientregas.edit')->only('edit', 'update');
+        $this->middleware('can:vehientregas.show')->only('show');
+        $this->middleware('can:vehientregas.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

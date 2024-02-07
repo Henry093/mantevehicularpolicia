@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class AsignacionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:asignacions.index')->only('index');
+        $this->middleware('can:asignacions.create')->only('create', 'store');
+        $this->middleware('can:asignacions.edit')->only('edit', 'update');
+        $this->middleware('can:asignacions.show')->only('show');
+        $this->middleware('can:asignacions.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,15 @@ class AsignacionController extends Controller
      */
     public function index()
     {
-        $asignacions = Asignacion::paginate(10);
+
+        $search = request('search');
+        $query = Asignacion::query();
+
+        if($search){
+            $query->where('nombre', 'like', '%' . $search . '%');
+        }
+
+        $asignacions = $query->paginate(12);
 
         return view('asignacion.index', compact('asignacions'))
             ->with('i', (request()->input('page', 1) - 1) * $asignacions->perPage());

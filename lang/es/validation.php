@@ -346,4 +346,10 @@ return [
     'Create Vehientrega'        => 'Crear Entrega Vehículo',
     'Update Vehientrega'        => 'Editar Entrega Vehículo',
     'View Vehientrega'          => 'Ver Entrega Vehículo',
+    'Create Mantestado'        => 'Crear Estado Mantenimiento',
+    'Update Mantestado'        => 'Editar Estado Mantenimiento',
+    'View Mantestado'          => 'Ver Estado Mantenimiento',
+    'Create Mantetipo'        => 'Crear Tipo Mantenimiento',
+    'Update Mantetipo'        => 'Editar Tipo Mantenimiento',
+    'View Mantetipo'          => 'Ver Tipo Mantenimiento',
 ];

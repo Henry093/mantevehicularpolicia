@@ -17,6 +17,14 @@ use Illuminate\Http\Request;
  */
 class DistritoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:distritos.index')->only('index');
+        $this->middleware('can:distritos.create')->only('create', 'store');
+        $this->middleware('can:distritos.edit')->only('edit', 'update');
+        $this->middleware('can:distritos.show')->only('show');
+        $this->middleware('can:distritos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +32,29 @@ class DistritoController extends Controller
      */
     public function index()
     {
-        $distritos = Distrito::paginate(10);
+        $search = request('search');
+        $query = Distrito::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhere('codigo', 'like', '%' . $search . '%')
+                    ->orWhereHas('provincia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('canton', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('parroquia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('estado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        $distritos = $query->paginate(12);
 
         return view('distrito.index', compact('distritos'))
             ->with('i', (request()->input('page', 1) - 1) * $distritos->perPage());

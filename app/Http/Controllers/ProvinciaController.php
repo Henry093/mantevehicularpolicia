@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
  */
 class ProvinciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:provincias.index')->only('index');
+        $this->middleware('can:provincias.create')->only('create', 'store');
+        $this->middleware('can:provincias.edit')->only('edit', 'update');
+        $this->middleware('can:provincias.show')->only('show');
+        $this->middleware('can:provincias.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +27,15 @@ class ProvinciaController extends Controller
      */
     public function index()
     {
-        $provincias = Provincia::paginate(14);
+        $search = request('search');
+        $query = Provincia::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $provincias = $query->paginate(12);
 
         return view('provincia.index', compact('provincias'))
             ->with('i', (request()->input('page', 1) - 1) * $provincias->perPage());

@@ -18,6 +18,14 @@ use Illuminate\Http\Request;
  */
 class CircuitoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:circuitos.index')->only('index');
+        $this->middleware('can:circuitos.create')->only('create', 'store');
+        $this->middleware('can:circuitos.edit')->only('edit', 'update');
+        $this->middleware('can:circuitos.show')->only('show');
+        $this->middleware('can:circuitos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -25,8 +33,33 @@ class CircuitoController extends Controller
      */
     public function index()
     {
-        $circuitos = Circuito::paginate(10);
-
+        $search = request('search');
+        $query = Circuito::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhere('codigo', 'like', '%' . $search . '%')
+                    ->orWhereHas('provincia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('canton', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('parroquia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('distrito', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('estado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+    
+        $circuitos = $query->paginate(12);
+    
         return view('circuito.index', compact('circuitos'))
             ->with('i', (request()->input('page', 1) - 1) * $circuitos->perPage());
     }

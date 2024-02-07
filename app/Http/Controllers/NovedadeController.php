@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Auth;
  */
 class NovedadeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:novedades.index')->only('index');
+        $this->middleware('can:novedades.create')->only('create', 'store');
+        $this->middleware('can:novedades.edit')->only('edit', 'update');
+        $this->middleware('can:novedades.show')->only('show');
+        $this->middleware('can:novedades.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +28,21 @@ class NovedadeController extends Controller
      */
     public function index()
     {
-        $novedades = Novedade::paginate(10);
+        $search = request('search');
+        $query = Novedade::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('mensaje', 'like', '%' . $search . '%')
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('tnovedade', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $novedades = $query->paginate(12);
 
         return view('novedade.index', compact('novedades'))
             ->with('i', (request()->input('page', 1) - 1) * $novedades->perPage());

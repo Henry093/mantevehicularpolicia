@@ -27,7 +27,15 @@ class SangreController extends Controller
      */
     public function index()
     {
-        $sangres = Sangre::paginate(10);
+        $search = request('search');
+        $query = Sangre::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $sangres = $query->paginate(12);
 
         return view('sangre.index', compact('sangres'))
             ->with('i', (request()->input('page', 1) - 1) * $sangres->perPage());

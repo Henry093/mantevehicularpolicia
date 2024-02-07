@@ -45,7 +45,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <h3 class="card-title">@lang('Manteregistro Details')</h3>
+                            <h3 class="card-title">@lang('Mantenimiento Details')</h3>
                             <div class="text-end">
                                 <strong>@lang('Welcome')</strong> {{ $user->name }} {{ $user->lastname }}
                             </div>

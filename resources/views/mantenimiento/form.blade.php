@@ -108,7 +108,7 @@
         <div class="col-md-6 text-center">
             <div>
                 <br>
-                <a href="{{ route('novedades.create') }}" class="btn btn-primary">Reportar novedad</a>
+                <a href="{{ route('novedades.create') }}" class="btn btn-danger">Reportar novedad</a>
             </div>
         </div>
     </div>

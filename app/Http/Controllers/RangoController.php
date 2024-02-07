@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
  */
 class RangoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:rangos.index')->only('index');
+        $this->middleware('can:rangos.create')->only('create', 'store');
+        $this->middleware('can:rangos.edit')->only('edit', 'update');
+        $this->middleware('can:rangos.show')->only('show');
+        $this->middleware('can:rangos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +27,18 @@ class RangoController extends Controller
      */
     public function index()
     {
-        $rangos = Rango::paginate(10);
+        $search = request('search');
+        $query = Rango::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhereHas('grado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $rangos = $query->paginate(12);
 
         return view('rango.index', compact('rangos'))
             ->with('i', (request()->input('page', 1) - 1) * $rangos->perPage());

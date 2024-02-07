@@ -405,5 +405,19 @@
     "Vehientrega Details": "Detalle Entrega Vehículo",
     "Vehientrega List": "Lista Entrega Vehículo",
     "Vehientrega": "Entrega Vehículo",
-    "View Dependencia": "Ver Dependencia"
+    "View Dependencia": "Ver Dependencia",
+    "Mantestado Details": "Detalle Estado Mantenimiento",
+    "Mantestado List": "Lista Estado Mantenimiento",
+    "Mantestado": "Estado Mantenimiento",
+    "View Mantestado": "Ver Estado Mantenimiento",
+    "Create Mantestado": "Crear Estado Mantenimiento",
+    "Mantetipo Details": "Detalle Tipo Mantenimiento",
+    "Mantetipo List": "Lista Tipo Mantenimiento",
+    "Mantetipo": "Tipo Mantenimiento",
+    "View Mantetipo": "Ver Tipo Mantenimiento",
+    "Create Mantetipo": "Crear Tipo Mantenimiento",
+    "Mantenimiento List": "Lista Mantenimientos",
+    "View Mantenimiento": "Ver Tipo Mantenimiento",
+    "Novedade List": "Lista de Novedades",
+    "View Novedade": "Ver Novedades"
 }

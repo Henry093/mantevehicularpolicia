@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class MantetipoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:mantetipos.index')->only('index');
+        $this->middleware('can:mantetipos.create')->only('create', 'store');
+        $this->middleware('can:mantetipos.edit')->only('edit', 'update');
+        $this->middleware('can:mantetipos.show')->only('show');
+        $this->middleware('can:mantetipos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,18 @@ class MantetipoController extends Controller
      */
     public function index()
     {
-        $mantetipos = Mantetipo::paginate(10);
+
+        $search = request('search');
+        $query = Mantetipo::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhere('valor', 'like', '%' . $search . '%')
+                    ->orWhere('descripcion', 'like', '%' . $search . '%');
+            });
+        }
+        $mantetipos = $query->paginate(12);
 
         return view('mantetipo.index', compact('mantetipos'))
             ->with('i', (request()->input('page', 1) - 1) * $mantetipos->perPage());

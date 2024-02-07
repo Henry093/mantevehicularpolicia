@@ -21,6 +21,14 @@ use Illuminate\Http\Request;
  */
 class UsersubcircuitoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:usersubcircuitos.index')->only('index');
+        $this->middleware('can:usersubcircuitos.create')->only('create', 'store');
+        $this->middleware('can:usersubcircuitos.edit')->only('edit', 'update');
+        $this->middleware('can:usersubcircuitos.show')->only('show');
+        $this->middleware('can:usersubcircuitos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

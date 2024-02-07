@@ -62,8 +62,9 @@
                                 <div class="ms-auto text-muted">
                                     @lang('Search:')
                                     <div class="ms-2 d-inline-block">
-                                        <input type="text" class="form-control form-control-sm"
-                                               aria-label="Search invoice">
+                                        <form action="{{ route('circuitos.index') }}" method="GET" class="form-inline">
+                                            <input type="text" name="search" class="form-control form-control-sm" value="{{ request('search') }}">
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +108,7 @@
 											<td>{{ $circuito->provincia->nombre }}</td>
 											<td>{{ $circuito->canton->nombre }}</td>
 											<td>{{ $circuito->parroquia->nombre }}</td>
-											<td>{{ $circuito->distrito_id }}</td>
+											<td>{{ $circuito->distrito->nombre }}</td>
 											<td>{{ $circuito->nombre }}</td>
 											<td>{{ $circuito->codigo }}</td>
 											<td>{{ $circuito->estado->nombre }}</td>

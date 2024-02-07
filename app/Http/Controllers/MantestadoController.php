@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class MantestadoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:mantestados.index')->only('index');
+        $this->middleware('can:mantestados.create')->only('create', 'store');
+        $this->middleware('can:mantestados.edit')->only('edit', 'update');
+        $this->middleware('can:mantestados.show')->only('show');
+        $this->middleware('can:mantestados.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,16 @@ class MantestadoController extends Controller
      */
     public function index()
     {
-        $mantestados = Mantestado::paginate(10);
+        $search = request('search');
+        $query = Mantestado::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+
+        $mantestados = $query->paginate(12);
 
         return view('mantestado.index', compact('mantestados'))
             ->with('i', (request()->input('page', 1) - 1) * $mantestados->perPage());
@@ -48,7 +65,7 @@ class MantestadoController extends Controller
         $mantestado = Mantestado::create($request->all());
 
         return redirect()->route('mantestados.index')
-            ->with('success', 'Mantestado created successfully.');
+            ->with('success', 'Estado mantenimiento creado exitosamente.');
     }
 
     /**
@@ -91,7 +108,7 @@ class MantestadoController extends Controller
         $mantestado->update($request->all());
 
         return redirect()->route('mantestados.index')
-            ->with('success', 'Mantestado updated successfully');
+            ->with('success', 'Estado mantenimiento actualizado exitosamente.');
     }
 
     /**
@@ -104,6 +121,6 @@ class MantestadoController extends Controller
         $mantestado = Mantestado::find($id)->delete();
 
         return redirect()->route('mantestados.index')
-            ->with('success', 'Mantestado deleted successfully');
+            ->with('success', 'Estado mantenimiento borrado exitosamente.');
     }
 }
