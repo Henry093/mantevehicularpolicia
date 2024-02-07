@@ -14,6 +14,14 @@ use Illuminate\Http\Request;
  */
 class VehirecepcioneController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:vehirecepciones.index')->only('index');
+        $this->middleware('can:vehirecepciones.create')->only('create', 'store');
+        $this->middleware('can:vehirecepciones.edit')->only('edit', 'update');
+        $this->middleware('can:vehirecepciones.show')->only('show');
+        $this->middleware('can:vehirecepciones.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +29,25 @@ class VehirecepcioneController extends Controller
      */
     public function index()
     {
-        $vehirecepciones = Vehirecepcione::paginate(10);
+        $search = request('search');
+        $query = Vehirecepcione::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('fecha_ingreso', 'like', '%' . $search . '%')
+                    ->orWhere('hora_ingreso', 'like', '%' . $search . '%')
+                    ->orWhere('kilometraje', 'like', '%' . $search . '%')
+                    ->orWhere('asunto', 'like', '%' . $search . '%')
+                    ->orWhere('detalle', 'like', '%' . $search . '%')
+                    ->orWhereHas('mantenimiento', function ($q) use ($search) {
+                        $q->where('orden', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('mantetipo', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $vehirecepciones = $query->paginate(12);
 
         return view('vehirecepcione.index', compact('vehirecepciones'))
             ->with('i', (request()->input('page', 1) - 1) * $vehirecepciones->perPage());

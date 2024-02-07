@@ -1,7 +1,7 @@
 @extends('tablar::page')
 
 @section('title')
-    Mantetipo
+    @lang('Mantetipo')
 @endsection
 
 @section('content')
@@ -30,7 +30,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Create Mantetipo
+                            @lang('Create Mantetipo')
                         </a>
                     </div>
                 </div>
@@ -47,23 +47,24 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Mantetipo</h3>
+                            <h3 class="card-title">@lang('Mantetipo')</h3>
                         </div>
                         <div class="card-body border-bottom py-3">
                             <div class="d-flex">
                                 <div class="text-muted">
-                                    Show
+                                    @lang('Show')
                                     <div class="mx-2 d-inline-block">
                                         <input type="text" class="form-control form-control-sm" value="10" size="3"
                                                aria-label="Invoices count">
                                     </div>
-                                    entries
+                                    @lang('entries')
                                 </div>
                                 <div class="ms-auto text-muted">
-                                    Search:
+                                    @lang('Search:')
                                     <div class="ms-2 d-inline-block">
-                                        <input type="text" class="form-control form-control-sm"
-                                               aria-label="Search invoice">
+                                        <form action="{{ route('mantetipos.index') }}" method="GET" class="form-inline">
+                                            <input type="text" name="search" class="form-control form-control-sm" value="{{ request('search') }}">
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +88,7 @@
                                     
 										<th>Nombre</th>
 										<th>Valor</th>
-										<th>Descripcion</th>
+										<th>Descripción</th>
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -109,16 +110,16 @@
                                                 <div class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top"
                                                             data-bs-toggle="dropdown">
-                                                        Actions
+                                                            @lang('Actions')
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item"
                                                            href="{{ route('mantetipos.show',$mantetipo->id) }}">
-                                                            View
+                                                           @lang('View')
                                                         </a>
                                                         <a class="dropdown-item"
                                                            href="{{ route('mantetipos.edit',$mantetipo->id) }}">
-                                                            Edit
+                                                           @lang('Edit')
                                                         </a>
                                                         <form
                                                             action="{{ route('mantetipos.destroy',$mantetipo->id) }}"
@@ -129,7 +130,7 @@
                                                                     onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
                                                                     class="dropdown-item text-red"><i
                                                                     class="fa fa-fw fa-trash"></i>
-                                                                Delete
+                                                                    @lang('Delete')
                                                             </button>
                                                         </form>
                                                     </div>
@@ -138,7 +139,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <td>No Data Found</td>
+                                    <td>@lang('No Data Found')</td>
                                 @endforelse
                                 </tbody>
 

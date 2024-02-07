@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class EstadoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:estados.index')->only('index');
+        $this->middleware('can:estados.create')->only('create', 'store');
+        $this->middleware('can:estados.edit')->only('edit', 'update');
+        $this->middleware('can:estados.show')->only('show');
+        $this->middleware('can:estados.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,15 @@ class EstadoController extends Controller
      */
     public function index()
     {
-        $estados = Estado::paginate(10);
+        $search = request('search');
+        $query = Estado::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $estados = $query->paginate(12);
 
         return view('estado.index', compact('estados'))
             ->with('i', (request()->input('page', 1) - 1) * $estados->perPage());

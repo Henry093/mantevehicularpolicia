@@ -11,6 +11,16 @@ use Spatie\Permission\Models\Permission;
  */
 class RoleController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('can:roles.index')->only('index');
+        $this->middleware('can:roles.create')->only('create', 'store');
+        $this->middleware('can:roles.edit')->only('edit', 'update');
+        $this->middleware('can:roles.show')->only('show');
+        $this->middleware('can:roles.destroy')->only('destroy');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +28,15 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::paginate(10);
+        $search = request('search');
+        $query = Role::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            });
+        }
+        $roles = $query->paginate(12);
 
         return view('role.index', compact('roles'))
             ->with('i', (request()->input('page', 1) - 1) * $roles->perPage());

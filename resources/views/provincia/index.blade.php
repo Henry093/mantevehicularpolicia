@@ -62,8 +62,9 @@
                                 <div class="ms-auto text-muted">
                                     @lang('Search:')
                                     <div class="ms-2 d-inline-block">
-                                        <input type="text" class="form-control form-control-sm"
-                                               aria-label="Search invoice">
+                                        <form action="{{ route('provincias.index') }}" method="GET" class="form-inline">
+                                            <input type="text" name="search" class="form-control form-control-sm" value="{{ request('search') }}">
+                                        </form>
                                     </div>
                                 </div>
                             </div>

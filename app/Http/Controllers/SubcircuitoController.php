@@ -18,6 +18,14 @@ use Illuminate\Http\Request;
  */
 class SubcircuitoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:subcircuitos.index')->only('index');
+        $this->middleware('can:subcircuitos.create')->only('create', 'store');
+        $this->middleware('can:subcircuitos.edit')->only('edit', 'update');
+        $this->middleware('can:subcircuitos.show')->only('show');
+        $this->middleware('can:subcircuitos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +33,34 @@ class SubcircuitoController extends Controller
      */
     public function index()
     {
-        $subcircuitos = Subcircuito::paginate(10);
+        $search = request('search');
+        $query = Subcircuito::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhere('codigo', 'like', '%' . $search . '%')
+                    ->orWhereHas('provincia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('canton', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('parroquia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('distrito', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('circuito', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('estado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $subcircuitos = $query->paginate(12);
 
         return view('subcircuito.index', compact('subcircuitos'))
             ->with('i', (request()->input('page', 1) - 1) * $subcircuitos->perPage());

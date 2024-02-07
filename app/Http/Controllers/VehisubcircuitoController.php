@@ -21,6 +21,14 @@ use Illuminate\Http\Request;
  */
 class VehisubcircuitoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:vehisubcircuitos.index')->only('index');
+        $this->middleware('can:vehisubcircuitos.create')->only('create', 'store');
+        $this->middleware('can:vehisubcircuitos.edit')->only('edit', 'update');
+        $this->middleware('can:vehisubcircuitos.show')->only('show');
+        $this->middleware('can:vehisubcircuitos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

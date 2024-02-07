@@ -11,6 +11,15 @@ use Illuminate\Http\Request;
  */
 class VpasajeroController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('can:vpasajeros.index')->only('index');
+        $this->middleware('can:vpasajeros.create')->only('create', 'store');
+        $this->middleware('can:vpasajeros.edit')->only('edit', 'update');
+        $this->middleware('can:vpasajeros.show')->only('show');
+        $this->middleware('can:vpasajeros.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +27,15 @@ class VpasajeroController extends Controller
      */
     public function index()
     {
-        $vpasajeros = Vpasajero::paginate(10);
+        $search = request('search');
+        $query = Vpasajero::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $vpasajeros = $query->paginate(12);
 
         return view('vpasajero.index', compact('vpasajeros'))
             ->with('i', (request()->input('page', 1) - 1) * $vpasajeros->perPage());

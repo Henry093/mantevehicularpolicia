@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
  */
 class CantonController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:cantons.index')->only('index');
+        $this->middleware('can:cantons.create')->only('create', 'store');
+        $this->middleware('can:cantons.edit')->only('edit', 'update');
+        $this->middleware('can:cantons.show')->only('show');
+        $this->middleware('can:cantons.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +27,18 @@ class CantonController extends Controller
      */
     public function index()
     {
-        $cantons = Canton::paginate(10);
+
+        $search = request('search');
+        $query = Canton::query();
+    
+        if ($search) {
+            $query->where('nombre', 'like', '%' . $search . '%')
+                  ->orWhereHas('provincia', function ($q) use ($search) {
+                      $q->where('nombre', 'like', '%' . $search . '%');
+                  });
+        }
+
+        $cantons = $query->paginate(12);
 
         return view('canton.index', compact('cantons'))
             ->with('i', (request()->input('page', 1) - 1) * $cantons->perPage());

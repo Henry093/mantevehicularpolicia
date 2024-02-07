@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
  */
 class ModeloController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:modelos.index')->only('index');
+        $this->middleware('can:modelos.create')->only('create', 'store');
+        $this->middleware('can:modelos.edit')->only('edit', 'update');
+        $this->middleware('can:modelos.show')->only('show');
+        $this->middleware('can:modelos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +27,18 @@ class ModeloController extends Controller
      */
     public function index()
     {
-        $modelos = Modelo::paginate(10);
+        $search = request('search');
+        $query = Modelo::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhereHas('marca', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $modelos = $query->paginate(12);
 
         return view('modelo.index', compact('modelos'))
             ->with('i', (request()->input('page', 1) - 1) * $modelos->perPage());

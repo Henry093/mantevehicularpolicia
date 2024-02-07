@@ -10,11 +10,20 @@ use Spatie\Permission\Models\Role;
 
 class AsignarController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:asignar.index')->only('index');
+        $this->middleware('can:asignar.create')->only('create', 'store');
+        $this->middleware('can:asignar.edit')->only('edit', 'update');
+        $this->middleware('can:asignar.show')->only('show');
+        $this->middleware('can:asignar.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        
         $users = User::with('roles')->paginate(10);
 
         return view('user.sistem.assign', compact('users'))

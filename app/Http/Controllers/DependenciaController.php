@@ -19,6 +19,14 @@ use Illuminate\Http\Request;
  */
 class DependenciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:dependencias.index')->only('index');
+        $this->middleware('can:dependencias.create')->only('create', 'store');
+        $this->middleware('can:dependencias.edit')->only('edit', 'update');
+        $this->middleware('can:dependencias.show')->only('show');
+        $this->middleware('can:dependencias.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

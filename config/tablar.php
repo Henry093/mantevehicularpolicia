@@ -152,145 +152,165 @@ return [
 
         [
             'text' => 'Aministración',
-            'url' => '#',
             'icon' => 'ti ti-user-circle',
+            'can' => 'roles.index',
             'active' => ['support1'],
             'submenu' => [
                 [
                     'text' => 'Rol',
-                    'url' => '#',
                     'icon' => 'ti ti-circle-plus',
+                    'active' => ['support2'],
+                    'can' => 'roles.index',
                     'submenu' => [
                         [
                             'text' => 'Roles',
                             'route' => 'roles.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'roles.index',
                         ],
                         [
                             'text' => 'Permisos',
                             'route' => 'permissions.index',
                             'icon' => 'ti ti-plus',
+                            //'can' => 'permissions.index',
                         ],
                         [
                             'text' => 'Usuarios',
                             'route' => 'asignar.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'asignar.index',
                         ],
                     ],
+
                 ],
                 [
                     'text' => 'Datos Geograficos',
-                    'url' => 'support1',
                     'icon' => 'ti ti-planet',
+                    'can' => 'provincias.index',
                     'submenu' => [
                         [
                             'text' => 'Provincias',
                             'route' => 'provincias.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'provincias.index',
                         ],
                         [
                             'text' => 'Cantones',
                             'route' => 'cantons.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'cantons.index',
                         ],
                         [
                             'text' => 'Parroquias',
                             'route' => 'parroquias.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'parroquias.index',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Personal',
-                    'url' => '#',
                     'icon' => 'ti ti-circle-plus',
+                    'can' => 'sangres.index',
                     'submenu' => [
                         [
                             'text' => 'Tipo Sangre',
-                            //'can' => 'Tipo Sangre',
                             'route' => 'sangres.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'sangres.index',
                         ],
                         [
                             'text' => 'Grado',
                             'route' => 'grados.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'grados.index',
                         ],
                         [
                             'text' => 'Rango',
                             'route' => 'rangos.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'rangos.index',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Vehículo',
-                    'url' => '#',
                     'icon' => 'ti ti-circle-plus',
+                    'can' => 'tvehiculos.index',
                     'submenu' => [
                         [
                             'text' => 'Tipo Vehículo',
                             'route' => 'tvehiculos.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'tvehiculos.index',
                         ],
                         [
                             'text' => 'Marca',
                             'route' => 'marcas.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'marcas.index',
                         ],
                         [
                             'text' => 'Modelo',
                             'route' => 'modelos.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'modelos.index',
                         ],                       
                         [
                             'text' => 'Capacidad Carga',
                             'route' => 'vcargas.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'vcargas.index',
                         ],
                         [
                             'text' => 'Capacidad Pasajero',
                             'route' => 'vpasajeros.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'vpasajeros.index',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Mantenimiento',
-                    'url' => '#',
                     'icon' => 'ti ti-circle-plus',
+                    'can' => 'mantetipos.index',
                     'submenu' => [
                         [
                             'text' => 'Tipo Mantenimiento',
                             'route' => 'mantetipos.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'mantetipos.index',
                         ],
                         [
                             'text' => 'Tipo Novedades',
                             'route' => 'tnovedades.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'tnovedades.index',
                         ],
                     ],
                 ],
                 [
                     'text' => 'Estados',
-                    'url' => '#',
                     'icon' => 'ti ti-circle-plus',
+                    'can' => 'estados.index',
                     'submenu' => [
                         [
                             'text' => 'General',
                             'route' => 'estados.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'estados.index',
                         ],
                         [
                             'text' => 'Asignación',
                             'route' => 'asignacions.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'asignacions.index',
                         ],
                         [
                             'text' => 'Mantenimiento',
                             'route' => 'mantestados.index',
                             'icon' => 'ti ti-plus',
+                            'can' => 'mantestados.index',
                         ],
                     ],
                 ],
@@ -300,60 +320,71 @@ return [
             'text' => 'Dependencia',
             'icon' => 'ti ti-home-star',
             'active' => ['dependencias'],
+            'can' => 'dependencias.index',
             'submenu' => [
                 [
                     'text' => 'Distrito',
                     'route' => 'distritos.index',
                     'icon' => 'ti ti-plus',
+                    'can' => 'distritos.index',
                 ],
                 [
                     'text' => 'Circuito',
                     'route' => 'circuitos.index',
                     'icon' => 'ti ti-plus',
+                    'can' => 'circuitos.index',
                 ],
                 [
                     'text' => 'Subcircuito',
                     'route' => 'subcircuitos.index',
                     'icon' => 'ti ti-plus',
+                    'can' => 'subcircuitos.index',
                 ],
                 [
                     'text' => 'Lista Dependencias',
                     'route' => 'dependencias.index',
                     'icon' => 'ti ti-plus',
+                    'can' => 'dependencias.index',
                 ],
             ],
         ],
         [
             'text' => 'Personal',
             'icon' => 'ti ti-user',
-            'active' => ['persona'],
+            'active' => ['user'],
             'route' => 'users.index',
+            'can' => 'users.index',
         ],
         [
             'text' => 'Flota Vehicular',
             'icon' => 'ti ti-car',
             'active' => ['flota_vehicular'],
             'route' => 'vehiculos.index',
+            'can' => 'vehiculos.index',
         ],
         [
             'text' => 'Asignación Subcircuito',
             'icon' => 'ti ti-home-check',
+            'can' => 'usersubcircuitos.index',
             'active' => ['asignacion'],
             'submenu' => [
                 [
                     'text' => 'User',
                     'route' => 'usersubcircuitos.index',
                     'icon' => 'ti ti-user',
+                    'can' => 'usersubcircuitos.index',
                 ],
                 [
                     'text' => 'Vehículo',
                     'route' => 'vehisubcircuitos.index',
                     'icon' => 'ti ti-car',
+                    'can' => 'vehisubcircuitos.index',
                 ],
                 [
                     'text' => 'Vehículo - Usuario',
                     'route' => 'asignarvehiculos.index',
                     'icon' => 'ti ti-car',
+                    'can' => 'asignarvehiculos.index',
                 ], 
                 
             ],
@@ -364,29 +395,34 @@ return [
             'active' => ['mantenimiento'],
             'submenu' => [
                 [
-                    'text' => 'Mantenimientos',
+                    'text' => 'Registro Mantenimiento',
                     'route' => 'mantenimientos.create',
                     'icon' => 'ti ti-plus',
-                ],
-                [
-                    'text' => 'Novedades',
-                    'route' => 'novedades.create',
-                    'icon' => 'ti ti-plus',
+                    'can' => 'mantenimientos.create',
                 ],
                 [
                     'text' => 'Ver Solicitud',
                     'route' => 'mantenimientos.index',
                     'icon' => 'ti ti-eye-search',
+                    'can' => 'mantenimientos.index',
+                ],
+                [
+                    'text' => 'Novedades',
+                    'route' => 'novedades.create',
+                    'icon' => 'ti ti-plus',
+                    'can' => 'novedades.create',
                 ],
                 [
                     'text' => 'Recepción Vehículo',
                     'route' => 'vehirecepciones.index',
                     'icon' => 'ti ti-receipt',
+                    'can' => 'vehirecepciones.index',
                 ],
                 [
                     'text' => 'Entrega Vehículo',
                     'route' => 'vehientregas.index',
                     'icon' => 'ti ti-checklist',
+                    'can' => 'vehientregas.index',
                 ],
             ],
         ],
@@ -441,16 +477,19 @@ return [
                     'text' => 'Reclamos',
                     'route' => 'reclamos.index',
                     'icon' => 'ti ti-file-description',
+                    'can' => 'reclamos.index',
                 ],
                 [
                     'text' => 'Tipo Reclamos',
                     'route' => 'treclamos.index',
                     'icon' => 'ti ti-file-description',
+                    'can' => 'treclamos.index',
                 ],
                 [
                     'text' => 'Reporte Reclamos',
                     'route' => 'reclamo.reporteReclamo',
                     'icon' => 'ti ti-file-description',
+                    'can' => 'reclamo.reporteReclamo',
                 ],
                 
             ],

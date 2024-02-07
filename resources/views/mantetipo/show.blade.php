@@ -1,6 +1,6 @@
 @extends('tablar::page')
 
-@section('title', 'View Mantetipo')
+@section('title', __('validation.View Mantetipo'))
 
 @section('content')
     <!-- Page header -->
@@ -10,10 +10,10 @@
                 <div class="col">
                     <!-- Page pre-title -->
                     <div class="page-pretitle">
-                        View
+                        @lang('View')
                     </div>
                     <h2 class="page-title">
-                        {{ __('Mantetipo ') }}
+                        {{ __('Mantetipo') }}
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -28,7 +28,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                             </svg>
-                            Mantetipo List
+                            @lang('Mantetipo List')
                         </a>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Mantetipo Details</h3>
+                            <h3 class="card-title">@lang('Mantetipo Details')</h3>
                         </div>
                         <div class="card-body">
                             
@@ -58,7 +58,7 @@
 {{ $mantetipo->valor }}
 </div>
 <div class="form-group">
-<strong>Descripcion:</strong>
+<strong>Descripción:</strong>
 {{ $mantetipo->descripcion }}
 </div>
 

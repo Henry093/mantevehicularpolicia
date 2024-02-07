@@ -18,6 +18,14 @@ use Illuminate\Support\Facades\Auth;
  */
 class MantenimientoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:mantenimientos.index')->only('index');
+        $this->middleware('can:mantenimientos.create')->only('create', 'store');
+        $this->middleware('can:mantenimientos.edit')->only('edit', 'update');
+        $this->middleware('can:mantenimientos.show')->only('show');
+        $this->middleware('can:mantenimientos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

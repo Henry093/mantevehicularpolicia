@@ -16,6 +16,14 @@ use Illuminate\Support\Facades\Validator;
  */
 class AsignarvehiculoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:asignarvehiculos.index')->only('index');
+        $this->middleware('can:asignarvehiculos.create')->only('create', 'store');
+        $this->middleware('can:asignarvehiculos.edit')->only('edit', 'update');
+        $this->middleware('can:asignarvehiculos.show')->only('show');
+        $this->middleware('can:asignarvehiculos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *

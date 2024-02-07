@@ -37,7 +37,29 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
+        $search = request('search');
+        $query = User::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('cedula', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhereHas('sangre', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('canton', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('grado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('rango', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $users = $query->paginate(12);
 
         return view('user.index', compact('users'))
             ->with('i', (request()->input('page', 1) - 1) * $users->perPage());

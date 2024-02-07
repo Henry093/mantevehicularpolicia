@@ -13,6 +13,14 @@ use Illuminate\Http\Request;
  */
 class ParroquiaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:parroquias.index')->only('index');
+        $this->middleware('can:parroquias.create')->only('create', 'store');
+        $this->middleware('can:parroquias.edit')->only('edit', 'update');
+        $this->middleware('can:parroquias.show')->only('show');
+        $this->middleware('can:parroquias.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +28,21 @@ class ParroquiaController extends Controller
      */
     public function index()
     {
-        $parroquias = Parroquia::paginate(10);
+        $search = request('search');
+        $query = Parroquia::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhereHas('provincia', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('canton', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $parroquias = $query->paginate(12);
 
         return view('parroquia.index', compact('parroquias'))
             ->with('i', (request()->input('page', 1) - 1) * $parroquias->perPage());

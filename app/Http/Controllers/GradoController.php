@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class GradoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:grados.index')->only('index');
+        $this->middleware('can:grados.create')->only('create', 'store');
+        $this->middleware('can:grados.edit')->only('edit', 'update');
+        $this->middleware('can:grados.show')->only('show');
+        $this->middleware('can:grados.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,16 @@ class GradoController extends Controller
      */
     public function index()
     {
-        $grados = Grado::paginate(10);
+        $search = request('search');
+        $query = Grado::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+
+        $grados = $query->paginate(12);
 
         return view('grado.index', compact('grados'))
             ->with('i', (request()->input('page', 1) - 1) * $grados->perPage());

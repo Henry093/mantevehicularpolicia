@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
  */
 class MarcaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:marcas.index')->only('index');
+        $this->middleware('can:marcas.create')->only('create', 'store');
+        $this->middleware('can:marcas.edit')->only('edit', 'update');
+        $this->middleware('can:marcas.show')->only('show');
+        $this->middleware('can:marcas.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,10 +27,22 @@ class MarcaController extends Controller
      */
     public function index()
     {
-        $marcas = Marca::paginate(10);
-
+        $search = request('search');
+        $query = Marca::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%')
+                    ->orWhereHas('tvehiculo', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+    
+        $marcas = $query->paginate(12);
+    
         return view('marca.index', compact('marcas'))
-            ->with('i', (request()->input('page', 1) - 1) * $marcas->perPage());
+            ->with('i', ($marcas->currentPage() - 1) * $marcas->perPage());
     }
 
     /**

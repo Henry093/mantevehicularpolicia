@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class TnovedadeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:tnovedades.index')->only('index');
+        $this->middleware('can:tnovedades.create')->only('create', 'store');
+        $this->middleware('can:tnovedades.edit')->only('edit', 'update');
+        $this->middleware('can:tnovedades.show')->only('show');
+        $this->middleware('can:tnovedades.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,15 @@ class TnovedadeController extends Controller
      */
     public function index()
     {
-        $tnovedades = Tnovedade::paginate(10);
+        $search = request('search');
+        $query = Tnovedade::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $tnovedades = $query->paginate(12);
 
         return view('tnovedade.index', compact('tnovedades'))
             ->with('i', (request()->input('page', 1) - 1) * $tnovedades->perPage());

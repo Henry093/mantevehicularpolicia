@@ -18,6 +18,14 @@ use Illuminate\Http\Request;
  */
 class VehiculoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:vehiculos.index')->only('index');
+        $this->middleware('can:vehiculos.create')->only('create', 'store');
+        $this->middleware('can:vehiculos.edit')->only('edit', 'update');
+        $this->middleware('can:vehiculos.show')->only('show');
+        $this->middleware('can:vehiculos.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +33,37 @@ class VehiculoController extends Controller
      */
     public function index()
     {
-        $vehiculos = Vehiculo::paginate(10);
+        $search = request('search');
+        $query = Vehiculo::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('placa', 'like', '%' . $search . '%')
+                    ->orWhere('chasis', 'like', '%' . $search . '%')
+                    ->orWhere('motor', 'like', '%' . $search . '%')
+                    ->orWhere('kilometraje', 'like', '%' . $search . '%')
+                    ->orWhere('cilindraje', 'like', '%' . $search . '%')
+                    ->orWhereHas('tvehiculo', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('marca', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('modelo', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('vcarga', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('vpasajero', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('estado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+        $vehiculos = $query->paginate(12);
 
         return view('vehiculo.index', compact('vehiculos'))
             ->with('i', (request()->input('page', 1) - 1) * $vehiculos->perPage());

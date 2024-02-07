@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
  */
 class VcargaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:vcargas.index')->only('index');
+        $this->middleware('can:vcargas.create')->only('create', 'store');
+        $this->middleware('can:vcargas.edit')->only('edit', 'update');
+        $this->middleware('can:vcargas.show')->only('show');
+        $this->middleware('can:vcargas.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +26,15 @@ class VcargaController extends Controller
      */
     public function index()
     {
-        $vcargas = Vcarga::paginate(10);
+        $search = request('search');
+        $query = Vcarga::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('nombre', 'like', '%' . $search . '%');
+            });
+        }
+        $vcargas = $query->paginate(12);
 
         return view('vcarga.index', compact('vcargas'))
             ->with('i', (request()->input('page', 1) - 1) * $vcargas->perPage());
