@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Marca;
 use App\Models\Modelo;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class ModeloController
@@ -65,12 +69,30 @@ class ModeloController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Modelo::$rules);
-
-        $modelo = Modelo::create($request->all());
-
-        return redirect()->route('modelos.index')
-            ->with('success', 'Modelo creado exitosamente.');
+        $validator = Validator::make($request->all(), Modelo::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $modeloExistente = Modelo::where('nombre', $nombre)->first();
+            if ($modeloExistente) {
+                return redirect()->route('modelos.create')->with('error', 'El modelo ya está registrado.');
+            }
+    
+            Modelo::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('modelos.index')->with('success', 'Modelo creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('modelos.index')->with('error', 'Error al crear el modelo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -81,9 +103,12 @@ class ModeloController extends Controller
      */
     public function show($id)
     {
-        $modelo = Modelo::find($id);
-
-        return view('modelo.show', compact('modelo'));
+        try {
+            $modelo = Modelo::findOrFail($id);
+            return view('modelo.show', compact('modelo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('modelos.index')->with('error', 'El modelo no existe.');
+        }
     }
 
     /**
@@ -94,10 +119,13 @@ class ModeloController extends Controller
      */
     public function edit($id)
     {
-        $modelo = Modelo::find($id);
-
-        $d_marca = Marca::all();
-        return view('modelo.edit', compact('modelo', 'd_marca'));
+        try {
+            $modelo = Modelo::findOrFail($id);
+            $d_marca = Marca::all();
+            return view('modelo.edit', compact('modelo', 'd_marca'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('modelos.index')->with('error', 'El modelo no existe.');
+        }
     }
 
     /**
@@ -109,12 +137,30 @@ class ModeloController extends Controller
      */
     public function update(Request $request, Modelo $modelo)
     {
-        request()->validate(Modelo::$rules);
+        $validator = Validator::make($request->all(), Modelo::$rules);
 
-        $modelo->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('modelos.index')
-            ->with('success', 'Modelo actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $modeloExistente = Modelo::where('nombre', $nombre)->where('id', '!=', $modelo->id)->first();
+            if ($modeloExistente) {
+                return redirect()->route('modelos.index')->with('error', 'Ya existe un modelo con ese nombre.');
+            }
+
+            $modelo->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('modelos.index')->with('success', 'Modelo actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('modelos.index')->with('error', 'Error al actualizar el modelo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -124,9 +170,17 @@ class ModeloController extends Controller
      */
     public function destroy($id)
     {
-        $modelo = Modelo::find($id)->delete();
+        try {
+            $modelo = Modelo::findOrFail($id);
+            $modelo->delete();
 
-        return redirect()->route('modelos.index')
-            ->with('success', 'Modelo borrado exitosamente.');
+            return redirect()->route('modelos.index')->with('success', 'Modelo borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('modelos.index')->with('error', 'El modelo no existe.');
+        } catch (QueryException $e) {
+            return redirect()->route('modelos.index')->with('error', 'El modelo no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            return redirect()->route('modelos.index')->with('error', 'Error al eliminar el modelo: ' . $e->getMessage());
+        }
     }
 }

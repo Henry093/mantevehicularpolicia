@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Canton;
 use App\Models\Provincia;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class CantonController
@@ -33,9 +37,9 @@ class CantonController extends Controller
     
         if ($search) {
             $query->where('nombre', 'like', '%' . $search . '%')
-                  ->orWhereHas('provincia', function ($q) use ($search) {
-                      $q->where('nombre', 'like', '%' . $search . '%');
-                  });
+                ->orWhereHas('provincia', function ($q) use ($search) {
+                    $q->where('nombre', 'like', '%' . $search . '%');
+                });
         }
 
         $cantons = $query->paginate(12);
@@ -64,17 +68,30 @@ class CantonController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Canton::$rules);
+        $validator = Validator::make($request->all(), Canton::$rules);
 
-        $nombre = Canton::where('nombre', $request->input('nombre'))->first();
-        if($nombre){
-            return redirect()->route('cantons.create')->with('error', 'La cantón ya está registrado.');
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
 
-        $canton = Canton::create($request->all());
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('cantons.index')
-            ->with('success', 'Cantón creado exitosamente.');
+            $nombre = Canton::where('nombre', $request->input('nombre'))->first();
+            if ($nombre) {
+                return redirect()->route('cantons.create')->with('error', 'El cantón ya está registrado.');
+            }
+
+            $canton = Canton::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('cantons.index')
+                ->with('success', 'Cantón creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('cantons.index')->with('error', 'Error al crear el cantón: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -85,9 +102,12 @@ class CantonController extends Controller
      */
     public function show($id)
     {
-        $canton = Canton::find($id);
-
-        return view('canton.show', compact('canton'));
+        try {
+            $canton = Canton::findOrFail($id);
+            return view('canton.show', compact('canton'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('cantons.index')->with('error', 'El cantón no existe.');
+        }
     }
 
     /**
@@ -98,10 +118,13 @@ class CantonController extends Controller
      */
     public function edit($id)
     {
-        $canton = Canton::find($id);
-        $d_provincia = Provincia::all();
-
-        return view('canton.edit', compact('canton', 'd_provincia'));
+        try {
+            $canton = Canton::findOrFail($id);
+            $d_provincia = Provincia::all();
+            return view('canton.edit', compact('canton', 'd_provincia'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('cantons.index')->with('error', 'El cantón no existe.');
+        }
     }
 
     /**
@@ -113,14 +136,31 @@ class CantonController extends Controller
      */
     public function update(Request $request, Canton $canton)
     {
-        request()->validate(Canton::$rules);
-
-        $canton->update($request->all());
-
-        return redirect()->route('cantons.index')
-            ->with('success', 'Cantón actualizado exitosamente.');
+        $validator = Validator::make($request->all(), Canton::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $cantonExistente = Canton::where('nombre', $nombre)->where('id', '!=', $canton->id)->first();
+            if ($cantonExistente) {
+                return redirect()->route('cantons.index')->with('error', 'Ya existe un cantón con ese nombre.');
+            }
+    
+            $canton->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('cantons.index')->with('success', 'Cantón actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('cantons.index')->with('error', 'Error al actualizar el cantón: ' . $e->getMessage());
+        }
     }
-
     /**
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
@@ -128,11 +168,24 @@ class CantonController extends Controller
      */
     public function destroy($id)
     {
-        $canton = Canton::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('cantons.index')
-            ->with('success', 'Cantón borrado exitosamente.');
+            $canton = Canton::findOrFail($id);
+            $canton->delete();
+
+            DB::commit();
+
+            return redirect()->route('cantons.index')->with('success', 'Cantón borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('cantons.index')->with('error', 'El cantón no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('cantons.index')->with('error', 'El cantón no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('cantons.index')->with('error', 'Error al eliminar el cantón: ' . $e->getMessage());
+        }
     }
-
- 
 }

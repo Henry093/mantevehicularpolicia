@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estado;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class EstadoController
@@ -59,12 +63,30 @@ class EstadoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Estado::$rules);
-
-        $estado = Estado::create($request->all());
-
-        return redirect()->route('estados.index')
-            ->with('success', 'Estado creado exitosamente.');
+        $validator = Validator::make($request->all(), Estado::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $estadoExistente = Estado::where('nombre', $nombre)->first();
+            if ($estadoExistente) {
+                return redirect()->route('estados.create')->with('error', 'El estado ya está registrado.');
+            }
+    
+            Estado::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('estados.index')->with('success', 'Estado creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('estados.index')->with('error', 'Error al crear el estado: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -75,9 +97,12 @@ class EstadoController extends Controller
      */
     public function show($id)
     {
-        $estado = Estado::find($id);
-
-        return view('estado.show', compact('estado'));
+        try {
+            $estado = Estado::findOrFail($id);
+            return view('estado.show', compact('estado'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('estados.index')->with('error', 'El estado no existe.');
+        }
     }
 
     /**
@@ -88,9 +113,12 @@ class EstadoController extends Controller
      */
     public function edit($id)
     {
-        $estado = Estado::find($id);
-
-        return view('estado.edit', compact('estado'));
+        try {
+            $estado = Estado::findOrFail($id);
+            return view('estado.edit', compact('estado'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('estados.index')->with('error', 'El estado no existe.');
+        }
     }
 
     /**
@@ -102,12 +130,30 @@ class EstadoController extends Controller
      */
     public function update(Request $request, Estado $estado)
     {
-        request()->validate(Estado::$rules);
-
-        $estado->update($request->all());
-
-        return redirect()->route('estados.index')
-            ->with('success', 'Estado actualizado exitosamente.');
+        $validator = Validator::make($request->all(), Estado::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $estadoExistente = Estado::where('nombre', $nombre)->where('id', '!=', $estado->id)->first();
+            if ($estadoExistente) {
+                return redirect()->route('estados.index')->with('error', 'Ya existe un estado con ese nombre.');
+            }
+    
+            $estado->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('estados.index')->with('success', 'Estado actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('estados.index')->with('error', 'Error al actualizar el estado: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -117,9 +163,24 @@ class EstadoController extends Controller
      */
     public function destroy($id)
     {
-        $estado = Estado::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('estados.index')
-            ->with('success', 'Estado borrado exitosamente.');
+            $estado = Estado::findOrFail($id);
+            $estado->delete();
+
+            DB::commit();
+
+            return redirect()->route('estados.index')->with('success', 'Estado borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('estados.index')->with('error', 'El estado no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('estados.index')->with('error', 'El estado no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('estados.index')->with('error', 'Error al eliminar el estado: ' . $e->getMessage());
+        }
     }
 }

@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Canton;
 use App\Models\Provincia;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class ProvinciaController
@@ -60,12 +64,30 @@ class ProvinciaController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Provincia::$rules);
-
-        $provincia = Provincia::create($request->all());
-
-        return redirect()->route('provincias.index')
-            ->with('success', 'Provincia creada exitosamente.');
+        $validator = Validator::make($request->all(), Provincia::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $provinciaExistente = Provincia::where('nombre', $nombre)->first();
+            if ($provinciaExistente) {
+                return redirect()->route('provincias.create')->with('error', 'La provincia ya está registrada.');
+            }
+    
+            Provincia::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('provincias.index')->with('success', 'Provincia creada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('provincias.index')->with('error', 'Error al crear la provincia: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -76,9 +98,12 @@ class ProvinciaController extends Controller
      */
     public function show($id)
     {
-        $provincia = Provincia::find($id);
-
-        return view('provincia.show', compact('provincia'));
+        try {
+            $provincia = Provincia::findOrFail($id);
+            return view('provincia.show', compact('provincia'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('provincias.index')->with('error', 'La provincia no existe.');
+        }
     }
 
     /**
@@ -89,9 +114,12 @@ class ProvinciaController extends Controller
      */
     public function edit($id)
     {
-        $provincia = Provincia::find($id);
-
-        return view('provincia.edit', compact('provincia'));
+        try {
+            $provincia = Provincia::findOrFail($id);
+            return view('provincia.edit', compact('provincia'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('provincias.index')->with('error', 'La provincia no existe.');
+        }
     }
 
     /**
@@ -101,15 +129,35 @@ class ProvinciaController extends Controller
      * @param  Provincia $provincia
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, Provincia $provincia)
     {
-        request()->validate(Provincia::$rules);
+        $validator = Validator::make($request->all(), Provincia::$rules);
 
-        $provincia->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('provincias.index')
-            ->with('success', 'Provincia actualizada exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $provinciaExistente = Provincia::where('nombre', $nombre)->where('id', '!=', $provincia->id)->first();
+            if ($provinciaExistente) {
+                return redirect()->route('provincias.index')->with('error', 'Ya existe una provincia con ese nombre.');
+            }
+
+            $provincia->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('provincias.index')->with('success', 'Provincia actualizada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('provincias.index')->with('error', 'Error al actualizar la provincia: ' . $e->getMessage());
+        }
     }
+
 
     /**
      * @param int $id
@@ -118,12 +166,27 @@ class ProvinciaController extends Controller
      */
     public function destroy($id)
     {
-        $provincia = Provincia::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('provincias.index')
-            ->with('success', 'Provincia borrada exitosamente.');
+            $provincia = Provincia::findOrFail($id);
+            $provincia->delete();
+
+            DB::commit();
+
+            return redirect()->route('provincias.index')->with('success', 'Provincia borrada exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('provincias.index')->with('error', 'La provincia no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('provincias.index')->with('error', 'La provincia no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('provincias.index')->with('error', 'Error al eliminar la provincia: ' . $e->getMessage());
+        }
     }
-
+    
     public function getCantones($provinciaId) {
         
         try {

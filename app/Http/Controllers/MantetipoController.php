@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mantetipo;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class MantetipoController
@@ -62,12 +66,30 @@ class MantetipoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Mantetipo::$rules);
+        $validator = Validator::make($request->all(), Mantetipo::$rules);
 
-        $mantetipo = Mantetipo::create($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('mantetipos.index')
-            ->with('success', 'Mantetipo created successfully.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $mantetipoExistente = Mantetipo::where('nombre', $nombre)->first();
+            if ($mantetipoExistente) {
+                return redirect()->route('mantetipos.create')->with('error', 'El tipo de mantenimiento ya está registrado.');
+            }
+
+            Mantetipo::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('mantetipos.index')->with('success', 'Tipo de mantenimiento creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantetipos.index')->with('error', 'Error al crear el tipo de mantenimiento: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -78,9 +100,12 @@ class MantetipoController extends Controller
      */
     public function show($id)
     {
-        $mantetipo = Mantetipo::find($id);
-
-        return view('mantetipo.show', compact('mantetipo'));
+        try {
+            $mantetipo = Mantetipo::findOrFail($id);
+            return view('mantetipo.show', compact('mantetipo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('mantetipos.index')->with('error', 'Tipo de mantenimiento no existe.');
+        }
     }
 
     /**
@@ -91,9 +116,12 @@ class MantetipoController extends Controller
      */
     public function edit($id)
     {
-        $mantetipo = Mantetipo::find($id);
-
-        return view('mantetipo.edit', compact('mantetipo'));
+        try {
+            $mantetipo = Mantetipo::findOrFail($id);
+            return view('mantetipo.edit', compact('mantetipo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('mantetipos.index')->with('error', 'Tipo de mantenimiento no existe.');
+        }
     }
 
     /**
@@ -105,12 +133,30 @@ class MantetipoController extends Controller
      */
     public function update(Request $request, Mantetipo $mantetipo)
     {
-        request()->validate(Mantetipo::$rules);
+        $validator = Validator::make($request->all(), Mantetipo::$rules);
 
-        $mantetipo->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('mantetipos.index')
-            ->with('success', 'Mantetipo updated successfully');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $mantetipoExistente = Mantetipo::where('nombre', $nombre)->where('id', '!=', $mantetipo->id)->first();
+            if ($mantetipoExistente) {
+                return redirect()->route('mantetipos.index')->with('error', 'Ya existe un tipo de mantenimiento con ese nombre.');
+            }
+
+            $mantetipo->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('mantetipos.index')->with('success', 'Tipo de mantenimiento actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantetipos.index')->with('error', 'Error al actualizar el tipo de mantenimiento: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -120,9 +166,24 @@ class MantetipoController extends Controller
      */
     public function destroy($id)
     {
-        $mantetipo = Mantetipo::find($id)->delete();
-
-        return redirect()->route('mantetipos.index')
-            ->with('success', 'Mantetipo deleted successfully');
+        try {
+            DB::beginTransaction();
+    
+            $mantetipo = Mantetipo::findOrFail($id);
+            $mantetipo->delete();
+    
+            DB::commit();
+    
+            return redirect()->route('mantetipos.index')->with('success', 'Tipo de mantenimiento borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('mantetipos.index')->with('error', 'El tipo de mantenimiento no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('mantetipos.index')->with('error', 'El tipo de mantenimiento no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantetipos.index')->with('error', 'Error al eliminar el tipo de mantenimiento: ' . $e->getMessage());
+        }
     }
 }

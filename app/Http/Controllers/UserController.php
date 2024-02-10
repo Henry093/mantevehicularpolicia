@@ -44,11 +44,12 @@ class UserController extends Controller
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
                     ->orWhere('cedula', 'like', '%' . $search . '%')
+                    ->orWhere('telefono', 'like', '%' . $search . '%')
                     ->orWhere('email', 'like', '%' . $search . '%')
                     ->orWhereHas('sangre', function ($q) use ($search) {
                         $q->where('nombre', 'like', '%' . $search . '%');
                     })
-                    ->orWhereHas('canton', function ($q) use ($search) {
+                    ->orWhereHas('parroquia', function ($q) use ($search) {
                         $q->where('nombre', 'like', '%' . $search . '%');
                     })
                     ->orWhereHas('grado', function ($q) use ($search) {

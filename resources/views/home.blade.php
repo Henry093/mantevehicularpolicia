@@ -7,7 +7,7 @@
     <div class="page-header d-print-none">
         <div class="container-xl">
             <div class="row g-2 align-items-center">
-                <div class="col">
+                <div class="col text-center">
                     <h2 class="page-title">
                         Policía Nacional del Ecuador Sub Zona 7 Loja
                     </h2>
@@ -15,123 +15,40 @@
             </div>
         </div>
     </div>
+
     <!-- Page body -->
     <div class="page-body">
         <div class="container-xl">
-          <div class="row row-cards">
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                  <div class="card-body text-center">
-                      <div class="text-uppercase text-secondary font-weight-medium">Dependencias</div>
-                      <div class="display-5 fw-bold my-3">{{ $totalDependencias }}</div>
-                      <ul class="list-unstyled lh-lg">
-                          <li><strong>{{ $totalDependencias }}</strong> Dependencia(s)</li>
-                      </ul>
-                      <div class="text-center mt-4">
-                          <a href="/dependencias" class="btn w-100">Dependencias</a>
-                      </div>
+            <!-- Carousel -->
+            <div id="carouselExampleIndicators" class="carousel slide mt-5" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                  <div class="carousel-item active">
+                      <img src="{{ asset('images/1706493263.png') }}" class="d-block mx-auto" style="width: 200px;" alt="Imagen 1">
+                  </div>
+                  <div class="carousel-item">
+                      <img src="{{ asset('images/1706493263.png') }}" class="d-block mx-auto" style="width: 200px;" alt="Imagen 2">
+                  </div>
+                  <div class="carousel-item">
+                      <img src="{{ asset('images/1706493263.png') }}" class="d-block mx-auto" style="width: 200px;" alt="Imagen 3">
                   </div>
               </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                  data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                  data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+              </button>
           </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center">
-                  <div class="text-uppercase text-secondary font-weight-medium">Personas</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalUsuarios }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalUsuarios }}</strong> Persona(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/users" class="btn w-100">Personas</a>
-                  </div>
+            <!-- Message -->
+            <div class="row mt-5">
+                <div class="col text-center">
+                    <p>Policia Nacional del Ecuador - Loja Sub Zona 7 le da la bienvenida</p>
                 </div>
-              </div>
             </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center" green>
-                  <div class="text-uppercase text-secondary font-weight-medium">Vehículos</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalVehiculos }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalVehiculos }}</strong> Vehículo(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/vehiculos" class="btn w-100">Vehiculos</a>
-                  </div>
-                </div>
-              </div>
-            </div>{{-- 
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center">
-                  <div class="text-uppercase text-secondary font-weight-medium">Mantenimientos</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalMantenimientos }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalMantenimientos }}</strong> Mantenimiento(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/rmantenimientos" class="btn w-100">Mantenimientos</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center">
-                  <div class="text-uppercase text-secondary font-weight-medium">Reclamos</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalReclamos }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalReclamos }}</strong> Reclamo(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/reclamos" class="btn w-100">Reclamos</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center">
-                  <div class="text-uppercase text-secondary font-weight-medium">Mantenimientos</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalMantenimientos }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalMantenimientos }}</strong> Mantenimiento(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/registrarmantenimientos" class="btn w-100">Mantenimientos</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center">
-                  <div class="text-uppercase text-secondary font-weight-medium">Mantenimientos</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalMantenimientos }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalMantenimientos }}</strong> Mantenimiento(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/registrarmantenimientos" class="btn w-100">Mantenimientos</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-lg-3">
-              <div class="card card-md">
-                <div class="card-body text-center">
-                  <div class="text-uppercase text-secondary font-weight-medium">Mantenimientos</div>
-                  <div class="display-5 fw-bold my-3">{{ $totalMantenimientos }}</div>
-                  <ul class="list-unstyled lh-lg">
-                    <li><strong>{{ $totalMantenimientos }}</strong> Mantenimiento(s)</li>
-                  </ul>
-                  <div class="text-center mt-4">
-                    <a href="/registrarmantenimientos" class="btn w-100">Mantenimientos</a>
-                  </div>
-                </div>
-              </div>
-            </div> --}}
-          </div>
         </div>
-      </div>
+    </div>
 @endsection

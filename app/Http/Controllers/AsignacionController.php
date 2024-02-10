@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asignacion;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class AsignacionController
@@ -59,12 +63,30 @@ class AsignacionController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Asignacion::$rules);
-
-        $asignacion = Asignacion::create($request->all());
-
-        return redirect()->route('asignacions.index')
-            ->with('success', 'Asignacion creado exitosamente.');
+        $validator = Validator::make($request->all(), Asignacion::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $asignacionExistente = Asignacion::where('nombre', $nombre)->first();
+            if ($asignacionExistente) {
+                return redirect()->route('asignacions.create')->with('error', 'La asignación ya está registrada.');
+            }
+    
+            Asignacion::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('asignacions.index')->with('success', 'Asignación creada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('asignacions.index')->with('error', 'Error al crear la asignación: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -75,9 +97,12 @@ class AsignacionController extends Controller
      */
     public function show($id)
     {
-        $asignacion = Asignacion::find($id);
-
-        return view('asignacion.show', compact('asignacion'));
+        try {
+            $asignacion = Asignacion::findOrFail($id);
+            return view('asignacion.show', compact('asignacion'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('asignacions.index')->with('error', 'La asignación no existe.');
+        }
     }
 
     /**
@@ -88,9 +113,12 @@ class AsignacionController extends Controller
      */
     public function edit($id)
     {
-        $asignacion = Asignacion::find($id);
-
-        return view('asignacion.edit', compact('asignacion'));
+        try {
+            $asignacion = Asignacion::findOrFail($id);
+            return view('asignacion.edit', compact('asignacion'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('asignacions.index')->with('error', 'La asignación no existe.');
+        }
     }
 
     /**
@@ -102,12 +130,30 @@ class AsignacionController extends Controller
      */
     public function update(Request $request, Asignacion $asignacion)
     {
-        request()->validate(Asignacion::$rules);
+        $validator = Validator::make($request->all(), Asignacion::$rules);
 
-        $asignacion->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('asignacions.index')
-            ->with('success', 'Asignacion actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $asignacionExistente = Asignacion::where('nombre', $nombre)->where('id', '!=', $asignacion->id)->first();
+            if ($asignacionExistente) {
+                return redirect()->route('asignacions.index')->with('error', 'Ya existe una asignación con ese nombre.');
+            }
+
+            $asignacion->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('asignacions.index')->with('success', 'Asignación actualizada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('asignacions.index')->with('error', 'Error al actualizar la asignación: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -117,9 +163,24 @@ class AsignacionController extends Controller
      */
     public function destroy($id)
     {
-        $asignacion = Asignacion::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('asignacions.index')
-            ->with('success', 'Asignacion borrado exitosamente');
+            $asignacion = Asignacion::findOrFail($id);
+            $asignacion->delete();
+
+            DB::commit();
+
+            return redirect()->route('asignacions.index')->with('success', 'Asignación borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('asignacions.index')->with('error', 'La asignación no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('asignacions.index')->with('error', 'La asignación no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('asignacions.index')->with('error', 'Error al eliminar la asignación: ' . $e->getMessage());
+        }
     }
 }

@@ -121,12 +121,12 @@ class AsignarvehiculoController extends Controller
             // Paso 5: Redirigir con éxito
             return back()->with('success', 'Asignación exitosa');
 
-        } catch (\Exception $e) {
-            // Rollback en caso de error
+        } catch (ModelNotFoundException $e) {
             DB::rollBack();
-
-            // Redirigir con error
-            return back()->with('error', 'Error al procesar la asignación');
+            return redirect()->route('asignarvehiculos.index')->with('error', 'Error: El vehículo no existe');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('asignarvehiculos.index')->with('error', 'Error al procesar la asignación');
         }
     }
 
@@ -177,6 +177,9 @@ class AsignarvehiculoController extends Controller
         ]);
     
         try {
+            // Iniciar una transacción
+            DB::beginTransaction();
+    
             // Obtener el modelo del vehículo
             $vehiculo = Vehisubcircuito::findOrFail($id);
     
@@ -184,18 +187,20 @@ class AsignarvehiculoController extends Controller
             $usuariosIds = $request->input('usuarios');
             $vehiculo->asignar()->whereIn('user_id', $usuariosIds)->delete();
     
+            // Confirmar la transacción
             DB::commit();
+    
             // Redirigir con éxito
             return back()->with('success', 'Desasignación exitosa');
         } catch (ModelNotFoundException $e) {
             // Manejar la excepción específica para el caso en que el vehículo no existe
+            DB::rollBack();
             return redirect()->route('asignarvehiculos.index')->with('error', 'Error: El vehículo no existe');
         } catch (\Exception $e) {
-            DB::rollBack();
             // Manejar cualquier otra excepción
+            DB::rollBack();
             return redirect()->route('asignarvehiculos.index')->with('error', 'Error al procesar la desasignación');
         }
     }
-
     
 }

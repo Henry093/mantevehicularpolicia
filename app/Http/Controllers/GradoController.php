@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grado;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class GradoController
@@ -60,12 +64,30 @@ class GradoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Grado::$rules);
-
-        $grado = Grado::create($request->all());
-
-        return redirect()->route('grados.index')
-            ->with('success', 'Grado creado exitosamente.');
+        $validator = Validator::make($request->all(), Grado::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $gradoExistente = Grado::where('nombre', $nombre)->first();
+            if ($gradoExistente) {
+                return redirect()->route('grados.create')->with('error', 'El grado ya está registrado.');
+            }
+    
+            Grado::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('grados.index')->with('success', 'Grado creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('grados.index')->with('error', 'Error al crear el grado: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -76,9 +98,12 @@ class GradoController extends Controller
      */
     public function show($id)
     {
-        $grado = Grado::find($id);
-
-        return view('grado.show', compact('grado'));
+        try {
+            $grado = Grado::findOrFail($id);
+            return view('grado.show', compact('grado'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('grados.index')->with('error', 'El grado no existe.');
+        }
     }
 
     /**
@@ -89,9 +114,12 @@ class GradoController extends Controller
      */
     public function edit($id)
     {
-        $grado = Grado::find($id);
-
-        return view('grado.edit', compact('grado'));
+        try {
+            $grado = Grado::findOrFail($id);
+            return view('grado.edit', compact('grado'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('grados.index')->with('error', 'El grado no existe.');
+        }
     }
 
     /**
@@ -103,12 +131,30 @@ class GradoController extends Controller
      */
     public function update(Request $request, Grado $grado)
     {
-        request()->validate(Grado::$rules);
-
-        $grado->update($request->all());
-
-        return redirect()->route('grados.index')
-            ->with('success', 'Grado actualizado exitosamente.');
+        $validator = Validator::make($request->all(), Grado::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $gradoExistente = Grado::where('nombre', $nombre)->where('id', '!=', $grado->id)->first();
+            if ($gradoExistente) {
+                return redirect()->route('grados.index')->with('error', 'Ya existe un grado con ese nombre.');
+            }
+    
+            $grado->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('grados.index')->with('success', 'Grado actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('grados.index')->with('error', 'Error al actualizar el grado: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -118,9 +164,24 @@ class GradoController extends Controller
      */
     public function destroy($id)
     {
-        $grado = Grado::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('grados.index')
-            ->with('success', 'Grado borrado exitosamente.');
+            $grado = Grado::findOrFail($id);
+            $grado->delete();
+
+            DB::commit();
+
+            return redirect()->route('grados.index')->with('success', 'Grado borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('grados.index')->with('error', 'El grado no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('grados.index')->with('error', 'El grado no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('grados.index')->with('error', 'Error al eliminar el grado: ' . $e->getMessage());
+        }
     }
 }

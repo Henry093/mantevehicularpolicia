@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Marca;
 use App\Models\Tvehiculo;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class MarcaController
@@ -66,14 +70,63 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Marca::$rules);
-
-        $marca = Marca::create($request->all());
-
-        return redirect()->route('marcas.index')
-            ->with('success', 'Marca creada exitosamente.');
+        $validator = Validator::make($request->all(), Marca::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+    
+            // Verificar si la marca ya está registrada para tvehiculo = 1
+            $marcaRegistradaTvehiculo1 = Marca::where('nombre', $nombre)
+                ->whereHas('tvehiculo', function ($query) {
+                    $query->where('id', 1);
+                })
+                ->exists();
+    
+            // Verificar si la marca ya está registrada para tvehiculo = 2
+            $marcaRegistradaTvehiculo2 = Marca::where('nombre', $nombre)
+                ->whereHas('tvehiculo', function ($query) {
+                    $query->where('id', 2);
+                })
+                ->exists();
+            
+                // Verificar si la marca ya está registrada para tvehiculo = 2
+            $marcaRegistradaTvehiculo3 = Marca::where('nombre', $nombre)
+            ->whereHas('tvehiculo', function ($query) {
+                $query->where('id', 3);
+            })
+            ->exists();
+    
+            if ($marcaRegistradaTvehiculo1 && $request->input('tvehiculo_id') == 1) {
+                // La marca ya está registrada para tvehiculo = 1
+                return redirect()->route('marcas.create')->with('error', 'La marca ya está registrada en automovil.');
+            }
+    
+            if ($marcaRegistradaTvehiculo2 && $request->input('tvehiculo_id') == 2) {
+                // La marca ya está registrada para tvehiculo = 2
+                return redirect()->route('marcas.create')->with('error', 'La marca ya está registrada en camioneta.');
+            }
+    
+            if ($marcaRegistradaTvehiculo3 && $request->input('tvehiculo_id') == 3) {
+                // La marca ya está registrada para tvehiculo = 2
+                return redirect()->route('marcas.create')->with('error', 'La marca ya está registrada en motocicleta.');
+            }
+    
+            Marca::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('marcas.index')->with('success', 'Marca creada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('marcas.index')->with('error', 'Error al crear la marca: ' . $e->getMessage());
+        }
     }
-
     /**
      * Display the specified resource.
      *
@@ -82,9 +135,12 @@ class MarcaController extends Controller
      */
     public function show($id)
     {
-        $marca = Marca::find($id);
-
-        return view('marca.show', compact('marca'));
+        try {
+            $marca = Marca::findOrFail($id);
+            return view('marca.show', compact('marca'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('marcas.index')->with('error', 'La marca no existe.');
+        }
     }
 
     /**
@@ -95,10 +151,13 @@ class MarcaController extends Controller
      */
     public function edit($id)
     {
-        $marca = Marca::find($id);
-        $tvehiculos = Tvehiculo::all();
-
-        return view('marca.edit', compact('marca', 'tvehiculos'));
+        try {
+            $marca = Marca::findOrFail($id);
+            $tvehiculos = Tvehiculo::all();
+            return view('marca.edit', compact('marca', 'tvehiculos'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('marcas.index')->with('error', 'La marca no existe.');
+        }
     }
 
     /**
@@ -110,12 +169,67 @@ class MarcaController extends Controller
      */
     public function update(Request $request, Marca $marca)
     {
-        request()->validate(Marca::$rules);
-
-        $marca->update($request->all());
-
-        return redirect()->route('marcas.index')
-            ->with('success', 'Marca actualizada exitosamente.');
+        $validator = Validator::make($request->all(), Marca::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+    
+            // Verificar si la marca ya está registrada para tvehiculo = 1
+            $marcaRegistradaTvehiculo1 = Marca::where('nombre', $nombre)
+                ->whereHas('tvehiculo', function ($query) {
+                    $query->where('id', 1);
+                })
+                ->where('id', '!=', $marca->id)
+                ->exists();
+    
+            // Verificar si la marca ya está registrada para tvehiculo = 2
+            $marcaRegistradaTvehiculo2 = Marca::where('nombre', $nombre)
+                ->whereHas('tvehiculo', function ($query) {
+                    $query->where('id', 2);
+                })
+                ->where('id', '!=', $marca->id)
+                ->exists();
+    
+            // Verificar si la marca ya está registrada para tvehiculo = 3
+            $marcaRegistradaTvehiculo3 = Marca::where('nombre', $nombre)
+                ->whereHas('tvehiculo', function ($query) {
+                    $query->where('id', 3);
+                })
+                ->where('id', '!=', $marca->id)
+                ->exists();
+    
+            // Verificar si la marca ya está registrada para los tipos de vehículo
+            if ($marcaRegistradaTvehiculo1 && $request->input('tvehiculo_id') == 1) {
+                // La marca ya está registrada para tvehiculo = 1
+                return redirect()->route('marcas.index')->with('error', 'La marca ya está registrada en automóvil.');
+            }
+    
+            if ($marcaRegistradaTvehiculo2 && $request->input('tvehiculo_id') == 2) {
+                // La marca ya está registrada para tvehiculo = 2
+                return redirect()->route('marcas.index')->with('error', 'La marca ya está registrada en camioneta.');
+            }
+    
+            if ($marcaRegistradaTvehiculo3 && $request->input('tvehiculo_id') == 3) {
+                // La marca ya está registrada para tvehiculo = 3
+                return redirect()->route('marcas.index')->with('error', 'La marca ya está registrada en motocicleta.');
+            }
+    
+            // Si no se encuentra registrada para el tipo de vehículo correspondiente, se procede con la actualización
+            $marca->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('marcas.index')->with('success', 'Marca actualizada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('marcas.index')->with('error', 'Error al actualizar la marca: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -125,9 +239,24 @@ class MarcaController extends Controller
      */
     public function destroy($id)
     {
-        $marca = Marca::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('marcas.index')
-            ->with('success', 'Marca borrada exitosamente.');
+            $marca = Marca::findOrFail($id);
+            $marca->delete();
+
+            DB::commit();
+
+            return redirect()->route('marcas.index')->with('success', 'Marca borrada exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('marcas.index')->with('error', 'La marca no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('marcas.index')->with('error', 'La marca no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('marcas.index')->with('error', 'Error al eliminar la marca: ' . $e->getMessage());
+        }
     }
 }

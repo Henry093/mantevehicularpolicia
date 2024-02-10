@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Grado;
 use App\Models\Rango;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class RangoController
@@ -65,12 +69,30 @@ class RangoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Rango::$rules);
+        $validator = Validator::make($request->all(), Rango::$rules);
 
-        $rango = Rango::create($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('rangos.index')
-            ->with('success', 'Rango creado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $rangoExistente = Rango::where('nombre', $nombre)->first();
+            if ($rangoExistente) {
+                return redirect()->route('rangos.create')->with('error', 'El rango ya está registrado.');
+            }
+
+            Rango::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('rangos.index')->with('success', 'Rango creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('rangos.index')->with('error', 'Error al crear el rango: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -81,9 +103,12 @@ class RangoController extends Controller
      */
     public function show($id)
     {
-        $rango = Rango::find($id);
-
-        return view('rango.show', compact('rango'));
+        try {
+            $rango = Rango::findOrFail($id);
+            return view('rango.show', compact('rango'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('rangos.index')->with('error', 'El rango no existe.');
+        }
     }
 
     /**
@@ -94,11 +119,13 @@ class RangoController extends Controller
      */
     public function edit($id)
     {
-        $rango = Rango::find($id);
-
-        $d_grado = Grado::all();
-
-        return view('rango.edit', compact('rango', 'd_grado'));
+        try {
+            $rango = Rango::findOrFail($id);
+            $d_grado = Grado::all();
+            return view('rango.edit', compact('rango', 'd_grado'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('rangos.index')->with('error', 'El rango no existe.');
+        }
     }
 
     /**
@@ -110,12 +137,30 @@ class RangoController extends Controller
      */
     public function update(Request $request, Rango $rango)
     {
-        request()->validate(Rango::$rules);
+        $validator = Validator::make($request->all(), Rango::$rules);
 
-        $rango->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('rangos.index')
-            ->with('success', 'Rango actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $rangoExistente = Rango::where('nombre', $nombre)->where('id', '!=', $rango->id)->first();
+            if ($rangoExistente) {
+                return redirect()->route('rangos.index')->with('error', 'Ya existe un rango con ese nombre.');
+            }
+
+            $rango->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('rangos.index')->with('success', 'Rango actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('rangos.index')->with('error', 'Error al actualizar el rango: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -125,9 +170,24 @@ class RangoController extends Controller
      */
     public function destroy($id)
     {
-        $rango = Rango::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('rangos.index')
-            ->with('success', 'Rango borrado exitosamente.');
+            $rango = Rango::findOrFail($id);
+            $rango->delete();
+
+            DB::commit();
+
+            return redirect()->route('rangos.index')->with('success', 'Rango borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('rangos.index')->with('error', 'El rango no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('rangos.index')->with('error', 'El rango no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('rangos.index')->with('error', 'Error al eliminar el rango: ' . $e->getMessage());
+        }
     }
 }
