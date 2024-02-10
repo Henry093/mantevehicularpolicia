@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Canton;
 use App\Models\Parroquia;
 use App\Models\Provincia;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class ParroquiaController
@@ -69,18 +73,29 @@ class ParroquiaController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Parroquia::$rules);
+        $validator = Validator::make($request->all(), Parroquia::$rules);
 
-        $parroquia = Parroquia::create($request->all());
-
-        $nombre = Parroquia::where('nombre', $request->input('nombre'))->first();
-
-        if($nombre){
-            return redirect()->route('parroquias.create')->with('error', 'La parroquia ya está registrada.');
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
 
-        return redirect()->route('parroquias.index')
-            ->with('success', 'Parroquia creada exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = Parroquia::where('nombre', $request->input('nombre'))->first();
+            if ($nombre) {
+                return redirect()->route('parroquias.create')->with('error', 'La parroquia ya está registrada.');
+            }
+
+            $parroquia = Parroquia::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('parroquias.index')->with('success', 'Parroquia creada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('parroquias.index')->with('error', 'Error al crear la parroquia: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -91,9 +106,12 @@ class ParroquiaController extends Controller
      */
     public function show($id)
     {
-        $parroquia = Parroquia::find($id);
-
-        return view('parroquia.show', compact('parroquia'));
+        try {
+            $parroquia = Parroquia::findOrFail($id);
+            return view('parroquia.show', compact('parroquia'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('parroquias.index')->with('error', 'La parroquia no existe.');
+        }
     }
 
     /**
@@ -104,11 +122,14 @@ class ParroquiaController extends Controller
      */
     public function edit($id)
     {
-        $parroquia = Parroquia::find($id);
-        $d_provincia = Provincia::all();
-        $d_canton = Canton::all();
-
-        return view('parroquia.edit', compact('parroquia', 'd_provincia', 'd_canton'));
+        try {
+            $parroquia = Parroquia::findOrFail($id);
+            $d_provincia = Provincia::all();
+            $d_canton = Canton::all();
+            return view('parroquia.edit', compact('parroquia', 'd_provincia', 'd_canton'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('parroquias.index')->with('error', 'La parroquia no existe.');
+        }
     }
 
     /**
@@ -120,13 +141,30 @@ class ParroquiaController extends Controller
      */
     public function update(Request $request, Parroquia $parroquia)
     {
-        request()->validate(Parroquia::$rules);
-        
-
-        $parroquia->update($request->all());
-
-        return redirect()->route('parroquias.index')
-            ->with('success', 'Parroquia actualizada exitosamente.');
+        $validator = Validator::make($request->all(), Parroquia::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $parroquiaExistente = Parroquia::where('nombre', $nombre)->where('id', '!=', $parroquia->id)->first();
+            if ($parroquiaExistente) {
+                return redirect()->route('parroquias.index')->with('error', 'Ya existe una parroquia con ese nombre.');
+            }
+    
+            $parroquia->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('parroquias.index')->with('success', 'Parroquia actualizada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('parroquias.index')->with('error', 'Error al actualizar la parroquia: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -136,9 +174,24 @@ class ParroquiaController extends Controller
      */
     public function destroy($id)
     {
-        $parroquia = Parroquia::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('parroquias.index')
-            ->with('success', 'Parroquia borrada exitosamente.');
+            $parroquia = Parroquia::findOrFail($id);
+            $parroquia->delete();
+
+            DB::commit();
+
+            return redirect()->route('parroquias.index')->with('success', 'Parroquia borrada exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('parroquias.index')->with('error', 'La parroquia no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('parroquias.index')->with('error', 'La parroquia no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('parroquias.index')->with('error', 'Error al eliminar la parroquia: ' . $e->getMessage());
+        }
     }
 }

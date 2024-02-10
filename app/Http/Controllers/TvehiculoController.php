@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tvehiculo;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class TvehiculoController
@@ -59,12 +63,30 @@ class TvehiculoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Tvehiculo::$rules);
+        $validator = Validator::make($request->all(), Tvehiculo::$rules);
 
-        $tvehiculo = Tvehiculo::create($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('tvehiculos.index')
-            ->with('success', 'Tipo de vehículo creado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $tvehiculoExistente = Tvehiculo::where('nombre', $nombre)->first();
+            if ($tvehiculoExistente) {
+                return redirect()->route('tvehiculos.create')->with('error', 'El tipo de vehículo ya está registrado.');
+            }
+
+            Tvehiculo::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('tvehiculos.index')->with('success', 'Tipo de vehículo creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tvehiculos.index')->with('error', 'Error al crear el tipo de vehículo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -75,9 +97,12 @@ class TvehiculoController extends Controller
      */
     public function show($id)
     {
-        $tvehiculo = Tvehiculo::find($id);
-
-        return view('tvehiculo.show', compact('tvehiculo'));
+        try {
+            $tvehiculo = Tvehiculo::findOrFail($id);
+            return view('tvehiculo.show', compact('tvehiculo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tvehiculos.index')->with('error', 'El tipo de vehículo no existe.');
+        }
     }
 
     /**
@@ -88,9 +113,12 @@ class TvehiculoController extends Controller
      */
     public function edit($id)
     {
-        $tvehiculo = Tvehiculo::find($id);
-
-        return view('tvehiculo.edit', compact('tvehiculo'));
+        try {
+            $tvehiculo = Tvehiculo::findOrFail($id);
+            return view('tvehiculo.edit', compact('tvehiculo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tvehiculos.index')->with('error', 'El tipo de vehículo no existe.');
+        }
     }
 
     /**
@@ -102,12 +130,30 @@ class TvehiculoController extends Controller
      */
     public function update(Request $request, Tvehiculo $tvehiculo)
     {
-        request()->validate(Tvehiculo::$rules);
+        $validator = Validator::make($request->all(), Tvehiculo::$rules);
 
-        $tvehiculo->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('tvehiculos.index')
-            ->with('success', 'Tipo de vehículo actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $tvehiculoExistente = Tvehiculo::where('nombre', $nombre)->where('id', '!=', $tvehiculo->id)->first();
+            if ($tvehiculoExistente) {
+                return redirect()->route('tvehiculos.index')->with('error', 'Ya existe un tipo de vehículo con ese nombre.');
+            }
+
+            $tvehiculo->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('tvehiculos.index')->with('success', 'Tipo de vehículo actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tvehiculos.index')->with('error', 'Error al actualizar el tipo de vehículo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -117,9 +163,24 @@ class TvehiculoController extends Controller
      */
     public function destroy($id)
     {
-        $tvehiculo = Tvehiculo::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('tvehiculos.index')
-            ->with('success', 'Tipo de vehículo borrado exitosamente.');
+            $tvehiculo = Tvehiculo::findOrFail($id);
+            $tvehiculo->delete();
+
+            DB::commit();
+
+            return redirect()->route('tvehiculos.index')->with('success', 'Tipo de vehículo borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('tvehiculos.index')->with('error', 'El tipo de vehículo no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('tvehiculos.index')->with('error', 'El tipo de vehículo no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tvehiculos.index')->with('error', 'Error al eliminar el tipo de vehículo: ' . $e->getMessage());
+        }
     }
 }

@@ -115,7 +115,7 @@ class VehiculoController extends Controller
         $estado = $request->input('estado_id');
 
         if (empty($estado)) {
-            // Si no se proporciona una estado, en este caso 1 = Activo
+            // Si no se proporciona un estado, en este caso 1 = Activo
             $request->merge(['estado_id' => '1']);
         }
 

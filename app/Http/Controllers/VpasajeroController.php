@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vpasajero;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class VpasajeroController
@@ -60,12 +64,30 @@ class VpasajeroController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Vpasajero::$rules);
+        $validator = Validator::make($request->all(), Vpasajero::$rules);
 
-        $vpasajero = Vpasajero::create($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('vpasajeros.index')
-            ->with('success', 'Capacidad de pasajeros creado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $vpasajeroExistente = Vpasajero::where('nombre', $nombre)->first();
+            if ($vpasajeroExistente) {
+                return redirect()->route('vpasajeros.create')->with('error', 'La capacidad de pasajeros ya está registrada.');
+            }
+
+            Vpasajero::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('vpasajeros.index')->with('success', 'Capacidad de pasajeros creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vpasajeros.index')->with('error', 'Error al crear la capacidad de pasajeros: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -76,9 +98,12 @@ class VpasajeroController extends Controller
      */
     public function show($id)
     {
-        $vpasajero = Vpasajero::find($id);
-
-        return view('vpasajero.show', compact('vpasajero'));
+        try {
+            $vpasajero = Vpasajero::findOrFail($id);
+            return view('vpasajero.show', compact('vpasajero'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('vpasajeros.index')->with('error', 'La capacidad de pasajeros no existe.');
+        }
     }
 
     /**
@@ -89,9 +114,12 @@ class VpasajeroController extends Controller
      */
     public function edit($id)
     {
-        $vpasajero = Vpasajero::find($id);
-
-        return view('vpasajero.edit', compact('vpasajero'));
+        try {
+            $vpasajero = Vpasajero::findOrFail($id);
+            return view('vpasajero.edit', compact('vpasajero'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('vpasajeros.index')->with('error', 'La capacidad de pasajeros no existe.');
+        }
     }
 
     /**
@@ -103,12 +131,30 @@ class VpasajeroController extends Controller
      */
     public function update(Request $request, Vpasajero $vpasajero)
     {
-        request()->validate(Vpasajero::$rules);
+        $validator = Validator::make($request->all(), Vpasajero::$rules);
 
-        $vpasajero->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('vpasajeros.index')
-            ->with('success', 'Capacidad de pasajeros actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $vpasajeroExistente = Vpasajero::where('nombre', $nombre)->where('id', '!=', $vpasajero->id)->first();
+            if ($vpasajeroExistente) {
+                return redirect()->route('vpasajeros.index')->with('error', 'Ya existe una capacidad de pasajeros con ese nombre.');
+            }
+
+            $vpasajero->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('vpasajeros.index')->with('success', 'Capacidad de pasajeros actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vpasajeros.index')->with('error', 'Error al actualizar la capacidad de pasajeros: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -118,9 +164,24 @@ class VpasajeroController extends Controller
      */
     public function destroy($id)
     {
-        $vpasajero = Vpasajero::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('vpasajeros.index')
-            ->with('success', 'Capacidad de pasajeros borrado exitosamente.');
+            $vpasajero = Vpasajero::findOrFail($id);
+            $vpasajero->delete();
+
+            DB::commit();
+
+            return redirect()->route('vpasajeros.index')->with('success', 'Capacidad de pasajeros borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('vpasajeros.index')->with('error', 'La capacidad de pasajeros no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('vpasajeros.index')->with('error', 'La capacidad de pasajeros no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vpasajeros.index')->with('error', 'Error al eliminar la capacidad de pasajeros: ' . $e->getMessage());
+        }
     }
 }

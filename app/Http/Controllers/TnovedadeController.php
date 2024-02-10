@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tnovedade;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class TnovedadeController
@@ -59,12 +63,30 @@ class TnovedadeController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Tnovedade::$rules);
-
-        $tnovedade = Tnovedade::create($request->all());
-
-        return redirect()->route('tnovedades.index')
-            ->with('success', 'Tipo de novedad creado exitosamente.');
+        $validator = Validator::make($request->all(), Tnovedade::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $tnovedadeExistente = Tnovedade::where('nombre', $nombre)->first();
+            if ($tnovedadeExistente) {
+                return redirect()->route('tnovedades.create')->with('error', 'El tipo de novedad ya está registrado.');
+            }
+    
+            Tnovedade::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('tnovedades.index')->with('success', 'Tipo de novedad creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tnovedades.index')->with('error', 'Error al crear el tipo de novedad: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -75,9 +97,12 @@ class TnovedadeController extends Controller
      */
     public function show($id)
     {
-        $tnovedade = Tnovedade::find($id);
-
-        return view('tnovedade.show', compact('tnovedade'));
+        try {
+            $tnovedade = Tnovedade::findOrFail($id);
+            return view('tnovedade.show', compact('tnovedade'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tnovedades.index')->with('error', 'El tipo de novedad no existe.');
+        }
     }
 
     /**
@@ -88,9 +113,12 @@ class TnovedadeController extends Controller
      */
     public function edit($id)
     {
-        $tnovedade = Tnovedade::find($id);
-
-        return view('tnovedade.edit', compact('tnovedade'));
+        try {
+            $tnovedade = Tnovedade::findOrFail($id);
+            return view('tnovedade.edit', compact('tnovedade'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tnovedades.index')->with('error', 'El tipo de novedad no existe.');
+        }
     }
 
     /**
@@ -102,12 +130,30 @@ class TnovedadeController extends Controller
      */
     public function update(Request $request, Tnovedade $tnovedade)
     {
-        request()->validate(Tnovedade::$rules);
-
-        $tnovedade->update($request->all());
-
-        return redirect()->route('tnovedades.index')
-            ->with('success', 'Tipo de novedad actualizado exitosamente.');
+        $validator = Validator::make($request->all(), Tnovedade::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $tnovedadeExistente = Tnovedade::where('nombre', $nombre)->where('id', '!=', $tnovedade->id)->first();
+            if ($tnovedadeExistente) {
+                return redirect()->route('tnovedades.index')->with('error', 'Ya existe un tipo de novedad con ese nombre.');
+            }
+    
+            $tnovedade->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('tnovedades.index')->with('success', 'Tipo de novedad actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tnovedades.index')->with('error', 'Error al actualizar el tipo de novedad: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -117,9 +163,24 @@ class TnovedadeController extends Controller
      */
     public function destroy($id)
     {
-        $tnovedade = Tnovedade::find($id)->delete();
-
-        return redirect()->route('tnovedades.index')
-            ->with('success', 'Tipo de novedad borrado exitosamente.');
+        try {
+            DB::beginTransaction();
+    
+            $tnovedade = Tnovedade::findOrFail($id);
+            $tnovedade->delete();
+    
+            DB::commit();
+    
+            return redirect()->route('tnovedades.index')->with('success', 'Tipo de novedad borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('tnovedades.index')->with('error', 'El tipo de novedad no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('tnovedades.index')->with('error', 'El tipo de novedad no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('tnovedades.index')->with('error', 'Error al eliminar el tipo de novedad: ' . $e->getMessage());
+        }
     }
 }

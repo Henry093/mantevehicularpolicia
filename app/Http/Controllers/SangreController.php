@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sangre;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class SangreController
@@ -60,12 +64,30 @@ class SangreController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Sangre::$rules);
+        $validator = Validator::make($request->all(), Sangre::$rules);
 
-        $sangre = Sangre::create($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('sangres.index')
-            ->with('success', 'Sangre creado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $sangreExistente = Sangre::where('nombre', $nombre)->first();
+            if ($sangreExistente) {
+                return redirect()->route('sangres.create')->with('error', 'El tipo de sangre ya está registrado.');
+            }
+
+            Sangre::create($request->all());
+
+            DB::commit();
+
+            return redirect()->route('sangres.index')->with('success', 'Tipo de sangre creada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('sangres.index')->with('error', 'Error al crear el tipo de sangre: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -76,9 +98,12 @@ class SangreController extends Controller
      */
     public function show($id)
     {
-        $sangre = Sangre::find($id);
-
-        return view('sangre.show', compact('sangre'));
+        try {
+            $sangre = Sangre::findOrFail($id);
+            return view('sangre.show', compact('sangre'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('sangres.index')->with('error', 'El tipo de sangre no existe.');
+        }
     }
 
     /**
@@ -89,9 +114,12 @@ class SangreController extends Controller
      */
     public function edit($id)
     {
-        $sangre = Sangre::find($id);
-
-        return view('sangre.edit', compact('sangre'));
+        try {
+            $sangre = Sangre::findOrFail($id);
+            return view('sangre.edit', compact('sangre'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('sangres.index')->with('error', 'El tipo de sangre no existe.');
+        }
     }
 
     /**
@@ -103,12 +131,30 @@ class SangreController extends Controller
      */
     public function update(Request $request, Sangre $sangre)
     {
-        request()->validate(Sangre::$rules);
+        $validator = Validator::make($request->all(), Sangre::$rules);
 
-        $sangre->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('sangres.index')
-            ->with('success', 'Sangre actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $sangreExistente = Sangre::where('nombre', $nombre)->where('id', '!=', $sangre->id)->first();
+            if ($sangreExistente) {
+                return redirect()->route('sangres.index')->with('error', 'Ya existe un tipo de sangre con ese nombre.');
+            }
+
+            $sangre->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('sangres.index')->with('success', 'Tipo de sangre actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('sangres.index')->with('error', 'Error al actualizar el tipo de sangre: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -118,9 +164,24 @@ class SangreController extends Controller
      */
     public function destroy($id)
     {
-        $sangre = Sangre::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('sangres.index')
-            ->with('success', 'Sangre borrado exitosamente.');
+            $sangre = Sangre::findOrFail($id);
+            $sangre->delete();
+
+            DB::commit();
+
+            return redirect()->route('sangres.index')->with('success', 'Tipo de sangre borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('sangres.index')->with('error', 'El tipo de sangre no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('sangres.index')->with('error', 'El tipo de sangre no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('sangres.index')->with('error', 'Error al eliminar el tipo de sangre: ' . $e->getMessage());
+        }
     }
 }
