@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Mantenimiento;
 use App\Models\Mantetipo;
 use App\Models\Vehirecepcione;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class VehirecepcioneController
@@ -30,7 +33,9 @@ class VehirecepcioneController extends Controller
     public function index()
     {
         $search = request('search');
-        $query = Vehirecepcione::query();
+        $query = Vehirecepcione::whereHas('mantenimiento', function ($q) {
+            $q->where('mantestado_id', 4);
+        });
     
         if ($search) {
             $query->where(function ($query) use ($search) {
@@ -48,7 +53,7 @@ class VehirecepcioneController extends Controller
             });
         }
         $vehirecepciones = $query->paginate(12);
-
+    
         return view('vehirecepcione.index', compact('vehirecepciones'))
             ->with('i', (request()->input('page', 1) - 1) * $vehirecepciones->perPage());
     }
@@ -61,7 +66,11 @@ class VehirecepcioneController extends Controller
     public function create()
     {
         $d_mantetipos = Mantetipo::all();
-        $d_mantenimientos = Mantenimiento::whereNotIn('id', Vehirecepcione::pluck('mantenimientos_id'))->get();
+    
+        // Verificar si hay registros de vehículos recibidos
+        $vehirecepcionesIds = Vehirecepcione::pluck('mantenimientos_id')->toArray();
+        $d_mantenimientos = Mantenimiento::whereNotIn('id', $vehirecepcionesIds)->get();
+        
         $vehirecepcione = new Vehirecepcione();
     
         return view('vehirecepcione.create', compact('vehirecepcione', 'd_mantetipos', 'd_mantenimientos'));
@@ -75,52 +84,49 @@ class VehirecepcioneController extends Controller
      */
     public function store(Request $request)
     {
-
-        try {
-        $request->validate([
-            'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // ajusta los formatos y tamaños según necesites
-        ]);
+        $validator = Validator::make($request->all(), Vehirecepcione::$rules);
     
-        $input = $request->all();
-    
-        if ($request->hasFile('imagen')) {
-            $image = $request->file('imagen');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = public_path('images') . '/' . $imageName;
-    
-            if ($image->move(public_path('images'), $imageName)) {
-                // Guardar la ruta de la imagen en el array de entrada
-                $input['imagen'] = 'images/' . $imageName;
-    
-                // Crear el nuevo registro de Vehiregistro
-                $vehiregistro = Vehirecepcione::create($input);
-    
-                // Verificar si la ruta de la imagen se guardó correctamente en la base de datos
-                if ($vehiregistro->imagen == 'images/' . $imageName) {
-                    return redirect()->route('vehirecepciones.index')
-                        ->with('success', 'Vehiregistro created successfully.');
-                } else {
-                    // Si la ruta no se guardó correctamente, eliminar la imagen del servidor
-                    unlink($imagePath);
-    
-                    // Devolver un mensaje de error
-                    return redirect()->route('vehirecepciones.index')
-                        ->with('error', 'Error al guardar la imagen en la base de datos.');
-                }
-            } else {
-                // Si la imagen no se guardó correctamente, devolver un mensaje de error
-                return redirect()->route('vehirecepciones.index')
-                    ->with('error', 'Error al guardar la imagen en el servidor.');
-            }
-        } else {
-            // Crear el nuevo registro de Vehiregistro sin imagen
-            $vehiregistro = Vehirecepcione::create($request->all());
-    
-                
-        return redirect()->route('vehirecepciones.index')
-        ->with('success', 'Vehirecepcione created successfully.');
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-    } catch (QueryException $e) {
+    
+        try {
+            $request->validate([
+                'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // ajusta los formatos y tamaños según necesites
+            ]);
+    
+            $input = $request->all();
+    
+            DB::beginTransaction();
+    
+            if ($request->hasFile('imagen')) {
+                $image = $request->file('imagen');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = public_path('images') . '/' . $imageName;
+    
+                if ($image->move(public_path('images'), $imageName)) {
+                    // Guardar la ruta de la imagen en el array de entrada
+                    $input['imagen'] = 'images/' . $imageName;
+                } else {
+                    // Si la imagen no se guardó correctamente, devolver un mensaje de error
+                    return redirect()->route('vehirecepciones.index')
+                        ->with('error', 'Error al guardar la imagen en el servidor.');
+                }
+            }
+    
+            // Crear el nuevo registro de Vehiregistro
+            $vehiregistro = Vehirecepcione::create($input);
+    
+            // Actualizar el campo mantestado_id en el mantenimiento relacionado
+            $mantenimiento = $vehiregistro->mantenimiento;
+            $mantenimiento->update(['mantestado_id' => 4]);
+    
+            DB::commit();
+    
+            return redirect()->route('vehirecepciones.index')
+                ->with('success', 'Recepción del vehículo creado exitosamente.');
+        } catch (QueryException $e) {
+            DB::rollback();
             // Capturar la excepción y manejar el error de la base de datos
             return redirect()->route('vehirecepciones.create')
                 ->with('error', 'Error no existe la orden de mantenimiento');
@@ -135,9 +141,12 @@ class VehirecepcioneController extends Controller
      */
     public function show($id)
     {
-        $vehirecepcione = Vehirecepcione::find($id);
-
-        return view('vehirecepcione.show', compact('vehirecepcione'));
+        try {
+            $vehirecepcione = Vehirecepcione::findOrFail($id);
+            return view('vehirecepcione.show', compact('vehirecepcione'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('vehirecepciones.index')->with('error', 'El registro de recepción de vehículo no existe.');
+        }
     }
 
     /**
@@ -148,10 +157,19 @@ class VehirecepcioneController extends Controller
      */
     public function edit($id)
     {
-        $vehirecepcione = Vehirecepcione::find($id);
-        $d_mantetipos = Mantetipo::all();
-
-        return view('vehirecepcione.edit', compact('vehirecepcione', 'd_mantetipos'));
+        try {
+            $vehirecepcione = Vehirecepcione::findOrFail($id);
+                // Verificar si el estado del mantenimiento es 1 (Nuevo)
+            if ($vehirecepcione->mantenimiento->mantestado_id != 4) {
+                return redirect()->route('vehirecepciones.index')->with('error', 'No puedes editar esta orden de mantenimiento porque esta en estado "' . $vehirecepcione->mantenimiento->mantestado->nombre . '".');
+            }
+            $d_mantetipos = Mantetipo::all();
+            $d_mantenimientos = Mantenimiento::all();
+    
+            return view('vehirecepcione.edit', compact('vehirecepcione', 'd_mantetipos', 'd_mantenimientos'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('vehirecepciones.index')->with('error', 'El registro de recepción de vehículo no existe.');
+        }
     }
 
     /**
@@ -163,38 +181,56 @@ class VehirecepcioneController extends Controller
      */
     public function update(Request $request, Vehirecepcione $vehirecepcione)
     {
-        request()->validate(Vehirecepcione::$rules);
-    
-        // Verificar si se ha seleccionado una nueva imagen
-        if ($request->hasFile('imagen')) {
-            // Eliminar la imagen anterior del servidor
-            if ($vehirecepcione->imagen) {
-                unlink(public_path($vehirecepcione->imagen));
-            }
-    
-            // Guardar la nueva imagen en el servidor y en la base de datos
-            $image = $request->file('imagen');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = public_path('images') . '/' . $imageName;
-    
-            if ($image->move(public_path('images'), $imageName)) {
-                // Actualizar el campo 'imagen' con la nueva ruta de la imagen
-                $input['imagen'] = 'images/' . $imageName;
-            } else {
-                // Si la imagen no se guardó correctamente, devolver un mensaje de error
-                return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)
-                    ->with('error', 'Error al guardar la imagen en el servidor.');
-            }
-        } else {
-            // Si no se ha seleccionado una nueva imagen, mantener la imagen actual
-            $input['imagen'] = $vehirecepcione->imagen;
+        $validator = Validator::make($request->all(), Vehirecepcione::$rules);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-    
-        // Actualizar los demás campos del registro
-        $vehirecepcione->update($input);
-    
-        return redirect()->route('vehirecepciones.index')
-            ->with('success', 'Vehirecepcione updated successfully');
+        try {
+            
+            // Verificar si se ha seleccionado una nueva imagen
+            if ($request->hasFile('imagen')) {
+                // Eliminar la imagen anterior del servidor
+                if ($vehirecepcione->imagen) {
+                    unlink(public_path($vehirecepcione->imagen));
+                }
+        
+                // Guardar la nueva imagen en el servidor y en la base de datos
+                $image = $request->file('imagen');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = public_path('images') . '/' . $imageName;
+        
+                if ($image->move(public_path('images'), $imageName)) {
+                    // Actualizar el campo 'imagen' con la nueva ruta de la imagen
+                    $input['imagen'] = 'images/' . $imageName;
+                } else {
+                    // Si la imagen no se guardó correctamente, devolver un mensaje de error
+                    return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)
+                        ->with('error', 'Error al guardar la imagen en el servidor.');
+                }
+            } else {
+                // Si no se ha seleccionado una nueva imagen, mantener la imagen actual
+                $input['imagen'] = $vehirecepcione->imagen;
+            }
+            
+            // Actualizar los demás campos del registro
+            DB::beginTransaction();
+
+            $vehirecepcione->update($input);
+
+            DB::commit();
+        
+            return redirect()->route('vehirecepciones.index')
+                ->with('success', 'Recepción del vehículo actualizado  exitosamente.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)
+                ->with('error', 'Error al actualizar la recepción del vehículo: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)
+                ->with('error', 'Error al actualizar la recepción del vehículo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -204,10 +240,36 @@ class VehirecepcioneController extends Controller
      */
     public function destroy($id)
     {
-        $vehirecepcione = Vehirecepcione::find($id)->delete();
+        try {
+            DB::beginTransaction();
+        
+            $vehirecepcione = Vehirecepcione::findOrFail($id);
 
-        return redirect()->route('vehirecepciones.index')
-            ->with('success', 'Vehirecepcione deleted successfully');
+            // Verificar si el mantestado es igual a 2, 3
+            if (in_array($vehirecepcione->mantenimiento->mantestado_id, [4, 5])) {
+                return redirect()->route('vehirecepciones.index')->with('error', 'No se puede eliminar la orden de mantenimiento porque esta "' . $vehirecepcione->mantenimiento->mantestado->nombre . '".');
+            }
+    
+            // Eliminar el registro de recepción de vehículo
+            $vehirecepcione->delete();
+        
+            DB::commit();
+        
+            return redirect()->route('vehirecepciones.index')
+                ->with('success', 'Recepción del vehículo borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            // Manejar el caso donde el registro de recepción de vehículo no existe
+            DB::rollBack();
+            return redirect()->route('vehirecepciones.index')->with('error', 'El registro de recepción de vehículo no existe.');
+        } catch (QueryException $e) {
+            // Manejar errores relacionados con consultas de base de datos
+            DB::rollBack();
+            return redirect()->route('vehirecepciones.index')->with('error', 'Error al borrar la recepción del vehículo: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            // Manejar otros errores inesperados
+            DB::rollBack();
+            return redirect()->route('vehirecepciones.index')->with('error', 'Error al borrar la recepción del vehículo: ' . $e->getMessage());
+        }
     }
 
 

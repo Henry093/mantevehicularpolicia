@@ -8,8 +8,11 @@ use App\Models\Estado;
 use App\Models\Parroquia;
 use App\Models\Provincia;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class DistritoController
@@ -85,20 +88,37 @@ class DistritoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Distrito::$rules);
-
-        // Verificar si el estado ya está presente en la solicitud
-        $estado = $request->input('estado_id');
-
-        if (empty($estado)) {
-            // Si no se proporciona una estado, en este caso 1 = Activo
-            $request->merge(['estado_id' => '1']);
+        $validator = Validator::make($request->all(), Distrito::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-
-        $distrito = Distrito::create($request->all());
-
-        return redirect()->route('distritos.index')
-            ->with('success', 'Distrito creado exitosamente.');
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $distritoExistente = Distrito::where('nombre', $nombre)->first();
+            if ($distritoExistente) {
+                return redirect()->route('distritos.create')->with('error', 'El distrito ya está registrado.');
+            }
+    
+            // Verificar si el estado ya está presente en la solicitud
+            $estado = $request->input('estado_id');
+            if (empty($estado)) {
+                // Si no se proporciona un estado, en este caso 1 = Activo
+                $request->merge(['estado_id' => '1']);
+            }
+    
+            Distrito::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('distritos.index')->with('success', 'Distrito creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('distritos.index')->with('error', 'Error al crear el distrito: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -109,9 +129,12 @@ class DistritoController extends Controller
      */
     public function show($id)
     {
-        $distrito = Distrito::find($id);
-
-        return view('distrito.show', compact('distrito'));
+        try {
+            $distrito = Distrito::findOrFail($id);
+            return view('distrito.show', compact('distrito'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('distritos.index')->with('error', 'El distrito no existe.');
+        }
     }
 
     /**
@@ -122,15 +145,19 @@ class DistritoController extends Controller
      */
     public function edit($id)
     {
-        $distrito = Distrito::find($id);
-        $d_provincia = Provincia::all();
-        $d_canton = Canton::all();
-        $d_parroquia = Parroquia::all();
-        $d_estado = Estado::all();
+        try {
+            $distrito = Distrito::findOrFail($id);
+            $d_provincia = Provincia::all();
+            $d_canton = Canton::all();
+            $d_parroquia = Parroquia::all();
+            $d_estado = Estado::all();
 
-        $edicion = true;
+            $edicion = true;
 
-        return view('distrito.edit', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia', 'd_estado', 'edicion'));
+            return view('distrito.edit', compact('distrito', 'd_provincia', 'd_canton', 'd_parroquia', 'd_estado', 'edicion'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('distritos.index')->with('error', 'El distrito no existe.');
+        }
     }
 
     /**
@@ -142,12 +169,30 @@ class DistritoController extends Controller
      */
     public function update(Request $request, Distrito $distrito)
     {
-        request()->validate(Distrito::$rules);
+        $validator = Validator::make($request->all(), Distrito::$rules);
 
-        $distrito->update($request->all());
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
 
-        return redirect()->route('distritos.index')
-            ->with('success', 'Distrito actualizado exitosamente.');
+        try {
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $distritoExistente = Distrito::where('nombre', $nombre)->where('id', '!=', $distrito->id)->first();
+            if ($distritoExistente) {
+                return redirect()->route('distritos.index')->with('error', 'Ya existe un distrito con ese nombre.');
+            }
+
+            $distrito->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('distritos.index')->with('success', 'Distrito actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('distritos.index')->with('error', 'Error al actualizar el distrito: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -157,10 +202,25 @@ class DistritoController extends Controller
      */
     public function destroy($id)
     {
-        $distrito = Distrito::find($id)->delete();
+        try {
+            DB::beginTransaction();
 
-        return redirect()->route('distritos.index')
-            ->with('success', 'Distrito borrado exitosamente.');
+            $distrito = Distrito::findOrFail($id);
+            $distrito->delete();
+
+            DB::commit();
+
+            return redirect()->route('distritos.index')->with('success', 'Distrito borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('distritos.index')->with('error', 'El distrito no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('distritos.index')->with('error', 'El distrito no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('distritos.index')->with('error', 'Error al eliminar el distrito: ' . $e->getMessage());
+        }
     }
 
 

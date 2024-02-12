@@ -12,8 +12,12 @@ use App\Models\Subcircuito;
 use App\Models\Vehiculo;
 use App\Models\Vehisubcircuito;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 /**
  * Class VehisubcircuitoController
@@ -49,34 +53,43 @@ class VehisubcircuitoController extends Controller
      */
     public function create()
     {
-        // Obtener todos los usuarios
-        $d_vehiculo = Vehiculo::whereNotIn('id', Vehisubcircuito::where('asignacion_id', 1)->pluck('vehiculo_id')->toArray())
-        ->whereNotIn('id', Vehisubcircuito::where('asignacion_id', 2)->pluck('vehiculo_id')->toArray())
-        ->get();
-
-        $vehisubcircuito = new Vehisubcircuito();
-        $d_provincia = Provincia::all();
-        $d_canton = Canton::all();
-        $d_parroquia = Parroquia::all();
-        $d_distrito = Distrito::all();
-        $d_circuito = Circuito::all();
-        $d_subcircuito = Subcircuito::all();
-
-        $edicion = false;
-        $edicion2 = true;
-
-        return view('vehisubcircuito.create', compact(
-            'vehisubcircuito', 
-            'd_vehiculo', 
-            'd_provincia', 
-            'd_canton', 
-            'd_parroquia', 
-            'd_distrito', 
-            'd_circuito', 
-            'd_subcircuito', 
-            'edicion',
-            'edicion2'
-        ));
+        try {
+            // Obtener todos los usuarios
+            $d_vehiculo = Vehiculo::whereNotIn('id', Vehisubcircuito::where('asignacion_id', 1)->pluck('vehiculo_id')->toArray())
+                ->whereNotIn('id', Vehisubcircuito::where('asignacion_id', 2)->pluck('vehiculo_id')->toArray())
+                ->whereNotIn('estado_id', [2, 3])
+                ->get();
+    
+            $vehisubcircuito = new Vehisubcircuito();
+            $d_provincia = Provincia::all();
+            $d_canton = Canton::all();
+            $d_parroquia = Parroquia::all();
+            $d_distrito = Distrito::all();
+            $d_circuito = Circuito::all();
+            $d_subcircuito = Subcircuito::all();
+    
+            $edicion = false;
+            $edicion2 = true;
+    
+            return view('vehisubcircuito.create', compact(
+                'vehisubcircuito', 
+                'd_vehiculo', 
+                'd_provincia', 
+                'd_canton', 
+                'd_parroquia', 
+                'd_distrito', 
+                'd_circuito', 
+                'd_subcircuito', 
+                'edicion',
+                'edicion2'
+            ));
+        } catch (\Exception $e) {
+            // Manejar la excepción general
+            return redirect()->route('error')->with('error', 'Hubo un error al cargar la página de creación: ' . $e->getMessage());
+        } catch (ModelNotFoundException $e) {
+            // Manejar la excepción específica del modelo
+            return redirect()->route('error')->with('error', 'Hubo un error al cargar la página de creación: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -87,31 +100,40 @@ class VehisubcircuitoController extends Controller
      */
     public function store(Request $request)
     {
-        //request()->validate(Vehisubcircuito::$rules);
-
-        $vehiculoId = $request->input('vehiculo_id');
-        $VehiculoEx = Vehisubcircuito::where('vehiculo_id', $vehiculoId)->first();
-
-        if ($VehiculoEx) {
+        // Validación de los datos de entrada según las reglas definidas en el modelo
+        $validator = Validator::make($request->all(), Vehisubcircuito::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+    
+            DB::beginTransaction();
+    
+            $vehiculoId = $request->input('vehiculo_id');
+            $vehiculoExistente = Vehisubcircuito::where('vehiculo_id', $vehiculoId)->first();
+            if ($vehiculoExistente) {
+                return redirect()->route('vehisubcircuitos.create')
+                    ->with('error', 'Ya existe un registro para esta Placa.');
+            }
+    
+            $estado = $request->input('asignacion_id');
+            if (empty($estado)) {
+                $request->merge(['asignacion_id' => '1']);
+            }
+    
+            Vehisubcircuito::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('vehisubcircuitos.index')
+                ->with('success', 'Vehículo asignado al Subcircuito creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->route('vehisubcircuitos.create')
-                ->with('error', 'Ya existe un registro para esta Placa.');
+                ->with('error', 'Error al crear el Vehículo asignado al Subcircuito: ' . $e->getMessage());
         }
-
-        // Si no hay un registro existente, procede con la creación del nuevo registro
-        request()->validate(Vehisubcircuito::$rules);
-
-
-        $estado = $request->input('asignacion_id');
-
-        if (empty($estado)) {
-            // Si no se proporciona un estado, en este caso 1 = Activo
-            $request->merge(['asignacion_id' => '1']);
-        }
-        
-        $vehisubcircuito = Vehisubcircuito::create($request->all());
-
-        return redirect()->route('vehisubcircuitos.index')
-            ->with('success', 'Vehículo Subcircuito creado exitosamente.');
     }
 
     /**
@@ -122,9 +144,16 @@ class VehisubcircuitoController extends Controller
      */
     public function show($id)
     {
-        $vehisubcircuito = Vehisubcircuito::find($id);
-
-        return view('vehisubcircuito.show', compact('vehisubcircuito'));
+        try {
+            // Intenta encontrar el Vehisubcircuito con el ID proporcionado
+            $vehisubcircuito = Vehisubcircuito::findOrFail($id);
+    
+            // Si se encuentra, mostrar la vista de detalle del Vehisubcircuito
+            return view('vehisubcircuito.show', compact('vehisubcircuito'));
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentra, redirigir al usuario a alguna parte a la lista de Vehisubcircuitos
+            return redirect()->route('vehisubcircuitos.index')->with('error', 'El Vehículo asignado al subcircuito no existe.');
+        }
     }
 
     /**
@@ -135,31 +164,42 @@ class VehisubcircuitoController extends Controller
      */
     public function edit($id)
     {
-        $vehisubcircuito = Vehisubcircuito::find($id);
-        $d_vehiculo = Vehiculo::all();
-        $d_provincia = Provincia::all();
-        $d_canton = Canton::all();
-        $d_parroquia = Parroquia::all();
-        $d_distrito = Distrito::all();
-        $d_circuito = Circuito::all();
-        $d_subcircuito = Subcircuito::all();
-        $d_asignacion = Asignacion::all();
-
-        $edicion = true;
-        $edicion2 = false;
-        return view('vehisubcircuito.edit', compact(
-            'vehisubcircuito',
-            'd_vehiculo',
-            'd_provincia',
-            'd_canton',
-            'd_parroquia',
-            'd_distrito',
-            'd_circuito',
-            'd_subcircuito',
-            'd_asignacion',
-            'edicion',
-            'edicion2'
-        ));
+        try {
+            // Intenta encontrar el Vehisubcircuito con el ID proporcionado
+            $vehisubcircuito = Vehisubcircuito::findOrFail($id);
+    
+            // Obtener datos relacionados
+            $d_vehiculo = Vehiculo::all();
+            $d_provincia = Provincia::all();
+            $d_canton = Canton::all();
+            $d_parroquia = Parroquia::all();
+            $d_distrito = Distrito::all();
+            $d_circuito = Circuito::all();
+            $d_subcircuito = Subcircuito::all();
+            $d_asignacion = Asignacion::all();
+    
+            // Establecer variables de edición
+            $edicion = true;
+            $edicion2 = false;
+    
+            // Pasar los datos a la vista de edición
+            return view('vehisubcircuito.edit', compact(
+                'vehisubcircuito',
+                'd_vehiculo',
+                'd_provincia',
+                'd_canton',
+                'd_parroquia',
+                'd_distrito',
+                'd_circuito',
+                'd_subcircuito',
+                'd_asignacion',
+                'edicion',
+                'edicion2'
+            ));
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el Vehisubcircuito, redirigir al usuario a la lista de Vehisubcircuitos
+            return redirect()->route('vehisubcircuitos.index')->with('error', 'El Vehículo asignado al subcircuito no existe.');
+        }
     }
 
     /**
@@ -171,43 +211,73 @@ class VehisubcircuitoController extends Controller
      */
     public function update(Request $request, Vehisubcircuito $vehisubcircuito)
     {
-        // Reglas de validación
-        $rules = [
-            'vehiculo_id' => 'required',
-            'provincia_id' => 'required',
-            'canton_id' => 'required',
-            'parroquia_id' => 'required',
-            'distrito_id' => 'required',
-            'circuito_id' => 'required',
-            'subcircuito_id' => 'required',
-            'asignacion_id' => 'required',
-        ];
-
-        // Validar los datos de la solicitud
-        $validatedData = $request->validate($rules);
-
-        // Verificar si la asignación es igual a 2 (No Asignado)
-        if ($request->input('asignacion_id') == 2) {
-            // Actualizar los campos a "No Asignado" sin borrar el registro
-            $vehisubcircuito->update([
-                'provincia_id' => null,
-                'canton_id' => null,
-                'parroquia_id' => null,
-                'distrito_id' => null,
-                'circuito_id' => null,
-                'subcircuito_id' => null,
-                'asignacion_id' => 2,
-
-            ]);
-
-            return redirect()->route('vehisubcircuitos.index')->with('success', 'Registro actualizado a "No Asignado".');
+        // Validación de los datos de entrada según las reglas definidas en el modelo
+        $validator = Validator::make($request->all(), Vehisubcircuito::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-
-        // Actualizar el Usersubcircuito con los nuevos datos
-        $vehisubcircuito->update($validatedData);
-
-        return redirect()->route('vehisubcircuitos.index')
-            ->with('success', 'Vehículo Subcircuito actualizado exitosamente.');
+    
+        try {
+            // Reglas de validación
+            $rules = [
+                'vehiculo_id' => 'required',
+                'asignacion_id' => ['required', Rule::in([1, 2])],
+            ];
+    
+            // Validar los datos de la solicitud
+            $validatedData = $request->validate($rules);
+    
+            DB::beginTransaction();
+    
+            // Verificar si la asignación es igual a 2 (No Asignado)
+            if ($validatedData['asignacion_id'] == 2) {
+                // Eliminar el registro de la base de datos
+                $vehisubcircuito->delete();
+    
+                DB::commit();
+    
+                return redirect()->route('vehisubcircuitos.index')->with('success', 'Registro eliminado exitosamente.');
+            } elseif ($validatedData['asignacion_id'] == 1) {
+                // Actualizar los campos a "Asignado" sin borrar el registro
+                $asignadoData = [
+                    'provincia_id' => $request->input('provincia_id'),
+                    'canton_id' => $request->input('canton_id'),
+                    'parroquia_id' => $request->input('parroquia_id'),
+                    'distrito_id' => $request->input('distrito_id'),
+                    'circuito_id' => $request->input('circuito_id'),
+                    'subcircuito_id' => $request->input('subcircuito_id'),
+                    'asignacion_id' => 1,
+                ];
+    
+                $vehisubcircuito->update($asignadoData);
+    
+                DB::commit();
+    
+                return redirect()->route('vehisubcircuitos.index')->with('success', 'Registro actualizado a "Asignado".');
+            }
+    
+            // Asegurarse de que se proporcionen valores válidos para los campos de ubicación
+            $request->validate([
+                'provincia_id' => 'required',
+                'canton_id' => 'required',
+                'parroquia_id' => 'required',
+                'distrito_id' => 'required',
+                'circuito_id' => 'required',
+                'subcircuito_id' => 'required',
+            ]);
+    
+            // Actualizar el Vehisubcircuito con los nuevos datos
+            $vehisubcircuito->update($validatedData);
+    
+            DB::commit();
+    
+            return redirect()->route('vehisubcircuitos.index')
+                ->with('success', 'Vehículo asignado al subcircuito actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vehisubcircuitos.index')->with('error', 'Error al actualizar el vehículo asignado al subcircuito: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -228,15 +298,19 @@ class VehisubcircuitoController extends Controller
             $vehisubcircuito->delete();
     
             return redirect()->route('vehisubcircuitos.index')
-                ->with('success', 'Vehículo Subcircuito borrado exitosamente.');
+                ->with('success', 'Vehículo asignado al Subcircuito borrado exitosamente.');
         } catch (ModelNotFoundException $e) {
             // Manejar la excepción si no se encuentra el registro
             return redirect()->route('vehisubcircuitos.index')
-                ->with('error', 'Vehículo Subcircuito no encontrado.');
+                ->with('error', 'Vehículo asignado al Subcircuito no encontrado.');        
+        } catch (QueryException $e) {
+            // Capturar si hay un error de consulta (por ejemplo, restricciones de clave externa) y redirigir al usuario con un mensaje de error
+            return redirect()->route('vehisubcircuitos.index')
+                ->with('error', 'Error al eliminar el Vehículo asignado al subcircuito, Hay datos asociados.');
         } catch (\Exception $e) {
             // Manejar otras excepciones
             return redirect()->route('vehisubcircuitos.index')
-                ->with('error', 'Error al borrar Vehículo Subcircuito.');
+                ->with('error', 'Error al borrar el Vehículo asignado al Subcircuito.');
         }
     }
 

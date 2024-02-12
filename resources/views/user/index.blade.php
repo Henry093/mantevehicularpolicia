@@ -113,7 +113,7 @@
 											<td>{{ $user->telefono }}</td>
 											<td>{{ $user->grado->nombre }}</td>
 											<td>{{ $user->rango->nombre }}</td>
-											<td>{{ $user->email }}</td>
+											<td>{{ $user->estado->nombre }}</td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">

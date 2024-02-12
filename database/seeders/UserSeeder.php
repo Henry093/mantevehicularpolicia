@@ -261,7 +261,7 @@ class UserSeeder extends Seeder
 		User::create([
 			'name' => 'Henry A', 'lastname' => 'Ponce A', 'cedula' => '1700000000', 'fecha_nacimiento' => '2000-01-01',
 			'sangre_id' => '1', 'provincia_id' => '11', 'canton_id' => '1', 'parroquia_id' => '1',
-			'telefono' => '0999999991', 'grado_id' => '1', 'rango_id' => '1','usuario' => 'ecponcehe',
+			'telefono' => '0999999990', 'grado_id' => '1', 'rango_id' => '1','usuario' => 'ecponcehe',
 			'email' => 'hbponce@policianacional.gob.ec',  'email_verified_at' => '2023-01-01', 'password' => Hash::make('Policia2024'),
 			 'estado_id' => '1'])->assignRole ('Administrador');
 

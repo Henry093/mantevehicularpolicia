@@ -28,37 +28,33 @@
                     <div class="card-body vehiculo-info">
                         <div class="form-group mb-3">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Tipo de Vehículo</label>
-                                    <input type="text" class="form-control ps-0 vehiculo-info-tipo" disabled>
+                                    <input type="text" class="form-control ps-3 vehiculo-info-tipo" disabled>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Placa del Vehículo</label>
-                                    <input type="text" class="form-control ps-0 vehiculo-info-placa" disabled>
+                                    <input type="text" class="form-control ps-3 vehiculo-info-placa" disabled>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-3">
-                            <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Marca del Vehículo</label>
-                                    <input type="text" class="form-control ps-0 vehiculo-info-marca" disabled>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Modelo del Vehículo</label>
-                                    <input type="text" class="form-control ps-0 vehiculo-info-modelo" disabled>
+                                    <input type="text" class="form-control ps-3 vehiculo-info-marca" disabled>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mb-3">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label class="form-label">Capacidad de carga</label>
-                                    <input type="text" class="form-control ps-0 vehiculo-info-carga" disabled>
+                                <div class="col-md-4">
+                                    <label class="form-label">Modelo del Vehículo</label>
+                                    <input type="text" class="form-control ps-3 vehiculo-info-modelo" disabled>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <label class="form-label">Capacidad de carga</label>
+                                    <input type="text" class="form-control ps-3 vehiculo-info-carga" disabled>
+                                </div>
+                                <div class="col-md-4">
                                     <label class="form-label">Capacidad de Pasajeros</label>
-                                    <input type="text" class="form-control ps-0 vehiculo-info-pasajero" disabled>
+                                    <input type="text" class="form-control ps-3 vehiculo-info-pasajero" disabled>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +67,7 @@
 @endif
 <div class="form-group mb-3">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('provincia_id', 'Provincia') }}</label>
             <div>
                 <select name="provincia_id" required
@@ -89,7 +85,7 @@
                 {!! $errors->first('provincia_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('canton_id', 'Cantón') }}</label>
             <div>
                 <select name="canton_id" required
@@ -107,11 +103,7 @@
                 {!! $errors->first('canton_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('parroquia_id', 'Parroquia') }}</label>
             <div>
                 <select name="parroquia_id" required
@@ -129,7 +121,11 @@
                 {!! $errors->first('parroquia_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-        <div class="col-md-6">
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('distrito_id', 'Distrito') }}</label>
             <div>
                 <select name="distrito_id" required
@@ -147,12 +143,7 @@
                 {!! $errors->first('distrito_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-    </div>
-</div>
-
-<div class="form-group mb-3">
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('circuito_id', 'Circuito') }}</label>
             <div>
                 <select name="circuito_id" required
@@ -170,7 +161,7 @@
                 {!! $errors->first('circuito_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('subcircuito_id', 'Sub Circuito') }}</label>
             <div>
                 <select name="subcircuito_id" required

@@ -369,7 +369,7 @@ return [
             'active' => ['asignacion'],
             'submenu' => [
                 [
-                    'text' => 'User',
+                    'text' => 'Usuario',
                     'route' => 'usersubcircuitos.index',
                     'icon' => 'ti ti-user',
                     'can' => 'usersubcircuitos.index',
@@ -383,7 +383,7 @@ return [
                 [
                     'text' => 'Vehículo - Usuario',
                     'route' => 'asignarvehiculos.index',
-                    'icon' => 'ti ti-car',
+                    'icon' => 'ti ti-car-suv',
                     'can' => 'asignarvehiculos.index',
                 ], 
                 

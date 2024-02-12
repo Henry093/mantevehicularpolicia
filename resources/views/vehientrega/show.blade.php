@@ -124,7 +124,7 @@
     </div>
         <!-- Agregar los botones aquí -->
         <div class="d-flex justify-content-center mt-5">
-            <a href="{{ route('mantenimientos.create') }}" class="btn btn-primary me-3">
+            <a href="{{ route('vehientregas.index') }}" class="btn btn-primary me-3">
                 @lang('Return')
             </a>
             <button type="button" class="btn btn-secondary" onclick="window.print();">

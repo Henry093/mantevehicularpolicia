@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::create('estados', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nombre', 15);
+            $table->string('nombre', 15)->unique();
             $table->timestamps();
         });
 
 
         Schema::create('provincias', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nombre', 50);
+            $table->string('nombre', 50)->unique();
             $table->timestamps();
         });
 
         Schema::create('cantons', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('provincia_id');
-            $table->string('nombre', 50);
+            $table->string('nombre', 50)->unique();
             $table->timestamps();
             $table->foreign('provincia_id')->references('id')->on('provincias');
         });
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('provincia_id');
             $table->unsignedBigInteger('canton_id');
-            $table->string('nombre', 50);
+            $table->string('nombre', 50)->unique();
             $table->timestamps();
             $table->foreign('provincia_id')->references('id')->on('provincias');
             $table->foreign('canton_id')->references('id')->on('cantons');
@@ -44,35 +44,35 @@ return new class extends Migration
 
         Schema::create('sangres', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nombre', 10); 
+            $table->string('nombre', 10)->unique(); 
             $table->timestamps();
         });
 
         Schema::create('grados', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nombre', 20);
+            $table->string('nombre', 20)->unique();
             $table->timestamps();
         });
 
         Schema::create('rangos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('grado_id');
-            $table->string('nombre', 20);
+            $table->string('nombre', 20)->unique();
             $table->timestamps();
             $table->foreign('grado_id')->references('id')->on('grados');
         });
 
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->unique();
-            $table->string('lastname')->unique();
+            $table->string('name');
+            $table->string('lastname');
             $table->string('cedula')->unique();
             $table->date('fecha_nacimiento');
             $table->unsignedBigInteger('sangre_id');
             $table->unsignedBigInteger('provincia_id');
             $table->unsignedBigInteger('canton_id');
             $table->unsignedBigInteger('parroquia_id');
-            $table->string('telefono', 10);
+            $table->string('telefono', 10)->unique();
             $table->unsignedBigInteger('grado_id');
             $table->unsignedBigInteger('rango_id');
             $table->unsignedBigInteger('estado_id');
@@ -96,8 +96,8 @@ return new class extends Migration
                 $table->unsignedBigInteger('provincia_id');
                 $table->unsignedBigInteger('canton_id');
                 $table->unsignedBigInteger('parroquia_id');
-                $table->string('nombre', 20);
-                $table->string('codigo', 20);
+                $table->string('nombre', 20)->unique();
+                $table->string('codigo', 20)->unique();
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');
@@ -112,8 +112,8 @@ return new class extends Migration
                 $table->unsignedBigInteger('canton_id');
                 $table->unsignedBigInteger('parroquia_id');
                 $table->unsignedBigInteger('distrito_id');
-                $table->string('nombre', 20);
-                $table->string('codigo', 20);
+                $table->string('nombre', 20)->unique();
+                $table->string('codigo', 20)->unique();
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');
@@ -130,8 +130,8 @@ return new class extends Migration
                 $table->unsignedBigInteger('parroquia_id');
                 $table->unsignedBigInteger('distrito_id');
                 $table->unsignedBigInteger('circuito_id');
-                $table->string('nombre', 20);
-                $table->string('codigo', 20);
+                $table->string('nombre', 20)->unique();
+                $table->string('codigo', 20)->unique();
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');
@@ -144,7 +144,7 @@ return new class extends Migration
     
             Schema::create('tvehiculos', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('nombre', 50);
+                $table->string('nombre', 50)->unique();
                 $table->timestamps();  
             });
     
@@ -159,21 +159,21 @@ return new class extends Migration
             Schema::create('modelos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('marca_id');
-                $table->string('nombre', 50);
+                $table->string('nombre', 50)->unique();
                 $table->timestamps();
                 $table->foreign('marca_id')->references('id')->on('marcas');
             });
 
             Schema::create('vcargas', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('nombre', 10);
+                $table->string('nombre', 10)->unique();
                 $table->timestamps();
                 
             });
 
             Schema::create('vpasajeros', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('nombre', 10); 
+                $table->string('nombre', 10)->unique(); 
                 $table->timestamps();
             });
     
@@ -201,19 +201,19 @@ return new class extends Migration
     
             Schema::create('asignacions', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('nombre', 50);
+                $table->string('nombre', 50)->unique();
                 $table->timestamps();
             });
 
             Schema::create('usersubcircuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('user_id');
-                $table->unsignedBigInteger('provincia_id');
-                $table->unsignedBigInteger('canton_id');
-                $table->unsignedBigInteger('parroquia_id');
-                $table->unsignedBigInteger('distrito_id');
-                $table->unsignedBigInteger('circuito_id');
-                $table->unsignedBigInteger('subcircuito_id');
+                $table->unsignedBigInteger('provincia_id')->nullable();
+                $table->unsignedBigInteger('canton_id')->nullable();
+                $table->unsignedBigInteger('parroquia_id')->nullable();
+                $table->unsignedBigInteger('distrito_id')->nullable();
+                $table->unsignedBigInteger('circuito_id')->nullable();
+                $table->unsignedBigInteger('subcircuito_id')->nullable();
                 $table->unsignedBigInteger('asignacion_id');
                 $table->timestamps();
                 $table->foreign('user_id')->references('id')->on('users');
@@ -229,12 +229,12 @@ return new class extends Migration
             Schema::create('vehisubcircuitos', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('vehiculo_id');
-                $table->unsignedBigInteger('provincia_id');
-                $table->unsignedBigInteger('canton_id');
-                $table->unsignedBigInteger('parroquia_id');
-                $table->unsignedBigInteger('distrito_id');
-                $table->unsignedBigInteger('circuito_id');
-                $table->unsignedBigInteger('subcircuito_id');
+                $table->unsignedBigInteger('provincia_id')->nullable();
+                $table->unsignedBigInteger('canton_id')->nullable();
+                $table->unsignedBigInteger('parroquia_id')->nullable();
+                $table->unsignedBigInteger('distrito_id')->nullable();
+                $table->unsignedBigInteger('circuito_id')->nullable();
+                $table->unsignedBigInteger('subcircuito_id')->nullable();
                 $table->unsignedBigInteger('asignacion_id');
                 $table->timestamps();
                 $table->foreign('vehiculo_id')->references('id')->on('vehiculos');
@@ -252,14 +252,14 @@ return new class extends Migration
                 $table->unsignedBigInteger('vehisubcircuito_id');
                 $table->unsignedBigInteger('user_id');
                 $table->timestamps();
-                $table->foreign('vehisubcircuito_id')->references('id')->on('vehisubcircuitos');
-                $table->foreign('user_id')->references('id')->on('users');
+                $table->foreign('vehisubcircuito_id')->references('id')->on('vehisubcircuitos')->onDelete('cascade');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             });
     
             //Tipo mantenimiento
             Schema::create('mantetipos', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('nombre', 50);
+                $table->string('nombre', 50)->unique();
                 $table->decimal('valor', 5, 2);
                 $table->text('descripcion');
                 $table->timestamps();
@@ -267,7 +267,7 @@ return new class extends Migration
             //Estado mantenimiento
             Schema::create('mantestados', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('nombre', 11);
+                $table->string('nombre', 11)->unique();
                 $table->timestamps();
             });
 

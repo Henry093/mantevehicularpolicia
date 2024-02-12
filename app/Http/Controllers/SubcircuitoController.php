@@ -9,8 +9,11 @@ use App\Models\Parroquia;
 use App\Models\Provincia;
 use App\Models\Subcircuito;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class SubcircuitoController
@@ -91,20 +94,49 @@ class SubcircuitoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Subcircuito::$rules);
-
-        // Verificar si el estado ya está presente en la solicitud
-        $estado = $request->input('estado_id');
-
-        if (empty($estado)) {
-            // Si no se proporciona una estado, en este caso 1 = Activo
-            $request->merge(['estado_id' => '1']);
+        // Validar los datos del formulario según las reglas definidas en el modelo Subcircuito
+        $validator = Validator::make($request->all(), Subcircuito::$rules);
+    
+        // Si la validación falla, redirigir de vuelta al formulario con los errores
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-
-        $subcircuito = Subcircuito::create($request->all());
-
-        return redirect()->route('subcircuitos.index')
-            ->with('success', 'Subcircuito creado exitosamente.');
+    
+        try {
+            // Iniciar una transacción de base de datos
+            DB::beginTransaction();
+    
+            // Verificar si el estado ya está presente en la solicitud
+            $estado = $request->input('estado_id');
+    
+            if (empty($estado)) {
+                // Si no se proporciona un estado, establecerlo en 1 (Activo)
+                $request->merge(['estado_id' => '1']);
+            }
+    
+            // Obtener el nombre del subcircuito del formulario
+            $nombre = $request->input('nombre');
+    
+            // Verificar si ya existe un subcircuito con el mismo nombre
+            $subcircuitoExistente = Subcircuito::where('nombre', $nombre)->first();
+            if ($subcircuitoExistente) {
+                // Si ya existe un subcircuito con el mismo nombre, redirigir con un mensaje de error
+                return redirect()->route('subcircuitos.create')->with('error', 'El subcircuito ya está registrado.');
+            }
+    
+            // Crear un nuevo subcircuito con los datos del formulario y guardarlo en la base de datos
+            Subcircuito::create($request->all());
+    
+            // Confirmar la transacción de base de datos
+            DB::commit();
+    
+            // Redirigir al usuario a la página de índice de subcircuitos con un mensaje de éxito
+            return redirect()->route('subcircuitos.index')->with('success', 'Subcircuito creado exitosamente.');
+        } catch (\Exception $e) {
+            // Si ocurre algún error durante el proceso, revertir la transacción y redirigir con un mensaje de error
+            DB::rollBack();
+            return redirect()->route('subcircuitos.index')->with('error', 'Error al crear el subcircuito: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -115,9 +147,12 @@ class SubcircuitoController extends Controller
      */
     public function show($id)
     {
-        $subcircuito = Subcircuito::find($id);
-
-        return view('subcircuito.show', compact('subcircuito'));
+        try {
+            $subcircuito = Subcircuito::findOrFail($id);
+            return view('subcircuito.show', compact('subcircuito'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('subcircuitos.index')->with('error', 'El subcircuito no existe.');
+        }
     }
 
     /**
@@ -128,15 +163,19 @@ class SubcircuitoController extends Controller
      */
     public function edit($id)
     {
-        $subcircuito = Subcircuito::find($id);
-        $d_provincia = Provincia::all();
-        $d_canton = Canton::all();
-        $d_parroquia = Parroquia::all();
-        $d_distrito = Distrito::all();
-        $d_circuito = Circuito::all();
-        $edicion = false;
-
-        return view('subcircuito.edit', compact('subcircuito', 'd_provincia', 'd_canton', 'd_parroquia', 'd_distrito', 'd_circuito', 'edicion'));
+        try {
+            $subcircuito = Subcircuito::findOrFail($id);
+            $d_provincia = Provincia::all();
+            $d_canton = Canton::all();
+            $d_parroquia = Parroquia::all();
+            $d_distrito = Distrito::all();
+            $d_circuito = Circuito::all();
+            $edicion = true;
+    
+            return view('subcircuito.edit', compact('subcircuito', 'd_provincia', 'd_canton', 'd_parroquia', 'd_distrito', 'd_circuito', 'edicion'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('subcircuitos.index')->with('error', 'El subcircuito no existe.');
+        }
     }
 
     /**
@@ -148,12 +187,30 @@ class SubcircuitoController extends Controller
      */
     public function update(Request $request, Subcircuito $subcircuito)
     {
-        request()->validate(Subcircuito::$rules);
-
-        $subcircuito->update($request->all());
-
-        return redirect()->route('subcircuitos.index')
-            ->with('success', 'Subcircuito actualizado exitosamente.');
+        $validator = Validator::make($request->all(), Subcircuito::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $nombre = $request->input('nombre');
+            $subcircuitoExistente = Subcircuito::where('nombre', $nombre)->where('id', '!=', $subcircuito->id)->first();
+            if ($subcircuitoExistente) {
+                return redirect()->route('subcircuitos.index')->with('error', 'Ya existe un subcircuito con ese nombre.');
+            }
+    
+            $subcircuito->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('subcircuitos.index')->with('success', 'Subcircuito actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('subcircuitos.index')->with('error', 'Error al actualizar el subcircuito: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -163,10 +220,25 @@ class SubcircuitoController extends Controller
      */
     public function destroy($id)
     {
-        $subcircuito = Subcircuito::find($id)->delete();
-
-        return redirect()->route('subcircuitos.index')
-            ->with('success', 'Subcircuito borrado exitosamente.');
+        try {
+            DB::beginTransaction();
+    
+            $subcircuito = Subcircuito::findOrFail($id);
+            $subcircuito->delete();
+    
+            DB::commit();
+    
+            return redirect()->route('subcircuitos.index')->with('success', 'Subcircuito borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('subcircuitos.index')->with('error', 'El subcircuito no existe.');
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return redirect()->route('subcircuitos.index')->with('error', 'El subcircuito no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('subcircuitos.index')->with('error', 'Error al eliminar el subcircuito: ' . $e->getMessage());
+        }
     }
 
     public function getCantoness($provinciaId) {

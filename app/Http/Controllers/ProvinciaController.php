@@ -6,6 +6,7 @@ use App\Models\Canton;
 use App\Models\Provincia;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -187,13 +188,14 @@ class ProvinciaController extends Controller
         }
     }
     
-    public function getCantones($provinciaId) {
-        
+    public function getCantonesc($provinciaId) {
         try {
             $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
             return response()->json($cantones);
+        } catch (ModelNotFoundException $e) {
+            return new JsonResponse(['error' => 'Cantones no encontrados'], 404);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return new JsonResponse(['error' => 'Error interno del servidor'], 500);
         }
     }
 }

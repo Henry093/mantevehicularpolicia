@@ -9,8 +9,11 @@ use App\Models\Tvehiculo;
 use App\Models\Vcarga;
 use App\Models\Vehiculo;
 use App\Models\Vpasajero;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class VehiculoController
@@ -97,32 +100,46 @@ class VehiculoController extends Controller
      */
     public function store(Request $request)
     {
-        request()->validate(Vehiculo::$rules);
-
-        $placa = Vehiculo::where('placa', $request->input('placa'))->first();
-        $chasis = Vehiculo::where('chasis', $request->input('chasis'))->first();
-        $motor = Vehiculo::where('motor', $request->input('motor'))->first();
-
-        if($placa){
-            return redirect()->route('vehiculos.create')->with('error', 'La placa ya está registrada.');
-        }elseif($chasis){
-            return redirect()->route('vehiculos.create')->with('error', 'El Chasis ya está registrado.');
-        }elseif($motor){
-            return redirect()->route('vehiculos.create')->with('error', 'El motor ya está registrado.');
+        $validator = Validator::make($request->all(), Vehiculo::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-
-        // Verificar si el estado ya está presente en la solicitud
-        $estado = $request->input('estado_id');
-
-        if (empty($estado)) {
-            // Si no se proporciona un estado, en este caso 1 = Activo
-            $request->merge(['estado_id' => '1']);
+    
+        try {
+            //Se crea el vehículo en la base de datos
+            $placa = Vehiculo::where('placa', $request->input('placa'))->first();
+            $chasis = Vehiculo::where('chasis', $request->input('chasis'))->first();
+            $motor = Vehiculo::where('motor', $request->input('motor'))->first();
+            
+            if ($placa) {
+                return redirect()->route('vehiculos.create')->with('error', 'La placa ya está registrada.');
+            } elseif ($chasis) {
+                return redirect()->route('vehiculos.create')->with('error', 'El Chasis ya está registrado.');
+            } elseif ($motor) {
+                return redirect()->route('vehiculos.create')->with('error', 'El motor ya está registrado.');
+            }
+    
+            // Verificar si el estado ya está presente en la solicitud
+            $estado = $request->input('estado_id');
+    
+            if (empty($estado)) {
+                // Si no se proporciona un estado, en este caso 1 = Activo
+                $request->merge(['estado_id' => '1']);
+            }
+    
+            DB::beginTransaction();
+    
+            Vehiculo::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('vehiculos.index')->with('success', 'Vehículo creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vehiculos.index')->with('error', 'Error al crear el vehículo: ' . $e->getMessage());
         }
-
-        $vehiculo = Vehiculo::create($request->all());
-
-        return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehículo creado exitosamente.');
+    
     }
 
     /**
@@ -133,9 +150,12 @@ class VehiculoController extends Controller
      */
     public function show($id)
     {
-        $vehiculo = Vehiculo::find($id);
-
-        return view('vehiculo.show', compact('vehiculo'));
+        try {
+            $vehiculo = Vehiculo::findOrFail($id);
+            return view('vehiculo.show', compact('vehiculo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('vehiculos.index')->with('error', 'El vehículo no existe.');
+        }
     }
 
     /**
@@ -146,17 +166,21 @@ class VehiculoController extends Controller
      */
     public function edit($id)
     {
-        $vehiculo = Vehiculo::find($id);
-        $d_vehiculo = Tvehiculo::all();
-        $d_marca = Marca::all();
-        $d_modelo = Modelo::all();
-        $d_carga = Vcarga::all();
-        $d_pasajero = Vpasajero::all();
-        $d_estado = Estado::all();
-
-        $edicion = true;
-
-        return view('vehiculo.edit', compact('vehiculo', 'd_vehiculo', 'd_marca', 'd_modelo', 'd_carga', 'd_pasajero', 'd_estado', 'edicion'));
+        try {
+            $vehiculo = Vehiculo::findOrFail($id);
+            $d_vehiculo = Tvehiculo::all();
+            $d_marca = Marca::all();
+            $d_modelo = Modelo::all();
+            $d_carga = Vcarga::all();
+            $d_pasajero = Vpasajero::all();
+            $d_estado = Estado::all();
+    
+            $edicion = true;
+    
+            return view('vehiculo.edit', compact('vehiculo', 'd_vehiculo', 'd_marca', 'd_modelo', 'd_carga', 'd_pasajero', 'd_estado', 'edicion'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('vehiculos.index')->with('error', 'El vehículo no existe.');
+        }
     }
 
     /**
@@ -182,12 +206,36 @@ class VehiculoController extends Controller
             'estado_id' => 'required',
         ];
         
-        request()->validate($rules);
-
-        $vehiculo->update($request->all());
-
-        return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehículo actualizado exitosamente.');
+        $validator = Validator::make($request->all(), $rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
+        try {
+            DB::beginTransaction();
+    
+            $placa = Vehiculo::where('placa', $request->input('placa'))->where('id', '!=', $vehiculo->id)->first();
+            $chasis = Vehiculo::where('chasis', $request->input('chasis'))->where('id', '!=', $vehiculo->id)->first();
+            $motor = Vehiculo::where('motor', $request->input('motor'))->where('id', '!=', $vehiculo->id)->first();
+    
+            if ($placa) {
+                return redirect()->route('vehiculos.edit', $vehiculo)->with('error', 'La placa ya está registrada.');
+            } elseif ($chasis) {
+                return redirect()->route('vehiculos.edit', $vehiculo)->with('error', 'El chasis ya está registrado.');
+            } elseif ($motor) {
+                return redirect()->route('vehiculos.edit', $vehiculo)->with('error', 'El motor ya está registrado.');
+            }
+    
+            $vehiculo->update($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('vehiculos.index')->with('success', 'Vehículo actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vehiculos.index')->with('error', 'Error al actualizar el vehículo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -197,29 +245,24 @@ class VehiculoController extends Controller
      */
     public function destroy($id)
     {
-        $vehiculo = Vehiculo::find($id);
-
-        if (!$vehiculo) {
-            return redirect()->route('vehiculos.index')
-                ->with('error', 'Vehículo no existe.');
-        }
-
         try {
-            // Verificar si el vehículo está asignado a algún subcircuito
-            if ($vehiculo->vsubcircuitos()->exists()) {
-                return redirect()->route('vehiculos.index')
-                    ->with('error', 'No se puede eliminar. El vehículo está asignada a un Subcircuito.');
-            }
-
+            DB::beginTransaction();
+    
+            $vehiculo = Vehiculo::findOrFail($id);
             $vehiculo->delete();
-
-            return redirect()->route('vehiculos.index')
-                ->with('success', 'Vehículo borrado exitosamente.');
-
+    
+            DB::commit();
+    
+            return redirect()->route('vehiculos.index')->with('success', 'Vehículo borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('vehiculos.index')->with('error', 'Vehículo no existe.');
         } catch (QueryException $e) {
-            // Captura cualquier otro error de la base de datos que pueda ocurrir durante la eliminación
-            return redirect()->route('vehiculos.index')
-                ->with('error', 'Hubo un problema al intentar eliminar el vehíiculo.');
+            DB::rollBack();
+            return redirect()->route('vehiculos.index')->with('error', 'El vehículo no puede eliminarse, tiene datos asociados.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('vehiculos.index')->with('error', 'Error al eliminar el vehículo: ' . $e->getMessage());
         }
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asignacion;
+use App\Models\Asignarvehiculo;
 use App\Models\Canton;
 use App\Models\Circuito;
 use App\Models\Distrito;
@@ -12,8 +13,12 @@ use App\Models\Subcircuito;
 use App\Models\User;
 use App\Models\Usersubcircuito;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 /**
  * Class UsersubcircuitoController
@@ -36,8 +41,8 @@ class UsersubcircuitoController extends Controller
      */
     public function index()
     {
-        $usersubcircuitos = Usersubcircuito::paginate(10);
-
+        $usersubcircuitos = Usersubcircuito::paginate(12);
+    
         return view('usersubcircuito.index', compact('usersubcircuitos'))
             ->with('i', (request()->input('page', 1) - 1) * $usersubcircuitos->perPage());
     }
@@ -52,6 +57,7 @@ class UsersubcircuitoController extends Controller
         // Obtener todos los usuarios
         $d_user = User::whereNotIn('id', Usersubcircuito::where('asignacion_id', 1)->pluck('user_id')->toArray())
         ->whereNotIn('id', Usersubcircuito::where('asignacion_id', 2)->pluck('user_id')->toArray())
+        ->whereNotIn('estado_id', [2, 3])
         ->get();
 
         $usersubcircuito = new Usersubcircuito();
@@ -67,13 +73,13 @@ class UsersubcircuitoController extends Controller
 
         return view('usersubcircuito.create', compact(
             'usersubcircuito',
-            'd_user', 
-            'd_provincia', 
-            'd_canton', 
-            'd_parroquia', 
-            'd_distrito', 
-            'd_circuito', 
-            'd_subcircuito', 
+            'd_user',
+            'd_provincia',
+            'd_canton',
+            'd_parroquia',
+            'd_distrito',
+            'd_circuito',
+            'd_subcircuito',
             'edicion',
             'edicion2'
         ));
@@ -87,32 +93,40 @@ class UsersubcircuitoController extends Controller
      */
     public function store(Request $request)
     {
-        //request()->validate(Usersubcircuito::$rules);
-        // Validación personalizada para verificar si ya existe un registro para el usuario
-        $userId = $request->input('user_id');
-        $userEx = Usersubcircuito::where('user_id', $userId)->first();
+        // Validación de los datos de entrada según las reglas definidas en el modelo
+        $validator = Validator::make($request->all(), Usersubcircuito::$rules);
 
-        if ($userEx) {
-            return redirect()->route('usersubcircuitos.create')
-                ->with('error', 'Ya existe un registro para este usuario.');
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-
-        // Si no hay un registro existente, procede con la creación del nuevo registro
-        request()->validate(Usersubcircuito::$rules);
-
-
-        $estado = $request->input('asignacion_id');
-
-        if (empty($estado)) {
-            // Si no se proporciona un estado, en este caso 1 = Activo
-            $request->merge(['asignacion_id' => '1']);
+        try {
+    
+            DB::beginTransaction();
+    
+            $userId = $request->input('user_id');
+            $userExistente = Usersubcircuito::where('user_id', $userId)->first();
+            if ($userExistente) {
+                return redirect()->route('usersubcircuitos.create')->with('error', 'Ya existe un registro para este usuario.');
+            }
+    
+            $estado = $request->input('asignacion_id');
+            if (empty($estado)) {
+                $request->merge(['asignacion_id' => '1']);
+            }
+    
+            Usersubcircuito::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('usersubcircuitos.index')
+            ->with('success', 'Usuario asignado al Subcircuito creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('usersubcircuitos.index')
+            ->with('error', 'Error al crear el usuario asignado al subcircuito: ' . $e->getMessage());
         }
-
-        $usersubcircuito = Usersubcircuito::create($request->all());
-
-        return redirect()->route('usersubcircuitos.create')
-            ->with('success', 'Usuario Subcircuito creado exitosamente.');
     }
+    
 
     /**
      * Display the specified resource.
@@ -122,9 +136,16 @@ class UsersubcircuitoController extends Controller
      */
     public function show($id)
     {
-        $usersubcircuito = Usersubcircuito::find($id);
-
-        return view('usersubcircuito.show', compact('usersubcircuito'));
+        try {
+            // Intenta encontrar el Usersubcircuito con el ID proporcionado
+            $usersubcircuito = Usersubcircuito::findOrFail($id);
+    
+            // Si se encuentra, mostrar la vista de detalle del Usersubcircuito
+            return view('usersubcircuito.show', compact('usersubcircuito'));
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentra, redirigir al usuario a alguna parte a la lista de Usersubcircuitos
+            return redirect()->route('usersubcircuitos.index')->with('error', 'El usuario asignado al subcircuito no existe.');
+        }
     }
 
     /**
@@ -135,31 +156,42 @@ class UsersubcircuitoController extends Controller
      */
     public function edit($id)
     {
-        $usersubcircuito = Usersubcircuito::find($id);
-        $d_user = User::all();
-        $d_provincia = Provincia::all();
-        $d_canton = Canton::all();
-        $d_parroquia = Parroquia::all();
-        $d_distrito = Distrito::all();
-        $d_circuito = Circuito::all();
-        $d_subcircuito = Subcircuito::all();
-        $d_asignacion = Asignacion::all();
-
-        $edicion = true;
-        $edicion2 = false;
-        return view('usersubcircuito.edit', compact(
-            'usersubcircuito',
-            'd_user',
-            'd_provincia',
-            'd_canton',
-            'd_parroquia',
-            'd_distrito',
-            'd_circuito',
-            'd_subcircuito',
-            'd_asignacion',
-            'edicion',
-            'edicion2'
-        ));
+        try {
+            // Intenta encontrar el Usersubcircuito con el ID proporcionado
+            $usersubcircuito = Usersubcircuito::findOrFail($id);
+    
+            // Obtener datos relacionados
+            $d_user = User::all();
+            $d_provincia = Provincia::all();
+            $d_canton = Canton::all();
+            $d_parroquia = Parroquia::all();
+            $d_distrito = Distrito::all();
+            $d_circuito = Circuito::all();
+            $d_subcircuito = Subcircuito::all();
+            $d_asignacion = Asignacion::all();
+    
+            // Establecer variables de edición
+            $edicion = true;
+            $edicion2 = false;
+    
+            // Pasar los datos a la vista de edición
+            return view('usersubcircuito.edit', compact(
+                'usersubcircuito',
+                'd_user',
+                'd_provincia',
+                'd_canton',
+                'd_parroquia',
+                'd_distrito',
+                'd_circuito',
+                'd_subcircuito',
+                'd_asignacion',
+                'edicion',
+                'edicion2'
+            ));
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el Usersubcircuito, redirigir al usuario a la lista de Usersubcircuitos
+            return redirect()->route('usersubcircuitos.index')->with('error', 'El usuario asignado al subcircuito no existe.');
+        }
     }
 
     /**
@@ -171,46 +203,82 @@ class UsersubcircuitoController extends Controller
      */
     public function update(Request $request, Usersubcircuito $usersubcircuito)
     {
-        /* request()->validate(Usersubcircuito::$rules);
+        // Validación de los datos de entrada según las reglas definidas en el modelo
+        $validator = Validator::make($request->all(), Usersubcircuito::$rules);
 
-        $usersubcircuito->update($request->all()); */
-
-        // Reglas de validación
-        $rules = [
-            'user_id' => 'required',
-            'provincia_id' => 'required',
-            'canton_id' => 'required',
-            'parroquia_id' => 'required',
-            'distrito_id' => 'required',
-            'circuito_id' => 'required',
-            'subcircuito_id' => 'required',
-            'asignacion_id' => 'required',
-        ];
-
-        // Validar los datos de la solicitud
-        $validatedData = $request->validate($rules);
-
-        // Verificar si la asignación es igual a 2 (No Asignado)
-        if ($request->input('asignacion_id') == 2) {
-            // Actualizar los campos a "No Asignado" sin borrar el registro
-            $usersubcircuito->update([
-                'provincia_id' => null,
-                'canton_id' => null,
-                'parroquia_id' => null,
-                'distrito_id' => null,
-                'circuito_id' => null,
-                'subcircuito_id' => null,
-                'asignacion_id' => 2,
-
-            ]);
-
-            return redirect()->route('usersubcircuitos.index')->with('success', 'Registro actualizado a "No Asignado".');
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
         }
-
-        // Actualizar el Usersubcircuito con los nuevos datos
-        $usersubcircuito->update($validatedData);
-        return redirect()->route('usersubcircuitos.index')
-            ->with('success', 'Usuario Subcircuito actualizado exitosamente.');
+        try {
+            // Reglas de validación
+            $rules = [
+                'user_id' => 'required',
+                'asignacion_id' => ['required', Rule::in([1, 2])],
+            ];
+    
+            // Validar los datos de la solicitud
+            $validatedData = $request->validate($rules);
+    
+            DB::beginTransaction();
+    
+            // Verificar si la asignación es igual a 2 (No Asignado)
+            if ($validatedData['asignacion_id'] == 2) {
+                // Actualizar los campos a "No Asignado" sin borrar el registro
+                $noAsignadoData = [
+                    'provincia_id' => null,
+                    'canton_id' => null,
+                    'parroquia_id' => null,
+                    'distrito_id' => null,
+                    'circuito_id' => null,
+                    'subcircuito_id' => null,
+                    'asignacion_id' => 2,
+                ];
+    
+                $usersubcircuito->update($noAsignadoData);
+    
+                DB::commit();
+    
+                return redirect()->route('usersubcircuitos.index')->with('success', 'Registro actualizado a "No Asignado".');
+            }elseif($validatedData['asignacion_id'] == 1){
+                // Actualizar los campos a "No Asignado" sin borrar el registro
+                $AsignadoData = [
+                    'provincia_id' => $request->input('provincia_id'),
+                    'canton_id' => $request->input('canton_id'),
+                    'parroquia_id' => $request->input('parroquia_id'),
+                    'distrito_id' => $request->input('distrito_id'),
+                    'circuito_id' => $request->input('circuito_id'),
+                    'subcircuito_id' => $request->input('subcircuito_id'),
+                    'asignacion_id' => 1,
+                ];
+    
+                $usersubcircuito->update($AsignadoData);
+    
+                DB::commit();
+    
+                return redirect()->route('usersubcircuitos.index')->with('success', 'Registro actualizado a "Asignado".');
+            }
+    
+            // Asegurarse de que se proporcionen valores válidos para los campos de ubicación
+            $request->validate([
+                'provincia_id' => 'required',
+                'canton_id' => 'required',
+                'parroquia_id' => 'required',
+                'distrito_id' => 'required',
+                'circuito_id' => 'required',
+                'subcircuito_id' => 'required',
+            ]);
+    
+            // Actualizar el Usersubcircuito con los nuevos datos
+            $usersubcircuito->update($validatedData);
+    
+            DB::commit();
+    
+            return redirect()->route('usersubcircuitos.index')
+                ->with('success', 'Usuario asignado al Subcircuito actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('usersubcircuitos.index')->with('error', 'Error al actualizar el usuario asignado al subcircuito: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -220,10 +288,33 @@ class UsersubcircuitoController extends Controller
      */
     public function destroy($id)
     {
-        $usersubcircuito = Usersubcircuito::find($id)->delete();
+        try {
+            // Verificar si el usuario está asignado a algún vehículo
+            $user = Usersubcircuito::findOrFail($id);
+            if ($user->vehiAsignado()) {
+                return redirect()->route('usersubcircuitos.index')
+                    ->with('error', 'No se puede eliminar el usuario porque está asignado a un vehículo.');
+            }
 
-        return redirect()->route('usersubcircuitos.index')
-            ->with('success', 'Usuario Subcircuito borrado exitosamente.');
+            // Eliminar el usuario asignado al subcircuito
+            $user->delete();
+
+            // Redirigir al usuario a la lista de Usersubcircuitos con un mensaje de éxito
+            return redirect()->route('usersubcircuitos.index')
+                ->with('success', 'Usuario asignado al subcircuito borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            // Capturar si el Usersubcircuito no existe y redirigir al usuario con un mensaje de error
+            return redirect()->route('usersubcircuitos.index')
+                ->with('error', 'El Usuario asignado al subcircuito no existe.');
+        } catch (QueryException $e) {
+            // Capturar si hay un error de consulta (por ejemplo, restricciones de clave externa) y redirigir al usuario con un mensaje de error
+            return redirect()->route('usersubcircuitos.index')
+                ->with('error', 'Error al eliminar el usuario asignado al subcircuito: Hay datos asociados.');
+        } catch (\Exception $e) {
+            // Capturar cualquier otra excepción no esperada y redirigir al usuario con un mensaje de error
+            return redirect()->route('usersubcircuitos.index')
+                ->with('error', 'Error al eliminar el usuario asignado al subcircuito: ' . $e->getMessage());
+        }
     }
 
     public function getCantonesus($provinciaId)

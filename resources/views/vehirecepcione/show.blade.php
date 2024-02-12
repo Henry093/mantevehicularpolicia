@@ -91,8 +91,11 @@
 {{ $vehirecepcione->mantetipo->valor }} $
 </div>
 <div class="form-group">
-<strong>Parte Policial:</strong>
-{{ $vehirecepcione->imagen }}
+    <strong>Parte Policial:</strong><br>
+    <a href="{{ asset($vehirecepcione->imagen) }}" target="_blank"> 
+        <!-- Abrir la imagen en una nueva pestaña -->
+        <img src="{{ asset($vehirecepcione->imagen) }}" alt="Parte Policial" style="max-width: 100px; max-height: 100px;">
+    </a>
 </div>
 
                         </div>

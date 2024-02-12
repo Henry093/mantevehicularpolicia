@@ -63,7 +63,7 @@
                 {{ $errors->has('mantestado_id') ? ' is-invalid' : '' }}" placeholder="Estado" >
                     <option value="" >Seleccionar Estado..</option>
                     @foreach($d_mantestado as $mantestado)
-                         <option value="{{ $mantestado->id }}" {{ $mantenimiento->mantestado_id == $mantestado->id ? 'selected' : '' }}>
+                        <option value="{{ $mantestado->id }}" {{ $mantenimiento->mantestado_id == $mantestado->id ? 'selected' : '' }}>
                             {{ $mantestado->nombre }}
                         </option>
                     @endforeach
@@ -76,7 +76,7 @@
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">
-                <a href="#" class="btn btn-danger">@lang('Cancel')</a>
+                <a href="/mantenimientos" class="btn btn-danger">@lang('Cancel')</a>
                 <button type="submit" class="btn btn-primary ms-auto ajax-submit">@lang('Submit')</button>
             </div>
         </div>
