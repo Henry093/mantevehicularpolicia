@@ -90,7 +90,7 @@
 {{ $vehiculo->vpasajero->nombre }}
 </div>
 <div class="form-group">
-<strong>Estado Id:</strong>
+<strong>Estado:</strong>
 {{ $vehiculo->estado->nombre }}
 </div>
 

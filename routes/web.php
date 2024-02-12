@@ -158,6 +158,10 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('novedades', NovedadeController::class)->names('novedades');
     Route::resource('vehirecepciones', VehirecepcioneController::class)->names('vehirecepciones');
     Route::resource('vehientregas', VehientregaController::class)->names('vehientregas');
+    // Nuevas rutas para aceptar y reasignar mantenimientos
+    Route::get('/mantenimientos/{id}/aceptar', [MantenimientoController::class, 'aceptar'])->name('mantenimientos.aceptar');
+    Route::post('/mantenimientos/{id}/reasignar', [MantenimientoController::class, 'reasignar'])->name('mantenimientos.reasignar');
+
 
     //Examen
     Route::resource('reclamos', ReclamoController::class)->names('reclamos');

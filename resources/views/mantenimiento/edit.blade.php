@@ -48,6 +48,28 @@
                             <h3 class="card-title">@lang('Mantenimiento Details')</h3>
                         </div>
                         <div class="card-body">
+                            @switch($mantenimiento->mantestado_id)
+                                @case(2)
+                                    <div class="alert alert-danger" role="alert">
+                                        No se puede editar la orden de mantenimiento porque ya fue "Aceptada".
+                                    </div>
+                                    @break
+                                @case(3)
+                                    <div class="alert alert-danger" role="alert">
+                                        No se puede editar la orden de mantenimiento porque ya fue "Re-Asignada".
+                                    </div>
+                                    @break
+                                @case(4)
+                                    <div class="alert alert-danger" role="alert">
+                                        No se puede editar la orden de mantenimiento porque está "En Proceso".
+                                    </div>
+                                    @break
+                                @case(5)
+                                    <div class="alert alert-danger" role="alert">
+                                        No se puede editar la orden de mantenimiento porque está "Finalizado".
+                                    </div>
+                                    @break
+                            @endswitch
                             <form method="POST"
                                   action="{{ route('mantenimientos.update', $mantenimiento->id) }}" id="ajaxForm" role="form"
                                   enctype="multipart/form-data">
@@ -61,6 +83,7 @@
             </div>
         </div>
     </div>
+    
 @endsection
 
 

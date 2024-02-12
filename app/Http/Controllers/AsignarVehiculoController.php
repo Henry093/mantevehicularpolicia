@@ -111,10 +111,16 @@ class AsignarvehiculoController extends Controller
     
             // Paso 4: Asignar usuarios al vehículo
             foreach ($usuariosIds as $usuarioId) {
-                $asignacion = new Asignarvehiculo();
-                $asignacion->vehisubcircuito_id = $vehiculo->id;
-                $asignacion->user_id = Usersubcircuito::findOrFail($usuarioId)->user_id; // Obtener el ID del usuario correspondiente
-                $asignacion->save();
+                // Verificar si el usuario aún existe en la tabla usersubcircuito
+                if (Usersubcircuito::where('id', $usuarioId)->exists()) {
+                    $asignacion = new Asignarvehiculo();
+                    $asignacion->vehisubcircuito_id = $vehiculo->id;
+                    $asignacion->user_id = Usersubcircuito::findOrFail($usuarioId)->user_id; // Obtener el ID del usuario correspondiente
+                    $asignacion->save();
+                } else {
+                    // Si el usuario ya no existe en la tabla, eliminarlo de la asignación
+                    Asignarvehiculo::where('user_id', $usuarioId)->delete();
+                }
             }
     
             DB::commit();
@@ -173,7 +179,7 @@ class AsignarvehiculoController extends Controller
     {
         $request->validate([
             'usuarios' => 'required|array',
-            'usuarios.*' => 'exists:asignarvehiculos,user_id',
+            'usuarios.*' => 'exists:asignarvehiculos,user_id,vehisubcircuito_id,' . $id,
         ]);
     
         try {

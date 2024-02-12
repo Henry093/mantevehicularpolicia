@@ -1,24 +1,22 @@
-
-    
-    <div class="form-group mb-3">
-        <label class="form-label required">{{ Form::label('user_id', 'Nombre ') }}</label>
-        <div>
-            <select name="user_id" required
-                class="form-select form-control-rounded mb-2 user-select
+<div class="form-group mb-3">
+    <label class="form-label required">{{ Form::label('user_id', 'Nombre ') }}</label>
+    <div>
+        <select name="user_id" required
+            class="form-select form-control-rounded mb-2 user-select
             {{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                placeholder="Nombre del personal policial">
-                <option value="">Seleccionar Usuario..</option>
-                @foreach ($d_user as $user)
-                    @unless ($user->asignacion_id == 1 || $user->asignacion_id == 2)
-                        <option value="{{ $user->id }}" {{ $usersubcircuito->user_id == $user->id ? 'selected' : '' }}>
-                            {{ $user->name }} {{ $user->lastname }}
-                        </option>
-                    @endunless
-                @endforeach
-            </select>
-            {!! $errors->first('user_id', '<div class="invalid-feedback">:message</div>') !!}
-        </div>
+            placeholder="Nombre del personal policial">
+            <option value="">Seleccionar Usuario..</option>
+            @foreach ($d_user as $user)
+                @unless ($user->asignacion_id == 1 || $user->asignacion_id == 2)
+                    <option value="{{ $user->id }}" {{ $usersubcircuito->user_id == $user->id ? 'selected' : '' }}>
+                        {{ $user->name }} {{ $user->lastname }}
+                    </option>
+                @endunless
+            @endforeach
+        </select>
+        {!! $errors->first('user_id', '<div class="invalid-feedback">:message</div>') !!}
     </div>
+</div>
 @if ($edicion2)
     <div class="page-body">
         <div class="container-xl">
@@ -31,37 +29,34 @@
                         <div class="card-body user-info">
                             <div class="form-group mb-3">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label class="form-label">Nombres y Apellidos</label>
-                                        <input type="text" class="form-control ps-0 user-info-name" disabled>
+                                        <input type="text" class="form-control ps-3 user-info-name" disabled>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label class="form-label">Email</label>
-                                        <input type="text" class="form-control ps-0 user-info-email" disabled>
+                                        <input type="text" class="form-control ps-3 user-info-email" disabled>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <label class="form-label">Grado</label>
-                                        <input type="text" class="form-control ps-0 user-info-grado" disabled>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Rango</label>
-                                        <input type="text" class="form-control ps-0 user-info-rango" disabled>
+                                        <input type="text" class="form-control ps-3 user-info-grado" disabled>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Cédula</label>
-                                        <input type="text" class="form-control ps-0 user-info-cedula" disabled>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Rango</label>
+                                        <input type="text" class="form-control ps-3 user-info-rango" disabled>
                                     </div>
-                                    <div class="col-md-6">
+                                    
+                                    <div class="col-md-4">
+                                        <label class="form-label">Cédula</label>
+                                        <input type="text" class="form-control ps-3 user-info-cedula" disabled>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label class="form-label">Teléfono</label>
-                                        <input type="text" class="form-control ps-0 user-info-telefono" disabled>
+                                        <input type="text" class="form-control ps-3 user-info-telefono" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +69,7 @@
 @endif
 <div class="form-group mb-3">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('provincia_id', 'Provincia') }}</label>
             <div>
                 <select name="provincia_id" required
@@ -92,7 +87,7 @@
                 {!! $errors->first('provincia_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('canton_id', 'Cantón') }}</label>
             <div>
                 <select name="canton_id" required
@@ -110,11 +105,7 @@
                 {!! $errors->first('canton_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('parroquia_id', 'Parroquia') }}</label>
             <div>
                 <select name="parroquia_id" required
@@ -132,7 +123,11 @@
                 {!! $errors->first('parroquia_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-        <div class="col-md-6">
+    </div>
+</div>
+<div class="form-group mb-3">
+    <div class="row">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('distrito_id', 'Distrito') }}</label>
             <div>
                 <select name="distrito_id" required
@@ -150,12 +145,7 @@
                 {!! $errors->first('distrito_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-    </div>
-</div>
-
-<div class="form-group mb-3">
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('circuito_id', 'Circuito') }}</label>
             <div>
                 <select name="circuito_id" required
@@ -173,7 +163,7 @@
                 {!! $errors->first('circuito_id', '<div class="invalid-feedback">:message</div>') !!}
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label class="form-label required">{{ Form::label('subcircuito_id', 'Sub Circuito') }}</label>
             <div>
                 <select name="subcircuito_id" required
@@ -198,8 +188,10 @@
     <div class="col-md-6">
         <label class="form-label required">{{ Form::label('asignacion_id', 'Estado Asignación') }}</label>
         <div>
-            <select name="asignacion_id" required class="form-select form-control-rounded mb-2 
-                {{ $errors->has('asignacion_id') ? ' is-invalid' : '' }}" placeholder="Estado Asignación">
+            <select name="asignacion_id" required
+                class="form-select form-control-rounded mb-2 
+                {{ $errors->has('asignacion_id') ? ' is-invalid' : '' }}"
+                placeholder="Estado Asignación">
                 <option value="">Seleccionar Estado Asignación..</option>
                 @foreach ($d_asignacion as $asignacion)
                     <option

@@ -8,9 +8,13 @@ use App\Models\Mantestado;
 use App\Models\Subcircuito;
 use App\Models\Vehiculo;
 use App\Models\Vehisubcircuito;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 /**
  * Class MantenimientoController
@@ -33,11 +37,35 @@ class MantenimientoController extends Controller
      */
     public function index()
     {
+        $search = request('search'); // Obtener el término de búsqueda de la solicitud HTTP
+    
         // Obtener el ID del usuario autenticado
         $user_id = Auth::id();
-        $mantenimientos = Mantenimiento::where('user_id', $user_id)->paginate(10);
+    
+        // Iniciar la consulta para el modelo Mantenimiento
+        $query = Mantenimiento::where('user_id', $user_id);
+    
+        // Aplicar la búsqueda si hay un término de búsqueda
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('fecha', 'like', '%' . $search . '%')
+                    ->orWhere('hora', 'like', '%' . $search . '%')
+                    ->orWhere('kilometraje', 'like', '%' . $search . '%')
+                    ->orWhere('observaciones', 'like', '%' . $search . '%')
+                    ->orWhere('orden', 'like', '%' . $search . '%')
+                    ->orWhereHas('mantestado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                });
+            });
+        }
+    
+        // Paginar los resultados de la consulta
+        $mantenimientos = $query->paginate(10);
+    
+        // Obtener los datos necesarios para la vista
         $subcircuito = Vehisubcircuito::all();
     
+        // Pasar los resultados paginados y otros datos a la vista
         return view('mantenimiento.index', compact('mantenimientos', 'subcircuito'))
             ->with('i', (request()->input('page', 1) - 1) * $mantenimientos->perPage());
     }
@@ -69,10 +97,15 @@ class MantenimientoController extends Controller
      */
     public function store(Request $request)
     {
+    
+        $validator = Validator::make($request->all(), Mantenimiento::$rules);
+    
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+    
         $request = $this->getInfo($request);
-    
-        request()->validate(Mantenimiento::$rules);
-    
+        
         $estado = $request->input('mantestado_id');
     
         if (empty($estado)) {
@@ -80,19 +113,28 @@ class MantenimientoController extends Controller
             $request->merge(['mantestado_id' => '1']);
         }
     
-        // Obtener el último valor del campo "orden" de la tabla "mantenimientos"
-        $lastOrder = Mantenimiento::latest('orden')->value('orden');
+        try {
+            DB::beginTransaction();
     
-        // Incrementar el último valor del campo "orden" en 1
-        $newOrder = $lastOrder + 1;
+            // Obtener el último valor del campo "orden" de la tabla "mantenimientos"
+            $ultimaOrden = Mantenimiento::latest('orden')->value('orden');
     
-        // Asignar el nuevo valor al atributo "orden" del objeto $request
-        $request->merge(['orden' => $newOrder]);
+            // Incrementar el último valor del campo "orden" en 1
+            $nuevaOrden = $ultimaOrden + 1;
     
-        $mantenimiento = Mantenimiento::create($request->all());
+            // Asignar el nuevo valor al atributo "orden" del objeto $request
+            $request->merge(['orden' => $nuevaOrden]);
     
-        return redirect()->route('mantenimientos.show', ['mantenimiento' => $mantenimiento->id])
-            ->with('success', 'Mantenimiento creado exitosamente.');
+            $mantenimiento = Mantenimiento::create($request->all());
+    
+            DB::commit();
+    
+            return redirect()->route('mantenimientos.show', ['mantenimiento' => $mantenimiento->id])
+                ->with('success', 'Orden de mantenimiento creado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al crear la orden de mantenimiento: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -103,9 +145,12 @@ class MantenimientoController extends Controller
      */
     public function show($id)
     {
-        $mantenimiento = Mantenimiento::find($id);
-
-        return view('mantenimiento.show', compact('mantenimiento'));
+        try {
+            $mantenimiento = Mantenimiento::findOrFail($id);
+            return view('mantenimiento.show', compact('mantenimiento'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('mantenimientos.index')->with('error', 'La orden de mantenimiento no existe.');
+        }
     }
 
     /**
@@ -116,15 +161,24 @@ class MantenimientoController extends Controller
      */
     public function edit($id)
     {
-        $mantenimiento = Mantenimiento::find($id);
-        $d_mantestado = Mantestado::all();
-        $user = auth()->user();
-        $d_vehiculo = Asignarvehiculo::where('user_id', $user->id)->first();
-
-        $d_mantestado = Mantestado::all();
-        $edicion = true;
-
-        return view('mantenimiento.edit', compact('mantenimiento', 'edicion', 'd_mantestado', 'user', 'd_vehiculo'));
+        try {
+            $mantenimiento = Mantenimiento::findOrFail($id);
+            
+            // Verificar si el estado del mantenimiento es 1 (Nuevo)
+            if ($mantenimiento->mantestado_id != 1) {
+                return redirect()->route('mantenimientos.index')->with('error', 'No puedes editar esta orden de mantenimiento porque esta en estado "' . $mantenimiento->mantestado->nombre . '".');
+            }
+    
+            $d_mantestado = Mantestado::all();
+            $user = auth()->user();
+            $d_vehiculo = Asignarvehiculo::where('user_id', $user->id)->first();
+    
+            $edicion = true;
+    
+            return view('mantenimiento.edit', compact('mantenimiento', 'edicion', 'd_mantestado', 'user', 'd_vehiculo'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('mantenimientos.index')->with('error', 'La orden de mantenimiento no existe.');
+        }
     }
 
     /**
@@ -136,14 +190,32 @@ class MantenimientoController extends Controller
      */
     public function update(Request $request, Mantenimiento $mantenimiento)
     {
+        $validator = Validator::make($request->all(), Mantenimiento::$rules);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+        
         $request = $this->getInfo($request);
-    
-        request()->validate(Mantenimiento::$rules);
-    
-        $mantenimiento->update($request->all());
-    
-        return redirect()->route('mantenimientos.index')
-            ->with('success', 'Mantenimiento actualizado exitosamente.');
+
+        // Validar si el nuevo estado seleccionado es 2, 3, 4 o 5
+        if (in_array($request->input('mantestado_id'), [2, 3, 4, 5])) {
+            return back()->with('error', 'No puedes cambiar el estado de esta orden de mantenimiento.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $mantenimiento->update($request->all());
+
+            DB::commit();
+
+            return redirect()->route('mantenimientos.index')
+                ->with('success', 'Orden de mantenimiento actualizado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al actualizar la orden de mantenimiento: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -154,15 +226,29 @@ class MantenimientoController extends Controller
     public function destroy($id)
     {
         try {
-            $mantenimiento = Mantenimiento::find($id);
-            $mantenimiento->delete();
+            DB::beginTransaction();
+        
+            $mantenimiento = Mantenimiento::findOrFail($id);
     
-            return redirect()->route('mantenimientos.index')
-                ->with('success', 'Mantenimiento borrado exitosamente.');
+            // Verificar si el mantestado es igual a 2, 3
+            if (in_array($mantenimiento->mantestado_id, [2, 3])) {
+                return redirect()->route('mantenimientos.index')->with('error', 'No se puede eliminar la orden de mantenimiento porque esta "' . $mantenimiento->mantestado->nombre . '".');
+            }
+
+            $mantenimiento->delete();
+        
+            DB::commit();
+        
+            return redirect()->route('mantenimientos.index')->with('success', 'Orden de Mantenimiento borrado exitosamente.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Orden de mantenimiento no existe.');
         } catch (QueryException $e) {
-            // Captura la excepción de integridad referencial (foreign key constraint)
-            return redirect()->route('mantenimientos.index')
-                ->with('error', 'Error no se puede eliminar, se encuentra en proceso de mantenimiento');
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Error: No se puede eliminar, la orden de mantenimiento se encuentra "' . $mantenimiento->mantestado->nombre . '".');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al eliminar la orden de mantenimiento: ' . $e->getMessage());
         }
     }
 
@@ -179,5 +265,69 @@ class MantenimientoController extends Controller
         $request->merge(['vehiculo_id' => $vehiculo_id]);
     
         return $request;
+    }
+
+        /**
+     * Cambiar el estado del mantenimiento a "Aceptar".
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function aceptar($id)
+    {
+        try {
+            DB::beginTransaction();
+            $mantenimiento = Mantenimiento::findOrFail($id);
+    
+            // Verificar si el mantestado actual es 3, 4 o 5
+            if ($mantenimiento->mantestado_id == 3 || $mantenimiento->mantestado_id == 4 || $mantenimiento->mantestado_id == 5) {
+                return redirect()->route('mantenimientos.index')->with('error', 'No se puede aceptar la orden de mantenimiento porque está "' . $mantenimiento->mantestado->nombre . '".');
+            }
+            // Verificar si el mantestado actual es 2 (Aceptado)
+            if ($mantenimiento->mantestado_id == 2) {
+                return redirect()->route('mantenimientos.index')->with('error', 'La orden de mantenimiento ya ha sido "' . $mantenimiento->mantestado->nombre . '".');
+            }
+            //Actualiza a Aceptado
+            $mantenimiento->update(['mantestado_id' => 2]);
+
+            DB::commit();
+            return redirect()->route('mantenimientos.index')->with('success', 'Orden de mantenimiento aceptada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al aceptar la orden de mantenimiento.');
+        }
+    }
+
+        /**
+     * Mostrar el modal de reasignación.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function reasignar(Request $request)
+    {
+        try {
+            $id = $request->input('id');
+            $fecha = $request->input('fecha');
+            $hora = $request->input('hora');
+
+            DB::beginTransaction();
+
+            $mantenimiento = Mantenimiento::findOrFail($id);
+
+            // Verificar si el mantestado actual es 4 o 5
+            if ($mantenimiento->mantestado_id == 4 || $mantenimiento->mantestado_id == 5) {
+                return redirect()->route('mantenimientos.index')->with('error', 'No se puede reasignar la orden de mantenimiento porque está "' . $mantenimiento->mantestado->nombre . '".');
+            }
+
+            $mantenimiento->update(['fecha' => $fecha, 'hora' => $hora, 'mantestado_id' => 3]);
+
+            DB::commit();
+
+            return redirect()->route('mantenimientos.index')->with('success', 'Orden de mantenimiento reasignado exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al reasignar la orden de mantenimiento.');
+        }
     }
 }
