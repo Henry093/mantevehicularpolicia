@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 /**
  * Class MantenimientoController
  * @package App\Http\Controllers
@@ -328,6 +328,20 @@ class MantenimientoController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('mantenimientos.index')->with('error', 'Error al reasignar la orden de mantenimiento.');
+        }
+    }
+
+
+    public function pdf($id){
+        try {
+            $mantenimiento = Mantenimiento::findOrFail($id);
+            
+            $pdf = PDF::loadView('mantenimiento.pdf', compact('mantenimiento'));
+        
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            // Manejar la excepción aquí, por ejemplo, redirigir a una página de error o mostrar un mensaje al usuario
+            return response()->json(['error' => 'Error al generar el PDF: ' . $e->getMessage()], 500);
         }
     }
 }

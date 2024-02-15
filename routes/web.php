@@ -24,6 +24,7 @@ use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\RangoController;
 use App\Http\Controllers\ReclamoController;
 use App\Http\Controllers\ReclamosrController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SangreController;
 use App\Http\Controllers\SubcircuitoController;
@@ -71,6 +72,7 @@ Route::post('formulario',[FormularioController::class, 'store'])->name('reclamo.
 
 Route::group(['middleware' => ['auth']], function(){
     
+
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     //Reportes
@@ -162,6 +164,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/mantenimientos/{id}/aceptar', [MantenimientoController::class, 'aceptar'])->name('mantenimientos.aceptar');
     Route::post('/mantenimientos/{id}/reasignar', [MantenimientoController::class, 'reasignar'])->name('mantenimientos.reasignar');
 
+    //mantenimiento pdf
+    Route::get('/mantenimientos/{id}/pdf', [MantenimientoController::class, 'pdf'])->name('mantenimientos.pdf');
+    Route::get('/vehientregas/{id}/pdf', [VehientregaController::class, 'pdf'])->name('vehientregas.pdf');
 
     //Examen
     Route::resource('reclamos', ReclamoController::class)->names('reclamos');
@@ -173,4 +178,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('reclamosr',[ReclamosrController::class, 'index'])->name('reclamo.reporteReclamo');
     Route::get('/filtro', [ReclamosrController::class, 'filtro']);
     
+    //Reportes
+    
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
 });
