@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mantenimiento;
 use App\Models\Subcircuito;
+use App\Models\Vehiculo;
+use App\Models\Vehientrega;
+use App\Models\Vehirecepcione;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ReporteController extends Controller
@@ -10,12 +15,32 @@ class ReporteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $dependencias = Subcircuito::paginate(10);
-
-        return view('dependencia.index', compact('dependencias'))
-            ->with('i', (request()->input('page', 1) - 1) * $dependencias->perPage());
+        $view = $request->get('view');
+    
+        switch ($view) {
+            case 'personas':
+                $data = User::paginate(10);
+                break;
+            case 'vehiculos':
+                $data = Vehiculo::paginate(10);
+                break;
+            case 'mantenimientos':
+                $data = Mantenimiento::paginate(10);
+                break;
+            case 'recepciones':
+                $data = Vehirecepcione::paginate(10);
+                break;
+            case 'entregas':
+                $data = Vehientrega::paginate(10);
+                break;
+            default:
+                $data = Subcircuito::paginate(10); // Por defecto, mostrar dependencias
+                break;
+        }
+    
+        return view('reporte.index', compact('data', 'view'));
     }
 
     /**
@@ -39,9 +64,7 @@ class ReporteController extends Controller
      */
     public function show(string $id)
     {
-        $dependencia = Subcircuito::find($id);
-
-        return view('dependencia.show', compact('dependencia'));
+        //
     }
 
     /**

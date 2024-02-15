@@ -32,7 +32,6 @@ class HomeController extends Controller
         $totalDependencias = Subcircuito::count();
         $totalUsuarios = User::count();
         $totalVehiculos = Vehiculo::count();
-        //$totalMantenimientos = Rmantenimiento::count();
         $totalReclamos = Reclamo::count();
         
         return view('home', compact('totalDependencias', 'totalUsuarios', 'totalVehiculos', 'totalReclamos'));

@@ -437,33 +437,8 @@ return [
                     'icon' => 'ti ti-report-analytics',
                 ],
                 [
-                    'text' => 'Dependencias',
-                    'url' => '#',
-                    'icon' => 'ti ti-file-description',
-                ],
-                [
-                    'text' => 'Personas',
-                    'url' => '#',
-                    'icon' => 'ti ti-file-description',
-                ],
-                [
-                    'text' => 'Vehículos',
-                    'url' => '#',
-                    'icon' => 'ti ti-file-description',
-                ],
-                [
-                    'text' => 'Mantenimientos',
-                    'url' => '#',
-                    'icon' => 'ti ti-file-description',
-                ],
-                [
-                    'text' => 'Recepción Vehículo',
-                    'url' => '#',
-                    'icon' => 'ti ti-file-description',
-                ],
-                [
-                    'text' => 'Entrega Vehículo',
-                    'url' => '#',
+                    'text' => 'Categorias',
+                    'route' => 'reportes.index',
                     'icon' => 'ti ti-file-description',
                 ],
             ],

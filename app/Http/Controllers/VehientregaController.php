@@ -9,7 +9,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 /**
  * Class VehientregaController
  * @package App\Http\Controllers
@@ -224,4 +224,19 @@ class VehientregaController extends Controller
             return redirect()->route('vehientregas.index')->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
+    
+    public function pdf($id){
+        try {
+            $vehientrega = Vehientrega::findOrFail($id);
+            
+            $pdf = PDF::loadView('vehientrega.pdf', compact('vehientrega'));
+        
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            // Manejar la excepción aquí, por ejemplo, redirigir a una página de error o mostrar un mensaje al usuario
+            return response()->json(['error' => 'Error al generar el PDF: ' . $e->getMessage()], 500);
+        }
+    }
+
 }

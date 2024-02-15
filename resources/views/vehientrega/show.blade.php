@@ -55,7 +55,7 @@
                                 <h3>Orden # {{ $vehientrega->vehirecepcione->mantenimiento->orden }} </h3>
                             </div>                        
 <div class="form-group">
-<strong>Tipo:</strong>
+<strong>Tipo Vehículo:</strong>
 {{ $vehientrega->vehirecepcione->mantenimiento->vehiculo->tvehiculo->nombre }}
 </div>
 <div class="form-group">
@@ -63,7 +63,7 @@
 {{ $vehientrega->vehirecepcione->mantenimiento->vehiculo->marca->nombre }}
 </div>
 <div class="form-group">
-<strong>Marca:</strong>
+<strong>Modelo:</strong>
 {{ $vehientrega->vehirecepcione->mantenimiento->vehiculo->modelo->nombre }}
 </div>
 <div class="form-group">
@@ -100,11 +100,11 @@
 {{ $vehientrega->vehirecepcione->mantetipo->nombre }}
 </div>
 <div class="form-group">
-<strong>Tipo de mantenimiento:</strong>
+<strong>Descripción del mantenimiento:</strong>
 {{ $vehientrega->vehirecepcione->mantetipo->descripcion }}
 </div>
 <div class="form-group">
-<strong>Tipo de mantenimiento: </strong>
+<strong>Valor del mantenimiento: </strong>
 {{ $vehientrega->vehirecepcione->mantetipo->valor }} $
 </div>
 <div class="form-group">
@@ -126,6 +126,9 @@
         <div class="d-flex justify-content-center mt-5">
             <a href="{{ route('vehientregas.index') }}" class="btn btn-primary me-3">
                 @lang('Return')
+            </a>
+            <a href="{{ route('vehientregas.pdf', ['id' => $vehientrega->id]) }}" class="btn btn-success me-3" target="_blank">
+                @lang('Generar PDF')
             </a>
             <button type="button" class="btn btn-secondary" onclick="window.print();">
                 @lang('Print')
