@@ -31,8 +31,24 @@ class VehientregaController extends Controller
      */
     public function index()
     {
-        $vehientregas = Vehientrega::paginate(10);
-
+        $search = request('search');
+        $query = Vehientrega::query();
+    
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('fecha_entrega', 'like', '%' . $search . '%')
+                    ->orWhere('p_retiro', 'like', '%' . $search . '%')
+                    ->orWhere('km_actual', 'like', '%' . $search . '%')
+                    ->orWhere('km_proximo', 'like', '%' . $search . '%')
+                    ->orWhere('observaciones', 'like', '%' . $search . '%')
+                    ->orWhereHas('vehirecepciones_id', function ($q) use ($search) {
+                        $q->where('placa', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+    
+        $vehientregas = $query->paginate(10);
+    
         return view('vehientrega.index', compact('vehientregas'))
             ->with('i', (request()->input('page', 1) - 1) * $vehientregas->perPage());
     }

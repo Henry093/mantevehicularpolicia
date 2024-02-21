@@ -91,7 +91,7 @@
 										<th>Parroquia</th>
 										<th>Distrito</th>
 										<th>Circuito Id</th>
-										<th>Nombre</th>
+										<th>Subcircuito</th>
 										<th>Código</th>
 										<th>Estado</th>
 

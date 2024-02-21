@@ -78,20 +78,3 @@
         </div>
     </div>
     @endsection
-
-    {{-- {!! Form::model($user, ['route' => ['user.update', $user], 'method'=>'put']]) !!}
-                    
-                    <div class="form-group mb-3">
-                        <label class="form-label">{{ Form::label('asignacion_id', 'Asignación ID') }}</label>
-                        <div>
-                            <select name="asignacion_id" class="form-select form-control-rounded mb-2 {{ $errors->has('asignacion_id') ? ' is-invalid' : '' }}" placeholder="Selecciona una asignación">
-                                <option value="">Selecciona una asignación..</option>
-                                @foreach($asignaciones as $asignacion)
-                                    <option value="{{ $asignacion->id }}" {{ $user->asignacione->nombre == $asignacion->nombre ? 'selected' : '' }}>
-                                        {{ $asignacion->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            {!! $errors->first('asignacion_id', '<div class="invalid-feedback">:message</div>') !!}
-                        </div>
-                    </div> --}}

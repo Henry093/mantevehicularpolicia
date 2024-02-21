@@ -8,6 +8,7 @@ use App\Models\Modelo;
 use App\Models\Tvehiculo;
 use App\Models\Vcarga;
 use App\Models\Vehiculo;
+use App\Models\Vehieliminacion;
 use App\Models\Vpasajero;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -107,17 +108,30 @@ class VehiculoController extends Controller
         }
     
         try {
-            //Se crea el vehículo en la base de datos
-            $placa = Vehiculo::where('placa', $request->input('placa'))->first();
-            $chasis = Vehiculo::where('chasis', $request->input('chasis'))->first();
-            $motor = Vehiculo::where('motor', $request->input('motor'))->first();
+            // Verificar existencia en Vehiculo
+            $placa = Vehiculo::where('placa', $request->input('placa'))->exists();
+            $chasis = Vehiculo::where('chasis', $request->input('chasis'))->exists();
+            $motor = Vehiculo::where('motor', $request->input('motor'))->exists();
             
             if ($placa) {
-                return redirect()->route('vehiculos.create')->with('error', 'La placa ya está registrada.');
+                return redirect()->route('vehiculos.index')->with('error', 'La placa ya está registrada.');
             } elseif ($chasis) {
-                return redirect()->route('vehiculos.create')->with('error', 'El Chasis ya está registrado.');
+                return redirect()->route('vehiculos.index')->with('error', 'El Chasis ya está registrado.');
             } elseif ($motor) {
-                return redirect()->route('vehiculos.create')->with('error', 'El motor ya está registrado.');
+                return redirect()->route('vehiculos.index')->with('error', 'El motor ya está registrado.');
+            }
+
+            $placaE = Vehieliminacion::where('placa', $request->input('placa'))->exists();
+            $chasisE = Vehieliminacion::where('chasis', $request->input('chasis'))->exists();
+            $motorE = Vehieliminacion::where('motor', $request->input('motor'))->exists();
+
+            // Verificar existencia en Vehieliminacions            
+            if ($placaE) {
+                return redirect()->route('vehiculos.index')->with('error', 'La placa ya está registrada como eliminado.');
+            } elseif ($chasisE) {
+                return redirect()->route('vehiculos.index')->with('error', 'El Chasis ya está registrado como eliminado.');
+            } elseif ($motorE) {
+                return redirect()->route('vehiculos.index')->with('error', 'El motor ya está registrado como eliminado.');
             }
     
             // Verificar si el estado ya está presente en la solicitud
@@ -214,10 +228,10 @@ class VehiculoController extends Controller
     
         try {
             DB::beginTransaction();
-    
-            $placa = Vehiculo::where('placa', $request->input('placa'))->where('id', '!=', $vehiculo->id)->first();
-            $chasis = Vehiculo::where('chasis', $request->input('chasis'))->where('id', '!=', $vehiculo->id)->first();
-            $motor = Vehiculo::where('motor', $request->input('motor'))->where('id', '!=', $vehiculo->id)->first();
+            // Verificar existencia en Vehiculo   
+            $placa = Vehiculo::where('placa', $request->input('placa'))->where('id', '!=', $vehiculo->id)->exists();
+            $chasis = Vehiculo::where('chasis', $request->input('chasis'))->where('id', '!=', $vehiculo->id)->exists();
+            $motor = Vehiculo::where('motor', $request->input('motor'))->where('id', '!=', $vehiculo->id)->exists();
     
             if ($placa) {
                 return redirect()->route('vehiculos.edit', $vehiculo)->with('error', 'La placa ya está registrada.');
@@ -226,7 +240,19 @@ class VehiculoController extends Controller
             } elseif ($motor) {
                 return redirect()->route('vehiculos.edit', $vehiculo)->with('error', 'El motor ya está registrado.');
             }
-    
+            // Verificar existencia en Vehieliminacions
+            $placaE = Vehieliminacion::where('placa', $request->input('placa'))->exists();
+            $chasisE = Vehieliminacion::where('chasis', $request->input('chasis'))->exists();
+            $motorE = Vehieliminacion::where('motor', $request->input('motor'))->exists();
+            
+            if ($placaE) {
+                return redirect()->route('vehiculos.edit')->with('error', 'La placa ya está registrada como eliminado.');
+            } elseif ($chasisE) {
+                return redirect()->route('vehiculos.edit')->with('error', 'El Chasis ya está registrado como eliminado.');
+            } elseif ($motorE) {
+                return redirect()->route('vehiculos.edit')->with('error', 'El motor ya está registrado como eliminado.');
+            }
+
             $vehiculo->update($request->all());
     
             DB::commit();
@@ -247,8 +273,23 @@ class VehiculoController extends Controller
     {
         try {
             DB::beginTransaction();
-    
+
             $vehiculo = Vehiculo::findOrFail($id);
+            $motivo = request('motivo');
+    
+            if (empty($motivo)) {
+                throw new \Exception('El motivo de la eliminación es requerido.');
+            }
+    
+            // Crear registro en Vehieliminacions
+            Vehieliminacion::create([
+                'placa' => $vehiculo->placa,
+                'chasis' => $vehiculo->chasis,
+                'motor' => $vehiculo->motor,
+                'motivo' => $motivo,
+            ]);
+    
+            // Eliminar el vehículo
             $vehiculo->delete();
     
             DB::commit();
@@ -265,8 +306,7 @@ class VehiculoController extends Controller
             return redirect()->route('vehiculos.index')->with('error', 'Error al eliminar el vehículo: ' . $e->getMessage());
         }
     }
-
-
+    
     public function getMarcas($tvehiculoId)
     {
         $marcas = Marca::where('tvehiculo_id', $tvehiculoId)->pluck('nombre', 'id');

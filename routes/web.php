@@ -35,6 +35,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserSubcircuitoController;
 use App\Http\Controllers\VcargaController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\VehieliminacionController;
 use App\Http\Controllers\VehientregaController;
 use App\Http\Controllers\VehirecepcioneController;
 use App\Http\Controllers\VehisubcircuitoController;
@@ -121,6 +122,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/obtener-cantones/{provinciaId}', [UserController::class, 'getCantones']);
     Route::get('/obtener-parroquias/{cantonId}', [UserController::class, 'getParroquias']);
 
+    Route::get('/perfil', [UserController::class, 'showProfile'])->name('perfil');
+    Route::post('/change-password', [UserController::class, 'changePassword'])->name('change.password');
+
     //Registro de vehículos
     Route::resource('tvehiculos', TvehiculoController::class)->names('tvehiculos');//tipo de vehiculos
     Route::resource('marcas', MarcaController::class)->names('marcas');
@@ -130,6 +134,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::resource('vehiculos', VehiculoController::class)->names('vehiculos');
     Route::get('/obtener-marcas/{tvehiculoId}', [VehiculoController::class, 'getMarcas']);
     Route::get('/obtener-modelos/{marcaId}', [VehiculoController::class, 'getModelos']);
+    //Eliminacion vehiculo
+    Route::resource('vehieliminacions', VehieliminacionController::class)->names('vehieliminacions');
+    
 
     //Usuario Subcircuito
     Route::resource('usersubcircuitos', UserSubcircuitoController::class)->names('usersubcircuitos');
@@ -178,7 +185,12 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('reclamosr',[ReclamosrController::class, 'index'])->name('reclamo.reporteReclamo');
     Route::get('/filtro', [ReclamosrController::class, 'filtro']);
     
+
+    Route::get('/novedades/{id}/cambiar_estado', [NovedadeController::class, 'cambiarEstado'])->name('novedades.cambiar_estado');
+
+    
     //Reportes
     
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::any('/reportes/export', [ReporteController::class, 'export'])->name('reportes.export');
 });

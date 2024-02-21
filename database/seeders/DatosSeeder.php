@@ -21,7 +21,6 @@ class DatosSeeder extends Seeder
         //Estado
         Estado::create(['nombre' => 'Activo']);
         Estado::create(['nombre' => 'Inactivo']);
-        Estado::create(['nombre' => 'Eliminado']);
 
         //Asignaciones
         Asignacion::create(['nombre' => 'Asignado']);

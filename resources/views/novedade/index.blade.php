@@ -89,6 +89,9 @@
 										<th>Nombre</th>
 										<th>Mensaje</th>
 										<th>Estatus</th>
+                                        @if(auth()->user()->isAdmin())
+										<th>Asignar</th>
+                                        @endif
 
                                     <th class="w-1"></th>
                                 </tr>
@@ -104,6 +107,12 @@
 											<td>{{ $novedade->user->name }} {{ $novedade->user->lastname }}</td>
 											<td>{{ $novedade->mensaje }}</td>
 											<td>{{ $novedade->tnovedade->nombre}}</td>
+
+                                            <td>
+                                                @if(auth()->user()->isAdmin() && $novedade->tnovedade->nombre === 'Nuevo')
+                                                    <a href="{{ route('novedades.cambiar_estado', $novedade->id) }}" class="btn btn-pill">@lang('Asignar Vehiculo')</a>
+                                                @endif
+                                            </td>
 
                                         <td>
                                             <div class="btn-list flex-nowrap">

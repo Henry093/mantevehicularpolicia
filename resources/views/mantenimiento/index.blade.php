@@ -181,6 +181,8 @@
                                                             @lang('Actions')
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-end">
+
+                                                            @if(auth()->user()->isAdmin())
                                                             <!-- Botón Aceptar -->
                                                             <a class="dropdown-item text-green"
                                                                 href="{{ route('mantenimientos.aceptar', $mantenimiento->id) }}">
@@ -192,6 +194,7 @@
                                                                 data-bs-target="#reasignarModal{{ $mantenimiento->id }}">
                                                                 @lang('Re-Asignar')
                                                             </button>
+                                                            @endif
                                                             <a class="dropdown-item"
                                                                 href="{{ route('mantenimientos.show', $mantenimiento->id) }}">
                                                                 @lang('View')

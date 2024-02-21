@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class MarcaController extends Controller
 {
+     // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:marcas.index')->only('index');
@@ -31,9 +32,10 @@ class MarcaController extends Controller
      */
     public function index()
     {
-        $search = request('search');
-        $query = Marca::query();
+        $search = request('search');// Se obtiene el término de búsqueda
+        $query = Marca::query();// Se crea una consulta para obtener las marcas
     
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('nombre', 'like', '%' . $search . '%')
@@ -43,8 +45,9 @@ class MarcaController extends Controller
             });
         }
     
-        $marcas = $query->paginate(12);
+        $marcas = $query->paginate(12);// Se obtienen los marcas paginados
     
+        // Se devuelve la vista con los marcas paginados
         return view('marca.index', compact('marcas'))
             ->with('i', ($marcas->currentPage() - 1) * $marcas->perPage());
     }
@@ -56,10 +59,11 @@ class MarcaController extends Controller
      */
     public function create()
     {
-        $marca = new Marca();
+        $marca = new Marca();// Se crea una nueva instancia de marca
 
-        $tvehiculos = Tvehiculo::all();
-        return view('marca.create', compact('marca', 'tvehiculos'));
+        $tvehiculos = Tvehiculo::all();// Se obtienen todas las tvehiculos disponibles
+
+        return view('marca.create', compact('marca', 'tvehiculos'));// Se devuelve la vista con el formulario de creación
     }
 
     /**
@@ -70,14 +74,15 @@ class MarcaController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), Marca::$rules);
+        $validator = Validator::make($request->all(), Marca::$rules);// Se validan los datos del formulario
     
+        // Si la validación falla, se redirige de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Se inicia una transacción de base de datos
     
             $nombre = $request->input('nombre');
     
@@ -95,11 +100,12 @@ class MarcaController extends Controller
                 })
                 ->exists();
             
-                // Verificar si la marca ya está registrada para tvehiculo = 2
+            // Verificar si la marca ya está registrada para tvehiculo = 3
             $marcaRegistradaTvehiculo3 = Marca::where('nombre', $nombre)
             ->whereHas('tvehiculo', function ($query) {
                 $query->where('id', 3);
             })
+
             ->exists();
     
             if ($marcaRegistradaTvehiculo1 && $request->input('tvehiculo_id') == 1) {
@@ -117,12 +123,15 @@ class MarcaController extends Controller
                 return redirect()->route('marcas.create')->with('error', 'La marca ya está registrada en motocicleta.');
             }
     
-            Marca::create($request->all());
+            Marca::create($request->all());// Se crea una nueva marca con los datos proporcionados
     
-            DB::commit();
+            DB::commit();// Se confirma la transacción
     
+            // Se redirige a la lista de cantones con un mensaje de éxito
             return redirect()->route('marcas.index')->with('success', 'Marca creada exitosamente.');
+
         } catch (\Exception $e) {
+             // En caso de error, se deshace la transacción y se redirige con un mensaje de error
             DB::rollBack();
             return redirect()->route('marcas.index')->with('error', 'Error al crear la marca: ' . $e->getMessage());
         }
@@ -136,9 +145,12 @@ class MarcaController extends Controller
     public function show($id)
     {
         try {
-            $marca = Marca::findOrFail($id);
-            return view('marca.show', compact('marca'));
+            $marca = Marca::findOrFail($id);// Intenta encontrar el marca por su ID
+
+            return view('marca.show', compact('marca'));// Devuelve la vista con los detalles del marca
+
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el marca, redirige a la lista de marcas con un mensaje de error
             return redirect()->route('marcas.index')->with('error', 'La marca no existe.');
         }
     }
@@ -152,10 +164,14 @@ class MarcaController extends Controller
     public function edit($id)
     {
         try {
-            $marca = Marca::findOrFail($id);
-            $tvehiculos = Tvehiculo::all();
-            return view('marca.edit', compact('marca', 'tvehiculos'));
+            $marca = Marca::findOrFail($id);// Intenta encontrar el cantón por su ID
+
+            $tvehiculos = Tvehiculo::all();// Obtiene todas las tvehiculos disponibles para mostrarlas en el formulario de edición
+
+            return view('marca.edit', compact('marca', 'tvehiculos'));// Devuelve la vista con el marcas a editar y las tvehiculos disponibles
+
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el marcas, redirige a la lista de marcas con un mensaje de error
             return redirect()->route('marcas.index')->with('error', 'La marca no existe.');
         }
     }
@@ -169,16 +185,17 @@ class MarcaController extends Controller
      */
     public function update(Request $request, Marca $marca)
     {
-        $validator = Validator::make($request->all(), Marca::$rules);
+        $validator = Validator::make($request->all(), Marca::$rules);// Validar los datos del formulario
     
+        // Si la validación falla, redirigir de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
     
-            $nombre = $request->input('nombre');
+            $nombre = $request->input('nombre');// Obtener el nuevo nombre del cantón
     
             // Verificar si la marca ya está registrada para tvehiculo = 1
             $marcaRegistradaTvehiculo1 = Marca::where('nombre', $nombre)
@@ -223,10 +240,13 @@ class MarcaController extends Controller
             // Si no se encuentra registrada para el tipo de vehículo correspondiente, se procede con la actualización
             $marca->update($request->all());
     
-            DB::commit();
+            DB::commit();// Confirmar la transacción
     
+            // Redirigir a la lista de cantones con un mensaje de éxito
             return redirect()->route('marcas.index')->with('success', 'Marca actualizada exitosamente.');
+        
         } catch (\Exception $e) {
+            // En caso de error, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('marcas.index')->with('error', 'Error al actualizar la marca: ' . $e->getMessage());
         }
@@ -240,21 +260,26 @@ class MarcaController extends Controller
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
 
-            $marca = Marca::findOrFail($id);
-            $marca->delete();
+            $marca = Marca::findOrFail($id);// Buscar el marca por su ID
+            $marca->delete();// Eliminar el marca
 
-            DB::commit();
+            DB::commit();// Confirmar la transacción
 
+            // Redirigir a la lista de marcas con un mensaje de éxito
             return redirect()->route('marcas.index')->with('success', 'Marca borrada exitosamente.');
+
         } catch (ModelNotFoundException $e) {
+            // En caso de que el marca no exista, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('marcas.index')->with('error', 'La marca no existe.');
         } catch (QueryException $e) {
+            // En caso de que no se pueda eliminar debido a datos asociados, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('marcas.index')->with('error', 'La marca no puede eliminarse, tiene datos asociados.');
         } catch (\Exception $e) {
+            // En caso de error, deshace la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('marcas.index')->with('error', 'Error al eliminar la marca: ' . $e->getMessage());
         }

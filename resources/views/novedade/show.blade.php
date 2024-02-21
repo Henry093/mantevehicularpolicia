@@ -59,7 +59,7 @@
 </div>
 <div class="form-group">
 <strong>Estatus:</strong>
-{{ $novedade->tnovedad->nombre }}
+{{ $novedade->tnovedade->nombre }}
 </div>
 
                         </div>

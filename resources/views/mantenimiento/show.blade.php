@@ -99,7 +99,7 @@
             @lang('Return')
         </a>
         <a href="{{ route('mantenimientos.pdf', ['id' => $mantenimiento->id]) }}" class="btn btn-success me-3" target="_blank">
-            @lang('Imprimir PDF')
+            @lang('Generar PDF')
         </a>
         <button type="button" class="btn btn-secondary" onclick="window.print();">
             @lang('Print')

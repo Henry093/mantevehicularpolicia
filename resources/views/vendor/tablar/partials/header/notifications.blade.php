@@ -15,9 +15,9 @@
     <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end dropdown-menu-card">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Last updates</h3>
+                <h3 class="card-title">@lang('Last updates')</h3>
             </div>
-            <div class="list-group list-group-flush list-group-hoverable">
+            {{-- <div class="list-group list-group-flush list-group-hoverable">
                 <div class="list-group-item">
                     <div class="row align-items-center">
                         <div class="col-auto"><span
@@ -117,7 +117,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

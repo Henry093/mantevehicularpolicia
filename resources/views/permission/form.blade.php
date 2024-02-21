@@ -1,37 +1,36 @@
 
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('name') }}</label>
+    <label class="form-label">   {{ Form::label('name', 'Nombre') }}</label>
     <div>
         {{ Form::text('name', $permission->name, ['class' => 'form-control' .
-        ($errors->has('name') ? ' is-invalid' : ''), 'placeholder' => 'Name']) }}
+        ($errors->has('name') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese el nombre del permiso']) }}
         {!! $errors->first('name', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">permission <b>name</b> instruction.</small>
     </div>
 </div>
 <div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('description') }}</label>
+    <label class="form-label">   {{ Form::label('description', 'Descripción') }}</label>
     <div>
         {{ Form::text('description', $permission->description, ['class' => 'form-control' .
-        ($errors->has('description') ? ' is-invalid' : ''), 'placeholder' => 'Description']) }}
+        ($errors->has('description') ? ' is-invalid' : ''), 'placeholder' => 'Ingrese la descripción del permiso']) }}
         {!! $errors->first('description', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">permission <b>description</b> instruction.</small>
-    </div>
-</div>
-<div class="form-group mb-3">
-    <label class="form-label">   {{ Form::label('guard_name') }}</label>
-    <div>
-        {{ Form::text('guard_name', $permission->guard_name, ['class' => 'form-control' .
-        ($errors->has('guard_name') ? ' is-invalid' : ''), 'placeholder' => 'Guard Name']) }}
-        {!! $errors->first('guard_name', '<div class="invalid-feedback">:message</div>') !!}
-        <small class="form-hint">permission <b>guard_name</b> instruction.</small>
     </div>
 </div>
 
+@if ($edicion) 
+    <div class="form-group mb-3">
+        <label class="form-label">   {{ Form::label('guard_name') }}</label>
+        <div>
+            {{ Form::text('guard_name', $permission->guard_name, ['class' => 'form-control' .
+            ($errors->has('guard_name') ? ' is-invalid' : ''), 'placeholder' => 'Guard Name']) }}
+            {!! $errors->first('guard_name', '<div class="invalid-feedback">:message</div>') !!}
+        </div>
+    </div>
+@endif
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">
-                <a href="#" class="btn btn-danger">Cancel</a>
-                <button type="submit" class="btn btn-primary ms-auto ajax-submit">Submit</button>
+                <a href="/permissions" class="btn btn-danger">@lang('Cancel')</a>
+                <button type="submit" class="btn btn-primary ms-auto ajax-submit">@lang('Submit')</button>
             </div>
         </div>
     </div>

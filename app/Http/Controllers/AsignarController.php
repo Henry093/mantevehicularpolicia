@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 
 class AsignarController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:asignar.index')->only('index');
@@ -24,11 +25,33 @@ class AsignarController extends Controller
     public function index()
     {
         
-        $users = User::with('roles')->paginate(10);
+        $search = request('search');// Se obtiene el término de búsqueda
+        
+        $query = User::with('roles');// Se crea la consulta para usuarios con sus roles relacionados
 
+        // Si hay un término de búsqueda, se aplican filtros
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('lastname', 'like', '%' . $search . '%')
+                    ->orWhere('usuario', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhereHas('roles', function ($q) use ($search) {
+                        $q->where('name', 'like', '%' . $search . '%');
+                    })->orWhereHas('grado', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    })->orWhereHas('rango', function ($q) use ($search) {
+                        $q->where('nombre', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        
+        $users = $query->paginate(10);// Se obtienen los usuarios paginados según la consulta
+
+        // Se devuelve la vista con los usuarios y la paginación    
         return view('user.sistem.assign', compact('users'))
-        ->with('i', (request()->input('page', 1) - 1) * $users->perPage());;
-
+            ->with('i', (request()->input('page', 1) - 1) * $users->perPage());
     }
 
     /**
@@ -60,11 +83,24 @@ class AsignarController extends Controller
      */
     public function edit(string $id)
     {
-        $user = User::find($id);
+        try {
+            
+            $user = User::find($id);// Se intenta encontrar el usuario con el ID proporcionado
+    
+            // Si el usuario no se encuentra, se lanza una excepción
+            if (!$user) {
+                throw new \Exception("Usuario no encontrado.");
+            }
+    
+            $roles = Role::all();// Se obtienen todos los roles
+    
+            // Se devuelve la vista de edición de roles con el usuario y los roles encontrados
+            return view('user.sistem.rol_user', compact('user', 'roles'));
 
-        $roles = Role::all();
-
-        return view('user.sistem.rol_user', compact('user', 'roles'));
+        } catch (\Exception $e) {
+            // Si ocurre un error, se redirecciona de vuelta con un mensaje de error
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -72,11 +108,25 @@ class AsignarController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::find($id);
-
-        $user->roles()->sync($request->roles);
-
-        return redirect()->route('asignar.index', $user)->with('success', 'Rol asignado correctamente.');
+        try {
+            
+            $user = User::find($id);// Se intenta encontrar el usuario con el ID proporcionado
+    
+            // Si el usuario no se encuentra, se lanza una excepción
+            if (!$user) {
+                throw new \Exception("Usuario no encontrado.");
+            }
+    
+            // Se sincronizan los roles del usuario con los proporcionados en la solicitud
+            $user->roles()->sync($request->roles);
+    
+            // Se redirecciona a la lista de usuarios con un mensaje de éxito
+            return redirect()->route('asignar.index', $user)->with('success', 'Rol asignado correctamente.');
+            
+        } catch (\Exception $e) {
+            // Si ocurre un error, se redirecciona de vuelta con un mensaje de error
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

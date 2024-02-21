@@ -93,7 +93,7 @@
 										<th>Telefono</th>
 										<th>Grado</th>
 										<th>Rango</th>
-										<th>Email</th>
+										<th>Estado</th>
 
                                     <th class="w-1"></th>
                                 </tr>

@@ -13,7 +13,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
@@ -338,5 +340,65 @@ class UserController extends Controller
     
         return $username;
     }
+    // Agrega este método al final del controlador
+    public function showProfile()
+    {
+        // Obtener el usuario autenticado
+        $user = auth()->user();
 
+        // Verificar si el usuario está autenticado
+        if ($user) {
+            // Renderizar la vista del perfil y pasar el usuario
+            return view('user.config.perfil', compact('user'));
+        } else {
+            // Redireccionar al usuario a la página de inicio de sesión si no está autenticado
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para ver tu perfil.');
+        }
+    }
+
+    //Cambiar Password
+    public function changePassword(Request $request)
+    {
+        try {
+            // Obtener el usuario autenticado desde el guardia 'web'
+            $user = Auth::guard('web')->user();
+    
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'Debes iniciar sesión para cambiar tu contraseña.');
+            }
+    
+            // Validar los datos de entrada
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required',
+                'new_password' => 'required|min:8', // Validar que la contraseña tenga al menos 8 caracteres
+                'new_confirm_password' => 'required|same:new_password',
+            ], [
+                'new_password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+                'new_confirm_password.same' => 'Las contraseñas no coinciden.',
+            ]);
+    
+            // Si la validación falla, redireccionar de vuelta al formulario con los errores de validación
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+    
+            // Verificar si la contraseña actual proporcionada coincide con la contraseña del usuario
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->with('error', 'La contraseña actual es incorrecta.');
+            }
+    
+            // Actualizar la contraseña del usuario
+            $user->password = Hash::make($request->new_password);
+    
+            // Verificar si $user es una instancia de User antes de intentar guardar
+            if ($user instanceof User) {
+                $user->save(); // Guardar los cambios en la base de datos
+            }
+            // Redirigir al usuario a la vista del perfil
+            return redirect()->route('perfil')->with('success', 'Contraseña cambiada exitosamente.');
+        } catch (\Exception $e) {
+            // Manejar cualquier excepción
+            return back()->with('error', 'Ha ocurrido un error al cambiar la contraseña: ' . $e->getMessage());
+        }
+    }
 }

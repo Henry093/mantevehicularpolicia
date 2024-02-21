@@ -88,8 +88,8 @@
 										<th>Nombre</th>
 										<th>Grado</th>
 										<th>Rango</th>
+										<th>Rol</th>
 										<th>Teléfono</th>
-										<th>Email</th>
 										<th>Distrito</th>
 										<th>Subcircuito</th>
 										<th>Asignacion</th>
@@ -109,8 +109,8 @@
                                                 {{ $usersubcircuito->user->lastname }}</td>
 											<td>{{ $usersubcircuito->user->grado->nombre }}</td>
 											<td>{{ $usersubcircuito->user->rango->nombre }}</td>
+											<td>{{ $usersubcircuito->user->roles[0]->name }}</td>
 											<td>{{ $usersubcircuito->user->telefono }}</td>
-											<td>{{ $usersubcircuito->user->email }}</td>
                                             <td>
                                                 @if ($usersubcircuito->distrito)
                                                     {{ $usersubcircuito->distrito->nombre }}
