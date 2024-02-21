@@ -182,24 +182,27 @@ class VehirecepcioneController extends Controller
     public function update(Request $request, Vehirecepcione $vehirecepcione)
     {
         $validator = Validator::make($request->all(), Vehirecepcione::$rules);
-
+    
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
+    
         try {
-            
+            // Obtener todos los campos del formulario
+            $input = $request->all();
+    
             // Verificar si se ha seleccionado una nueva imagen
             if ($request->hasFile('imagen')) {
                 // Eliminar la imagen anterior del servidor
                 if ($vehirecepcione->imagen) {
                     unlink(public_path($vehirecepcione->imagen));
                 }
-        
+    
                 // Guardar la nueva imagen en el servidor y en la base de datos
                 $image = $request->file('imagen');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $imagePath = public_path('images') . '/' . $imageName;
-        
+    
                 if ($image->move(public_path('images'), $imageName)) {
                     // Actualizar el campo 'imagen' con la nueva ruta de la imagen
                     $input['imagen'] = 'images/' . $imageName;
@@ -212,16 +215,16 @@ class VehirecepcioneController extends Controller
                 // Si no se ha seleccionado una nueva imagen, mantener la imagen actual
                 $input['imagen'] = $vehirecepcione->imagen;
             }
-            
+    
             // Actualizar los demás campos del registro
             DB::beginTransaction();
-
+    
             $vehirecepcione->update($input);
-
+    
             DB::commit();
-        
+    
             return redirect()->route('vehirecepciones.index')
-                ->with('success', 'Recepción del vehículo actualizado  exitosamente.');
+                ->with('success', 'Recepción del vehículo actualizado exitosamente.');
         } catch (QueryException $e) {
             DB::rollBack();
             return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)

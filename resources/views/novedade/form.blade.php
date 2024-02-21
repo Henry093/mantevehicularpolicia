@@ -3,7 +3,8 @@
 <div class="form-group mb-3">
     <label class="form-label">   {{ Form::label('user_id', 'Usuario') }}</label>
     <div>
-        {{ Form::text('user_id', $user->name . ' ' . $user->lastname, ['class' => 'form-control', 'readonly' => true, 'placeholder' => 'Usuario']) }}
+        {{ Form::hidden('user_id', $user->id) }} <!-- Cambiado a un campo oculto para enviar el ID del usuario -->
+        {{ Form::text('user_name', $user->name . ' ' . $user->lastname, ['class' => 'form-control', 'readonly' => true, 'placeholder' => 'Usuario']) }}
     </div>
 </div>
 
@@ -24,7 +25,7 @@
             <option value="">Seleccionar Estatus..</option>
             @foreach ($d_tnovedad as $tnovedad)
                 <option
-                    value="{{ $tnovedad->id }}"{{ $vehisubcircuito->tnovedad_id == $tnovedad->id ? 'selected' : '' }}>
+                    value="{{ $tnovedad->id }}"{{ $novedade->tnovedad_id == $tnovedad->id ? 'selected' : '' }}>
                     {{ $tnovedad->nombre }}
                 </option>
             @endforeach
@@ -37,7 +38,7 @@
     <div class="form-footer">
         <div class="text-end">
             <div class="d-flex">
-                <a href="/mantenimientos/create" class="btn btn-danger">@lang('Cancel')</a>
+                <a href="/novedades" class="btn btn-danger">@lang('Cancel')</a>
                 <button type="submit" class="btn btn-primary ms-auto ajax-submit">@lang('Submit')</button>
             </div>
         </div>

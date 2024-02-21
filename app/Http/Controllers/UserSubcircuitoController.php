@@ -205,10 +205,11 @@ class UsersubcircuitoController extends Controller
     {
         // Validación de los datos de entrada según las reglas definidas en el modelo
         $validator = Validator::make($request->all(), Usersubcircuito::$rules);
-
+    
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
+    
         try {
             // Reglas de validación
             $rules = [
@@ -233,15 +234,14 @@ class UsersubcircuitoController extends Controller
                     'subcircuito_id' => null,
                     'asignacion_id' => 2,
                 ];
-    
+        
                 $usersubcircuito->update($noAsignadoData);
     
-                DB::commit();
-    
-                return redirect()->route('usersubcircuitos.index')->with('success', 'Registro actualizado a "No Asignado".');
-            }elseif($validatedData['asignacion_id'] == 1){
-                // Actualizar los campos a "No Asignado" sin borrar el registro
-                $AsignadoData = [
+                // Llamar al método de eliminación en el controlador AsignarvehiculoController
+                AsignarvehiculoController::eliminarAsignacion($usersubcircuito->user_id);
+            } elseif ($validatedData['asignacion_id'] == 1) {
+                // Actualizar los campos a "Asignado"
+                $asignadoData = [
                     'provincia_id' => $request->input('provincia_id'),
                     'canton_id' => $request->input('canton_id'),
                     'parroquia_id' => $request->input('parroquia_id'),
@@ -251,25 +251,8 @@ class UsersubcircuitoController extends Controller
                     'asignacion_id' => 1,
                 ];
     
-                $usersubcircuito->update($AsignadoData);
-    
-                DB::commit();
-    
-                return redirect()->route('usersubcircuitos.index')->with('success', 'Registro actualizado a "Asignado".');
+                $usersubcircuito->update($asignadoData);
             }
-    
-            // Asegurarse de que se proporcionen valores válidos para los campos de ubicación
-            $request->validate([
-                'provincia_id' => 'required',
-                'canton_id' => 'required',
-                'parroquia_id' => 'required',
-                'distrito_id' => 'required',
-                'circuito_id' => 'required',
-                'subcircuito_id' => 'required',
-            ]);
-    
-            // Actualizar el Usersubcircuito con los nuevos datos
-            $usersubcircuito->update($validatedData);
     
             DB::commit();
     

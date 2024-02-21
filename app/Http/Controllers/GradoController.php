@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class GradoController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:grados.index')->only('index');
@@ -30,17 +31,19 @@ class GradoController extends Controller
      */
     public function index()
     {
-        $search = request('search');
-        $query = Grado::query();
+        $search = request('search');// Se obtiene el término de búsqueda
+        $query = Grado::query();// Se crea una consulta para obtener los grados
     
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('nombre', 'like', '%' . $search . '%');
             });
         }
 
-        $grados = $query->paginate(12);
+        $grados = $query->paginate(12);// Se obtienen los grados paginados
 
+        // Se devuelve la vista con los cantones paginados
         return view('grado.index', compact('grados'))
             ->with('i', (request()->input('page', 1) - 1) * $grados->perPage());
     }
@@ -52,8 +55,9 @@ class GradoController extends Controller
      */
     public function create()
     {
-        $grado = new Grado();
-        return view('grado.create', compact('grado'));
+        $grado = new Grado();// Se crea una nueva instancia de grado
+
+        return view('grado.create', compact('grado'));// Se devuelve la vista con el formulario de creación
     }
 
     /**
@@ -64,27 +68,29 @@ class GradoController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), Grado::$rules);
+        $validator = Validator::make($request->all(), Grado::$rules);// Se validan los datos del formulario
     
+        // Si la validación falla, se redirige de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Se inicia una transacción de base de datos
     
-            $nombre = $request->input('nombre');
-            $gradoExistente = Grado::where('nombre', $nombre)->first();
-            if ($gradoExistente) {
+            $nombre = Grado::where('nombre', $request->input('nombre'))->first();// Se busca si ya existe un grado con el mismo nombre
+            if ($nombre) {
                 return redirect()->route('grados.create')->with('error', 'El grado ya está registrado.');
             }
     
-            Grado::create($request->all());
+            Grado::create($request->all());// Se crea un nuevo cantón con los datos proporcionados
     
-            DB::commit();
+            DB::commit();// Se confirma la transacción
     
+            // Se redirige a la lista de cantones con un mensaje de éxito
             return redirect()->route('grados.index')->with('success', 'Grado creado exitosamente.');
         } catch (\Exception $e) {
+            // En caso de error, se deshace la transacción y se redirige con un mensaje de error
             DB::rollBack();
             return redirect()->route('grados.index')->with('error', 'Error al crear el grado: ' . $e->getMessage());
         }
@@ -99,9 +105,11 @@ class GradoController extends Controller
     public function show($id)
     {
         try {
-            $grado = Grado::findOrFail($id);
-            return view('grado.show', compact('grado'));
+            $grado = Grado::findOrFail($id);// Intenta encontrar el cantón por su ID
+            return view('grado.show', compact('grado'));// Devuelve la vista con los detalles del grado
+
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el cantón, redirige a la lista de grados con un mensaje de error
             return redirect()->route('grados.index')->with('error', 'El grado no existe.');
         }
     }
@@ -115,9 +123,12 @@ class GradoController extends Controller
     public function edit($id)
     {
         try {
-            $grado = Grado::findOrFail($id);
-            return view('grado.edit', compact('grado'));
+            $grado = Grado::findOrFail($id);// Intenta encontrar el grado por su ID
+
+            return view('grado.edit', compact('grado'));// Devuelve la vista con el grado a editar
+
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el grado, redirige a la lista de grados con un mensaje de error
             return redirect()->route('grados.index')->with('error', 'El grado no existe.');
         }
     }
@@ -131,27 +142,33 @@ class GradoController extends Controller
      */
     public function update(Request $request, Grado $grado)
     {
-        $validator = Validator::make($request->all(), Grado::$rules);
+        $validator = Validator::make($request->all(), Grado::$rules);// Validar los datos del formulario
     
+        // Si la validación falla, redirigir de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
     
-            $nombre = $request->input('nombre');
+            $nombre = $request->input('nombre');// Obtener el nuevo nombre del grado
+
+            // Verificar si ya existe un grado con el mismo nombre pero distinto ID
             $gradoExistente = Grado::where('nombre', $nombre)->where('id', '!=', $grado->id)->first();
             if ($gradoExistente) {
                 return redirect()->route('grados.index')->with('error', 'Ya existe un grado con ese nombre.');
             }
     
-            $grado->update($request->all());
+            $grado->update($request->all());// Actualizar los datos del grado con los proporcionados en el formulario
     
-            DB::commit();
+            DB::commit();// Confirmar la transacción
     
+            // Redirigir a la lista de grados con un mensaje de éxito
             return redirect()->route('grados.index')->with('success', 'Grado actualizado exitosamente.');
+
         } catch (\Exception $e) {
+            // En caso de error, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('grados.index')->with('error', 'Error al actualizar el grado: ' . $e->getMessage());
         }
@@ -165,21 +182,29 @@ class GradoController extends Controller
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
+            
+            DB::beginTransaction();// Iniciar una transacción de base de datos
 
-            $grado = Grado::findOrFail($id);
-            $grado->delete();
+            $grado = Grado::findOrFail($id);// Buscar el grado por su ID
+            $grado->delete();// Eliminar el grado
 
-            DB::commit();
+            DB::commit();// Confirmar la transacción
 
+            // Redirigir a la lista de grados con un mensaje de éxito
             return redirect()->route('grados.index')->with('success', 'Grado borrado exitosamente.');
+        
         } catch (ModelNotFoundException $e) {
+             // En caso de que el grado no exista, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('grados.index')->with('error', 'El grado no existe.');
+        
         } catch (QueryException $e) {
+            // En caso de que no se pueda eliminar debido a datos asociados, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('grados.index')->with('error', 'El grado no puede eliminarse, tiene datos asociados.');
+        
         } catch (\Exception $e) {
+            // En caso de error, deshace la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('grados.index')->with('error', 'Error al eliminar el grado: ' . $e->getMessage());
         }

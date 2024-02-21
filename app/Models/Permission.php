@@ -25,7 +25,6 @@ class Permission extends Model
     static $rules = [
 		'name' => 'required',
 		'description' => 'required',
-		'guard_name' => 'required',
     ];
 
     protected $perPage = 20;
@@ -54,5 +53,7 @@ class Permission extends Model
         return $this->hasOne('App\Models\RoleHasPermission', 'permission_id', 'id');
     }
     
-
+    protected $hidden = [
+        'guard_name'
+    ];
 }

@@ -61,6 +61,12 @@ class UserSeeder extends Seeder
 		Permission::create(['name' =>'roles.edit', 'description' => 'Editar Rol'])->syncRoles([$rol1]);
 		Permission::create(['name' =>'roles.show', 'description' => 'Ver Rol'])->syncRoles([$rol1]);
 		Permission::create(['name' =>'roles.destroy', 'description' => 'Eliminar Rol'])->syncRoles([$rol1]);
+
+		Permission::create(['name' =>'permissions.index', 'description' => 'Lista de Permisos'])->syncRoles([$rol1]);
+		Permission::create(['name' =>'permissions.create', 'description' => 'Crear Permisos'])->syncRoles([$rol1]);
+		Permission::create(['name' =>'permissions.edit', 'description' => 'Editar Permisos'])->syncRoles([$rol1]);
+		Permission::create(['name' =>'permissions.show', 'description' => 'Ver Permisos'])->syncRoles([$rol1]);
+		Permission::create(['name' =>'permissions.destroy', 'description' => 'Eliminar Permisos'])->syncRoles([$rol1]);
 		//User Roles
 		Permission::create(['name' =>'asignar.index', 'description' => 'Lista de Usuarios'])->syncRoles([$rol1]);
 		Permission::create(['name' =>'asignar.create', 'description' => 'Crear asignar rol'])->syncRoles([$rol1]);
@@ -136,6 +142,12 @@ class UserSeeder extends Seeder
 		Permission::create(['name' =>'vpasajeros.edit', 'description' => 'Editar capacidad pasajero'])->syncRoles([$rol1]);
 		Permission::create(['name' =>'vpasajeros.show', 'description' => 'Ver capacidad pasajero'])->syncRoles([$rol1]);
 		Permission::create(['name' =>'vpasajeros.destroy', 'description' => 'Eliminar capacidad pasajero'])->syncRoles([$rol1]);
+		//Vehículos eliminados
+		Permission::create(['name' =>'vehieliminacions.index', 'description' => 'Lista de vehículos eliminados'])->syncRoles([$rol1]);
+		Permission::create(['name' =>'vehieliminacions.show', 'description' => 'Ver vehículos eliminados'])->syncRoles([$rol1]);
+		//Reportes
+		Permission::create(['name' =>'reportes.index', 'description' => 'Lista de Reportes'])->syncRoles([$rol1]);
+		Permission::create(['name' =>'general.index', 'description' => 'Lista de Reportes General'])->syncRoles([$rol1]);
 		//Mantenimiento
 		//Tipo mantenimiento
 		Permission::create(['name' =>'mantetipos.index', 'description' => 'Lista de tipo mantenimientos'])->syncRoles([$rol1]);

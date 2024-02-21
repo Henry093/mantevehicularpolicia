@@ -2,12 +2,12 @@
 @section('title', __('validation.Login'))
 
 @section('content')
-
+<div class="container-fluid p-0" style="background-image: url('{{ asset('images/portada.jpg') }}'); background-size: cover; background-position: center; height: 100vh;">
     <div class="container container-tight py-4">
         <div class="text-center mb-1 mt-5">
             <a href="" class="navbar-brand navbar-brand-autodark">
-                <img src="{{asset(config('tablar.auth_logo.img.path','assets/logo.svg'))}}" height="36"
-                     alt=""></a>
+                <img src="{{asset(config('tablar.auth_logo.img.path','assets/logo.svg'))}}" height="100"alt="">
+            </a>
         </div>
         <div class="card card-md">
             <div class="card-body">
@@ -78,4 +78,5 @@
             @lang('Do not have account yet?')' <a href="{{route('register')}}" tabindex="-1">@lang('Sign up')</a>
         </div> --}}
     </div>
+</div>
 @endsection

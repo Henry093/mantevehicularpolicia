@@ -198,7 +198,16 @@ return new class extends Migration
                 $table->foreign('vpasajero_id')->references('id')->on('vpasajeros');
                 $table->foreign('estado_id')->references('id')->on('estados');
             });
-    
+
+            Schema::create('vehieliminacions', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('placa', 8)->unique(); 
+                $table->string('chasis', 20)->unique();
+                $table->string('motor', 20)->unique(); 
+                $table->text('motivo');
+                $table->timestamps();
+            });
+
             Schema::create('asignacions', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('nombre', 50)->unique();
@@ -354,12 +363,7 @@ return new class extends Migration
                 $table->foreign('circuito_id')->references('id')->on('circuitos');
                 $table->foreign('subcircuito_id')->references('id')->on('subcircuitos');
                 $table->foreign('treclamo_id')->references('id')->on('treclamos');
-            });
-
-            
-
-
-            
+            });    
     }
 
     /**
@@ -394,6 +398,7 @@ return new class extends Migration
         Schema::dropIfExists('rmantenimientos');
         Schema::dropIfExists('rvehiculos');
         Schema::dropIfExists('evehiculos');
+        Schema::dropIfExists('vehieliminacions');
         
         Schema::dropIfExists('treclamos');
         Schema::dropIfExists('reclamos');

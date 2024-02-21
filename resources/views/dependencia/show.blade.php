@@ -59,7 +59,7 @@
 </div>
 <div class="form-group">
 <strong>Parroquia:</strong>
-{{ $dependencia->parroquia->parroquia }}
+{{ $dependencia->parroquia->nombre }}
 </div>
 <div class="form-group">
 <strong>Distrito:</strong>

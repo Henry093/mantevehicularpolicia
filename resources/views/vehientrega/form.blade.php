@@ -50,7 +50,7 @@
 <div class="form-group mb-3">
     <div class="row">
         <div class="col-md-6">
-            <label class="form-label required">   {{ Form::label('p_retiro', 'Nombre') }}</label>
+            <label class="form-label required">   {{ Form::label('p_retiro', 'Nombre Policía') }}</label>
             <div>
                 {{ Form::text('p_retiro', $vehientrega->p_retiro, ['class' => 'form-control' .
                 ($errors->has('p_retiro') ? ' is-invalid' : ''), 'placeholder' => 'Nombre de la persona que retira el vehículo', 'required']) }}

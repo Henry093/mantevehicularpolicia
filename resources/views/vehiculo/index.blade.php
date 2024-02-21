@@ -137,18 +137,35 @@
                                                            href="{{ route('vehiculos.edit',$vehiculo->id) }}">
                                                            @lang('Edit')
                                                         </a>
-                                                        <form
-                                                            action="{{ route('vehiculos.destroy',$vehiculo->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                    onclick="if(!confirm('Do you Want to Proceed?')){return false;}"
-                                                                    class="dropdown-item text-red"><i
-                                                                    class="fa fa-fw fa-trash"></i>
-                                                                    @lang('Delete')
-                                                            </button>
-                                                        </form>
+                                                        <!-- Botón Delete que abre el modal -->
+                                                        <button type="button" class="dropdown-item text-red" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $vehiculo->id }}">
+                                                            @lang('Delete')
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Modal de Confirmación de Eliminación -->
+                                            <div class="modal fade" id="deleteModal{{ $vehiculo->id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">@lang('Confirm Delete')</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="{{ route('vehiculos.destroy',$vehiculo->id) }}" method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <div class="mb-3">
+                                                                    <label for="motivo" class="form-label">@lang('Motivo de Eliminación')</label>
+                                                                    <input type="text" class="form-control" id="motivo" name="motivo" required>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">@lang('Cancel')</button>
+                                                                    <button type="submit" class="btn btn-danger ms-auto" data-bs-dismiss="modal">@lang('Confirm')</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -169,4 +186,5 @@
             </div>
         </div>
     </div>
+
 @endsection

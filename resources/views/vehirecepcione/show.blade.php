@@ -55,7 +55,7 @@
 </div>
                             
 <div class="form-group">
-<strong>Orden:</strong>
+<strong>Placa:</strong>
 {{ $vehirecepcione->mantenimiento->vehiculo->placa }}
 </div>
 <div class="form-group">
@@ -87,7 +87,7 @@
 {{ $vehirecepcione->mantetipo->descripcion }}
 </div>
 <div class="form-group">
-<strong>Detalle Mantenimiento: </strong>
+<strong>Valor Mantenimiento: </strong>
 {{ $vehirecepcione->mantetipo->valor }} $
 </div>
 <div class="form-group">

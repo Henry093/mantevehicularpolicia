@@ -14,11 +14,21 @@ use Illuminate\Http\Request;
 
 class GeneralController extends Controller
 {
+    public function __construct()
+    {
+        // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
+        $this->middleware('can:general.index')->only('index');
+        $this->middleware('can:general.create')->only('create', 'store');
+        $this->middleware('can:general.edit')->only('edit', 'update');
+        $this->middleware('can:general.show')->only('show');
+        $this->middleware('can:general.destroy')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        // Obtener el total de dependencias, usuarios, vehículos, mantenimientos, recepciones, entregas y reclamos
         $totalDependencias = Subcircuito::count();
         $totalUsuarios = User::count();
         $totalVehiculos = Vehiculo::count();
@@ -27,7 +37,8 @@ class GeneralController extends Controller
         $totalEntregas = Vehientrega::count();
         $totalReclamos = Reclamo::count();
 
-        return view('reporte.general', compact('totalDependencias',
+        // Devolver la vista con los totales de cada recurso
+        return view('reporte.general.general', compact('totalDependencias',
             'totalUsuarios',
             'totalVehiculos',
             'totalMantenimientos',
@@ -35,7 +46,6 @@ class GeneralController extends Controller
             'totalEntregas',
             'totalReclamos'
         ));
-
     }
 
     /**

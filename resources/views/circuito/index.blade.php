@@ -90,7 +90,7 @@
 										<th>Cantón</th>
 										<th>Parroquia</th>
 										<th>Distrito</th>
-										<th>Nombre</th>
+										<th>Circuito</th>
 										<th>Código</th>
 										<th>Estado</th>
 

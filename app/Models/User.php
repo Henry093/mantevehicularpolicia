@@ -48,7 +48,8 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasRoles, HasApiTokens, HasFactory, Notifiable;
-    
+
+
     static $rules = [
 		'name' => 'required|max:50',
 		'lastname' => 'required|max:50',
@@ -160,5 +161,15 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     
-
+    public function isAdmin()
+    {
+        // Obtener los roles del usuario
+        $roles = $this->getRoleNames();
+        
+        // Verificar si alguno de los roles del usuario corresponde a un administrador
+        return $roles->contains(function ($role) {
+            return in_array($role, ['Administrador', 'Alta Gerencia', 'Técnico 1', 'Técnico 2']);
+        });
+    }
+    
 }
