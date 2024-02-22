@@ -16,6 +16,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
  */
 class VehientregaController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:vehientregas.index')->only('index');
@@ -31,9 +32,10 @@ class VehientregaController extends Controller
      */
     public function index()
     {
-        $search = request('search');
-        $query = Vehientrega::query();
+        $search = request('search'); // Se obtiene el término de búsqueda
+        $query = Vehientrega::query(); // Se crea una consulta para obtener los provincias
     
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('fecha_entrega', 'like', '%' . $search . '%')
@@ -47,8 +49,9 @@ class VehientregaController extends Controller
             });
         }
     
-        $vehientregas = $query->paginate(10);
-    
+        $vehientregas = $query->paginate(10);// Se obtienen los provincias paginados
+        
+        // Se devuelve la vista con los provincias paginados
         return view('vehientrega.index', compact('vehientregas'))
             ->with('i', (request()->input('page', 1) - 1) * $vehientregas->perPage());
     }
@@ -60,13 +63,14 @@ class VehientregaController extends Controller
      */
     public function create()
     {
-        $vehientrega = new Vehientrega();
+        $vehientrega = new Vehientrega(); // Se crea una nueva instancia de provincia
+
         $d_vehirecepciones = Vehirecepcione::all();
         $edicion = true;
     
         // Obtener las órdenes ya seleccionadas
         $ordenesSeleccionadas = Vehientrega::pluck('vehirecepciones_id')->toArray();
-    
+        // Se devuelve la vista con el formulario de creación
         return view('vehientrega.create', compact('vehientrega', 'd_vehirecepciones', 'ordenesSeleccionadas', 'edicion'));
     }
 
@@ -78,16 +82,16 @@ class VehientregaController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos de entrada
-        $validator = Validator::make($request->all(), Vehientrega::$rules);
+        $validator = Validator::make($request->all(), Vehientrega::$rules);// Se validan los datos del formulario
     
+        // Si la validación falla, se redirige de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            // Iniciar la transacción de base de datos
-            DB::beginTransaction();
+            
+            DB::beginTransaction();// Iniciar la transacción de base de datos
     
             // Cálculo de km_proximo
             $mantetipo = Vehirecepcione::find($request->input('vehirecepciones_id'))->mantetipo;
@@ -99,15 +103,15 @@ class VehientregaController extends Controller
                 $request->merge(['km_proximo' => $request->input('km_actual') + 2000]);
             }
     
-            // Crear un nuevo registro de vehientrega con los datos validados
-            Vehientrega::create($request->all());
+            
+            Vehientrega::create($request->all());// Crear un nuevo registro de vehientrega con los datos validados
     
             // Actualizar el estado del mantenimiento en la tabla mantenimientos
             $mantenimiento = Vehirecepcione::find($request->input('vehirecepciones_id'))->mantenimiento;
             $mantenimiento->update(['mantestado_id' => 5]);
     
-            // Confirmar la transacción de base de datos
-            DB::commit();
+            
+            DB::commit();// Confirmar la transacción de base de datos
     
             // Redirigir a la página de índice de vehientregas con un mensaje de éxito
             return redirect()->route('vehientregas.index')->with('success', 'Entrega de vehículo creado exitosamente.');
@@ -130,9 +134,10 @@ class VehientregaController extends Controller
     public function show($id)
     {
         try {
-            $vehientrega = Vehientrega::findOrFail($id);
-            return view('vehientrega.show', compact('vehientrega'));
+            $vehientrega = Vehientrega::findOrFail($id); // Intenta encontrar el vehientrega por su ID
+            return view('vehientrega.show', compact('vehientrega')); // Devuelve la vista con los detalles del vehientrega
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el vehientrega, redirige a la lista de vehientrega con un mensaje de error
             return redirect()->route('vehientrega.index')->with('error', 'El vehículo de entrega no existe.');
         }
     }
@@ -146,16 +151,16 @@ class VehientregaController extends Controller
     public function edit($id)
     {
         try {
-            // Obtener el vehículo de entrega con el ID proporcionado
-            $vehientrega = Vehientrega::findOrFail($id);
             
-            // Obtener todas las recepciones de vehículos disponibles
-            $d_vehirecepciones = Vehirecepcione::all();
+            $vehientrega = Vehientrega::findOrFail($id);// Obtener el vehículo de entrega con el ID proporcionado
+            
+            $d_vehirecepciones = Vehirecepcione::all();// Obtener todas las recepciones de vehículos disponibles
             
             $edicion = false;
 
-            return view('vehientrega.edit', compact('vehientrega', 'd_vehirecepciones', 'edicion'));
+            return view('vehientrega.edit', compact('vehientrega', 'd_vehirecepciones', 'edicion')); // Devuelve la vista con el vehientrega a editar
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el vehientrega, redirige a la lista de vehientrega con un mensaje de error
             return redirect()->route('vehientrega.index')->with('error', 'El vehículo de entrega no existe.');
         }
     }
@@ -169,16 +174,16 @@ class VehientregaController extends Controller
      */
     public function update(Request $request, Vehientrega $vehientrega)
     {
-        // Validar los datos de entrada
-        $validator = Validator::make($request->all(), Vehientrega::$rules);
+        $validator = Validator::make($request->all(), Vehientrega::$rules); // Validar los datos del formulario
     
+        // Si la validación falla, redirigir de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            // Iniciar la transacción de base de datos
-            DB::beginTransaction();
+            
+            DB::beginTransaction();// Iniciar la transacción de base de datos
     
             // Lógica de cálculo de km_proximo
             $mantetipo = Vehirecepcione::find($request->input('vehirecepciones_id'))->mantetipo;
@@ -188,12 +193,10 @@ class VehientregaController extends Controller
             } elseif ($mantetipo->id == 3) {
                 $request->merge(['km_proximo' => $request->input('km_actual') + 2000]);
             }
+            
+            $vehientrega->update($request->all());// Actualizar la Vehientrega con los datos validados
     
-            // Actualizar la Vehientrega con los datos validados
-            $vehientrega->update($request->all());
-    
-            // Confirmar la transacción de base de datos
-            DB::commit();
+            DB::commit();// Confirmar la transacción de base de datos
     
             // Redirigir a la página de índice de vehientregas con un mensaje de éxito
             return redirect()->route('vehientregas.index')->with('success', 'Entrega de vehículo actualizado exitosamente.');
@@ -214,9 +217,9 @@ class VehientregaController extends Controller
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
             
-            $vehientrega = Vehientrega::findOrFail($id);
+            $vehientrega = Vehientrega::findOrFail($id);// Buscar el vehientrega por su ID
     
             // Verificar si el estado del mantenimiento es 5 (finalizado)
             $mantestado = $vehientrega->vehirecepcione->mantenimiento->mantestado_id;
@@ -224,18 +227,22 @@ class VehientregaController extends Controller
                 throw new \Exception('No se puede eliminar la orden de mantenimiento si se encuentra en estado "' . $vehientrega->vehirecepcione->mantenimiento->mantestado->nombre . '".');
             }
     
-            $vehientrega->delete();
+            $vehientrega->delete();// Eliminar el vehientrega
             
-            DB::commit();
+            DB::commit();// Confirmar la transacción
             
+            // Redirigir a la lista de cantones con un mensaje de éxito
             return redirect()->route('vehientregas.index')->with('success', 'Entrega del vehículo borrado exitosamente.');
         } catch (ModelNotFoundException $e) {
+            // En caso de que el provincia no exista, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('vehientregas.index')->with('error', 'Entrega del vehículo no existe.');
         } catch (QueryException $e) {
+            // En caso de que no se pueda eliminar debido a datos asociados, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('vehientregas.index')->with('error', 'Error: No se puede eliminar, el mantenimiento se encuentra "' . $vehientrega->vehirecepcion->mantenimiento->mantestado->nombre . '".' . $e->getMessage());
         } catch (\Exception $e) {
+            // En caso de error, deshace la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('vehientregas.index')->with('error', 'Error: ' . $e->getMessage());
         }
@@ -244,7 +251,7 @@ class VehientregaController extends Controller
     
     public function pdf($id){
         try {
-            $vehientrega = Vehientrega::findOrFail($id);
+            $vehientrega = Vehientrega::findOrFail($id);// Buscar el vehientrega por su ID
             
             $pdf = PDF::loadView('vehientrega.pdf', compact('vehientrega'));
         

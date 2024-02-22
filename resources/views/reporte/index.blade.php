@@ -111,7 +111,7 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         <tr>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->name }} {{ $item->lastname }}</td>
                                             <td>{{ $item->cedula }}</td>
                                             <td>{{ $item->sangre->nombre }}</td>
@@ -162,7 +162,7 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         <tr>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->tvehiculo->nombre }}</td>
                                             <td>{{ $item->placa }}</td>
                                             <td>{{ $item->marca->nombre }}</td>
@@ -211,7 +211,7 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         <tr>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->orden }}</td>
                                             <td>{{ $item->user->name }} {{ $item->user->lastname }}</td>
                                             <td>{{ $item->vehiculo->placa }}</td>
@@ -265,7 +265,7 @@
                                         <tr>
                                             <td><input class="form-check-input m-0 align-middle" type="checkbox"
                                                     aria-label="Select subcircuito"></td>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->mantenimientos_id }}</td>
                                             <td>{{ $item->fecha_ingreso }}</td>
                                             <td>{{ $item->hora_ingreso }}</td>
@@ -313,7 +313,7 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         <tr>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->vehirecepciones_id }}</td>
                                             <td>{{ $item->fecha_entrega }}</td>
                                             <td>{{ $item->p_retiro }}</td>
@@ -361,7 +361,7 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         <tr>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->provincia->nombre }}</td>
                                             <td>{{ $item->canton->nombre }}</td>
                                             <td>{{ $item->parroquia->nombre }}</td>
@@ -412,7 +412,7 @@
                                 <tbody>
                                     @forelse ($data as $item)
                                         <tr>
-                                            <td>{{ ++$loop->index }}</td>
+                                            <td>{{ ++$i }}</td>
                                             <td>{{ $item->provincia->nombre }}</td>
                                             <td>{{ $item->canton->nombre }}</td>
                                             <td>{{ $item->parroquia->nombre }}</td>

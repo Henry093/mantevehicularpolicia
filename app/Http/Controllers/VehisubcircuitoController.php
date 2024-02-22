@@ -25,6 +25,7 @@ use Illuminate\Validation\Rule;
  */
 class VehisubcircuitoController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:vehisubcircuitos.index')->only('index');
@@ -40,8 +41,10 @@ class VehisubcircuitoController extends Controller
      */
     public function index()
     {
-        $vehisubcircuitos = Vehisubcircuito::paginate(10);
+        $vehisubcircuitos = Vehisubcircuito::paginate(10); // Se obtiene el término de búsqueda
 
+        
+        // Se devuelve la vista con los provincias paginados
         return view('vehisubcircuito.index', compact('vehisubcircuitos'))
             ->with('i', (request()->input('page', 1) - 1) * $vehisubcircuitos->perPage());
     }
@@ -103,33 +106,40 @@ class VehisubcircuitoController extends Controller
         // Validación de los datos de entrada según las reglas definidas en el modelo
         $validator = Validator::make($request->all(), Vehisubcircuito::$rules);
     
+        // Si la validación falla, se redirige de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
     
-            DB::beginTransaction();
+            DB::beginTransaction(); // Se inicia una transacción de base de datos
     
+            // Se obtiene el ID del vehículo desde la solicitud HTTP.
             $vehiculoId = $request->input('vehiculo_id');
+            // Se busca si existe un registro en la tabla Vehisubcircuito con el ID de vehículo dado.
             $vehiculoExistente = Vehisubcircuito::where('vehiculo_id', $vehiculoId)->first();
+            // Si se encuentra un registro con el ID de vehículo dado, se redirige de vuelta a la página de creación con un mensaje de error.
             if ($vehiculoExistente) {
                 return redirect()->route('vehisubcircuitos.create')
                     ->with('error', 'Ya existe un registro para esta Placa.');
             }
     
             $estado = $request->input('asignacion_id');
+            // Si el estado (asignación) está vacío, se establece por defecto el valor '1' (asignación por defecto).
             if (empty($estado)) {
                 $request->merge(['asignacion_id' => '1']);
             }
     
-            Vehisubcircuito::create($request->all());
+            Vehisubcircuito::create($request->all()); // Se crea un nuevo provincia con los datos proporcionados
     
-            DB::commit();
+            DB::commit(); // Se confirma la transacción
     
+            // Se redirige a la lista de provincias con un mensaje de éxito
             return redirect()->route('vehisubcircuitos.index')
                 ->with('success', 'Vehículo asignado al Subcircuito creado exitosamente.');
         } catch (\Exception $e) {
+            // En caso de error, se deshace la transacción y se redirige con un mensaje de error
             DB::rollBack();
             return redirect()->route('vehisubcircuitos.create')
                 ->with('error', 'Error al crear el Vehículo asignado al Subcircuito: ' . $e->getMessage());
@@ -252,7 +262,7 @@ class VehisubcircuitoController extends Controller
     
                 $vehisubcircuito->update($asignadoData);
     
-                DB::commit();
+                DB::commit(); // Se confirma la transacción
     
                 return redirect()->route('vehisubcircuitos.index')->with('success', 'Registro actualizado a "Asignado".');
             }

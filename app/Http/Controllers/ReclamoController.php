@@ -54,7 +54,7 @@ class ReclamoController extends Controller
         $reclamo = Reclamo::create($request->all());
 
         return redirect()->route('reclamos.index')
-            ->with('success', 'Reclamo created successfully.');
+            ->with('success', 'Reclamo creado exitosamente.');
     }
 
     /**
@@ -100,7 +100,7 @@ class ReclamoController extends Controller
         $reclamo->update($request->all());
 
         return redirect()->route('reclamos.index')
-            ->with('success', 'Reclamo updated successfully');
+            ->with('success', 'Reclamo actualizado exitosamente');
     }
 
     /**
@@ -113,7 +113,7 @@ class ReclamoController extends Controller
         $reclamo = Reclamo::find($id)->delete();
 
         return redirect()->route('reclamos.index')
-            ->with('success', 'Reclamo deleted successfully');
+            ->with('success', 'Reclamo borrado exitosamente');
     }
 
     
