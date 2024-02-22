@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class VehirecepcioneController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:vehirecepciones.index')->only('index');
@@ -32,11 +33,12 @@ class VehirecepcioneController extends Controller
      */
     public function index()
     {
-        $search = request('search');
+        $search = request('search'); // Se obtiene el término de búsqueda
         $query = Vehirecepcione::whereHas('mantenimiento', function ($q) {
             $q->where('mantestado_id', 4);
         });
     
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('fecha_ingreso', 'like', '%' . $search . '%')
@@ -52,8 +54,9 @@ class VehirecepcioneController extends Controller
                     });
             });
         }
-        $vehirecepciones = $query->paginate(12);
+        $vehirecepciones = $query->paginate(12);// Se obtienen los vehirecepcione paginados
     
+        // Se devuelve la vista con los vehirecepcione paginados
         return view('vehirecepcione.index', compact('vehirecepciones'))
             ->with('i', (request()->input('page', 1) - 1) * $vehirecepciones->perPage());
     }
@@ -71,7 +74,7 @@ class VehirecepcioneController extends Controller
         $vehirecepcionesIds = Vehirecepcione::pluck('mantenimientos_id')->toArray();
         $d_mantenimientos = Mantenimiento::whereNotIn('id', $vehirecepcionesIds)->get();
         
-        $vehirecepcione = new Vehirecepcione();
+        $vehirecepcione = new Vehirecepcione();  // Se crea una nueva instancia de Vehirecepcione
     
         return view('vehirecepcione.create', compact('vehirecepcione', 'd_mantetipos', 'd_mantenimientos'));
     }
@@ -84,8 +87,9 @@ class VehirecepcioneController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), Vehirecepcione::$rules);
+        $validator = Validator::make($request->all(), Vehirecepcione::$rules);// Se validan los datos del formulario
     
+        // Si la validación falla, se redirige de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
@@ -97,7 +101,7 @@ class VehirecepcioneController extends Controller
     
             $input = $request->all();
     
-            DB::beginTransaction();
+            DB::beginTransaction(); // Se inicia una transacción de base de datos
     
             if ($request->hasFile('imagen')) {
                 $image = $request->file('imagen');
@@ -121,8 +125,9 @@ class VehirecepcioneController extends Controller
             $mantenimiento = $vehiregistro->mantenimiento;
             $mantenimiento->update(['mantestado_id' => 4]);
     
-            DB::commit();
+            DB::commit(); // Se confirma la transacción
     
+            // Se redirige a la lista de vehirecepciones con un mensaje de éxito
             return redirect()->route('vehirecepciones.index')
                 ->with('success', 'Recepción del vehículo creado exitosamente.');
         } catch (QueryException $e) {
@@ -142,9 +147,10 @@ class VehirecepcioneController extends Controller
     public function show($id)
     {
         try {
-            $vehirecepcione = Vehirecepcione::findOrFail($id);
-            return view('vehirecepcione.show', compact('vehirecepcione'));
+            $vehirecepcione = Vehirecepcione::findOrFail($id); // Intenta encontrar el vehirecepcione por su ID
+            return view('vehirecepcione.show', compact('vehirecepcione')); // Devuelve la vista con los detalles del vehirecepcione
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el vehirecepciones, redirige a la lista de vehirecepciones con un mensaje de error
             return redirect()->route('vehirecepciones.index')->with('error', 'El registro de recepción de vehículo no existe.');
         }
     }
@@ -158,7 +164,7 @@ class VehirecepcioneController extends Controller
     public function edit($id)
     {
         try {
-            $vehirecepcione = Vehirecepcione::findOrFail($id);
+            $vehirecepcione = Vehirecepcione::findOrFail($id); // Intenta encontrar el provincia por su ID
                 // Verificar si el estado del mantenimiento es 1 (Nuevo)
             if ($vehirecepcione->mantenimiento->mantestado_id != 4) {
                 return redirect()->route('vehirecepciones.index')->with('error', 'No puedes editar esta orden de mantenimiento porque esta en estado "' . $vehirecepcione->mantenimiento->mantestado->nombre . '".');
@@ -168,6 +174,7 @@ class VehirecepcioneController extends Controller
     
             return view('vehirecepcione.edit', compact('vehirecepcione', 'd_mantetipos', 'd_mantenimientos'));
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el provincia, redirige a la lista de cantones con un mensaje de error
             return redirect()->route('vehirecepciones.index')->with('error', 'El registro de recepción de vehículo no existe.');
         }
     }
@@ -181,8 +188,9 @@ class VehirecepcioneController extends Controller
      */
     public function update(Request $request, Vehirecepcione $vehirecepcione)
     {
-        $validator = Validator::make($request->all(), Vehirecepcione::$rules);
+        $validator = Validator::make($request->all(), Vehirecepcione::$rules); // Validar los datos del formulario
     
+        // Si la validación falla, redirigir de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
@@ -216,20 +224,23 @@ class VehirecepcioneController extends Controller
                 $input['imagen'] = $vehirecepcione->imagen;
             }
     
-            // Actualizar los demás campos del registro
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
     
-            $vehirecepcione->update($input);
+            $vehirecepcione->update($input);// Actualizar los datos del provincia con los proporcionados en el formulario
     
-            DB::commit();
+            DB::commit();// Confirmar la transacción
     
+            
+            // Redirigir a la lista de cantones con un mensaje de éxito
             return redirect()->route('vehirecepciones.index')
                 ->with('success', 'Recepción del vehículo actualizado exitosamente.');
         } catch (QueryException $e) {
+            // En caso de que no se pueda eliminar debido a datos asociados, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)
                 ->with('error', 'Error al actualizar la recepción del vehículo: ' . $e->getMessage());
         } catch (\Exception $e) {
+            // En caso de error, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('vehirecepciones.edit', $vehirecepcione->id)
                 ->with('error', 'Error al actualizar la recepción del vehículo: ' . $e->getMessage());
@@ -244,9 +255,9 @@ class VehirecepcioneController extends Controller
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
         
-            $vehirecepcione = Vehirecepcione::findOrFail($id);
+            $vehirecepcione = Vehirecepcione::findOrFail($id);// Buscar el vehirecepciones por su ID
 
             // Verificar si el mantestado es igual a 2, 3
             if (in_array($vehirecepcione->mantenimiento->mantestado_id, [4, 5])) {
@@ -256,8 +267,9 @@ class VehirecepcioneController extends Controller
             // Eliminar el registro de recepción de vehículo
             $vehirecepcione->delete();
         
-            DB::commit();
+            DB::commit();// Confirmar la transacción
         
+            // Redirigir a la lista de vehirecepciones con un mensaje de éxito
             return redirect()->route('vehirecepciones.index')
                 ->with('success', 'Recepción del vehículo borrado exitosamente.');
         } catch (ModelNotFoundException $e) {

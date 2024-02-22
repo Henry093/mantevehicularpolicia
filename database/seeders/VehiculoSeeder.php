@@ -98,5 +98,26 @@ class VehiculoSeeder extends Seeder
         Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8545', 'chasis' => '1G1RC6E42BUXXXX66', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EEWE',
         'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
         
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8565', 'chasis' => '1G1RC6E42BUXXX548', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EWES',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-4515', 'chasis' => '1G1RC6E42BUXXX478', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EAWE',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8535', 'chasis' => '1G1RC6E42BUXXX136', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EEQW',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '4', 'vpasajero_id' => '5', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8487', 'chasis' => '1G1RC6E42BUXXX475', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EEWQ',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '6', 'vpasajero_id' => '4', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8314', 'chasis' => '1G1RC6E42BUXXX145', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EFDS',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '6', 'vpasajero_id' => '3', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8984', 'chasis' => '1G1RC6E42BUXXX875', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EVXC',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '2', 'vpasajero_id' => '2', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8987', 'chasis' => '1G1RC6E42BUXXX987', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EBFD',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '2', 'vpasajero_id' => '6', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8154', 'chasis' => '1G1RC6E42BUXXX784', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EFGS',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '6', 'vpasajero_id' => '5', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8111', 'chasis' => '1G1RC6E42BUXX1478', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EFGH',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '3', 'vpasajero_id' => '4', 'estado_id' => '1']);
+        Vehiculo::create(['tvehiculo_id' => '1', 'placa' => 'PAA-8125', 'chasis' => '1G1RC6E42BUXXX111', 'marca_id' => '1', 'modelo_id' => '1', 'motor' => 'N53 B30EGFS',
+        'kilometraje' => '1231', 'cilindraje' => '1.5', 'vcarga_id' => '5', 'vpasajero_id' => '2', 'estado_id' => '1']);
+        
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vehieliminacion;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 /**
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
  */
 class VehieliminacionController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:vehieliminacions.index')->only('index');
@@ -26,9 +28,10 @@ class VehieliminacionController extends Controller
      */
     public function index()
     {
-        $search = request('search');
-        $query = Vehieliminacion::query();
+        $search = request('search'); // Se obtiene el término de búsqueda
+        $query = Vehieliminacion::query(); // Se crea una consulta para obtener los vehieliminacions
     
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('placa', 'like', '%' . $search . '%')
@@ -38,8 +41,9 @@ class VehieliminacionController extends Controller
             });
         }
     
-        $vehieliminacions = $query->paginate(10);
+        $vehieliminacions = $query->paginate(10);// Se obtienen los vehieliminacions paginados
     
+        // Se devuelve la vista con los vehieliminacions paginados
         return view('vehieliminacion.index', compact('vehieliminacions'))
             ->with('i', (request()->input('page', 1) - 1) * $vehieliminacions->perPage());
     }
@@ -73,9 +77,14 @@ class VehieliminacionController extends Controller
      */
     public function show($id)
     {
-        $vehieliminacion = Vehieliminacion::find($id);
+        try {
+            $vehieliminacion = Vehieliminacion::find($id); // Intenta encontrar el vehieliminacion por su ID
 
-        return view('vehieliminacion.show', compact('vehieliminacion'));
+            return view('vehieliminacion.show', compact('vehieliminacion'));; // Devuelve la vista con los detalles del vehieliminacion
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el vehieliminacion, redirige a la lista de vehieliminacion con un mensaje de error
+            return redirect()->route('vehieliminacion.index')->with('error', 'El vehículo no existe.');
+        }
     }
 
     /**

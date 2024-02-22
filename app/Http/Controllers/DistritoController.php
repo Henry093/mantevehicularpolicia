@@ -103,11 +103,11 @@ class DistritoController extends Controller
         try {
 
             DB::beginTransaction();// Iniciar una transacción de base de datos
-
-            $nombre = Distrito::where('nombre', $request->input('nombre'))->first();// Se busca si ya existe un cantón con el mismo nombre
+/* 
+            $nombre = Distrito::where('nombre', $request->input('nombre'))->first();// Se busca si ya existe un distrito con el mismo nombre
             if ($nombre) {
                 return redirect()->route('distritos.create')->with('error', 'El distrito ya está registrado.');
-            }
+            } */
     
             // Verificar si el estado ya está presente en la solicitud
             $estado = $request->input('estado_id');
@@ -194,13 +194,13 @@ class DistritoController extends Controller
         try {
             DB::beginTransaction();// Iniciar una transacción de base de datos
 
-            $nombre = $request->input('nombre');// Obtener el nuevo nombre del Distrito
+/*             $nombre = $request->input('nombre');// Obtener el nuevo nombre del Distrito
 
             // Verificar si ya existe un Distrito con el mismo nombre pero distinto ID
             $distritoExistente = Distrito::where('nombre', $nombre)->where('id', '!=', $distrito->id)->first();
             if ($distritoExistente) {
                 return redirect()->route('distritos.index')->with('error', 'Ya existe un distrito con ese nombre.');
-            }
+            } */
 
             $distrito->update($request->all());// Actualizar los datos del cantón con los proporcionados en el formulario
 

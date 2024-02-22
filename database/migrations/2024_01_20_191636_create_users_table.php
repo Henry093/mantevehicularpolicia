@@ -96,8 +96,8 @@ return new class extends Migration
                 $table->unsignedBigInteger('provincia_id');
                 $table->unsignedBigInteger('canton_id');
                 $table->unsignedBigInteger('parroquia_id');
-                $table->string('nombre', 20)->unique();
-                $table->string('codigo', 20)->unique();
+                $table->string('nombre', 20);
+                $table->string('codigo', 20);
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');
@@ -112,8 +112,8 @@ return new class extends Migration
                 $table->unsignedBigInteger('canton_id');
                 $table->unsignedBigInteger('parroquia_id');
                 $table->unsignedBigInteger('distrito_id');
-                $table->string('nombre', 20)->unique();
-                $table->string('codigo', 20)->unique();
+                $table->string('nombre', 50);
+                $table->string('codigo', 50);
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');
@@ -130,8 +130,8 @@ return new class extends Migration
                 $table->unsignedBigInteger('parroquia_id');
                 $table->unsignedBigInteger('distrito_id');
                 $table->unsignedBigInteger('circuito_id');
-                $table->string('nombre', 20)->unique();
-                $table->string('codigo', 20)->unique();
+                $table->string('nombre', 50)->unique();
+                $table->string('codigo', 50)->unique();
                 $table->unsignedBigInteger('estado_id');
                 $table->timestamps();
                 $table->foreign('provincia_id')->references('id')->on('provincias');

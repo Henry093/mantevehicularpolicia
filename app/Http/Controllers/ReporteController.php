@@ -17,6 +17,8 @@ use Intervention\Image\Facades\Image;
 
 class ReporteController extends Controller
 {
+    
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:reportes.index')->only('index');
@@ -30,19 +32,22 @@ class ReporteController extends Controller
      */
     public function index(Request $request)
     {
-        $view = $request->get('view');
-        $search = $request->get('search');
+        $view = $request->get('view'); // Se obtiene el término de búsqueda
+        $search = $request->get('search'); // Se crea una consulta para obtener los provincias
 
-        $query = $this->getModelQuery($view);
+        
+        $query = $this->getModelQuery($view); // Se obtiene la consulta base según la vista
 
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search, $view) {
                 $this->applySearchLogic($query, $search, $view);
             });
         }
 
-        $data = $query->paginate(14);
+        $data = $query->paginate(24);// Se obtienen los provincias paginados
 
+        // Se devuelve la vista con los provincias paginados
         return view('reporte.index', compact('data', 'view'))
             ->with('i', ($request->input('page', 1) - 1) * $data->perPage());
     }
@@ -52,22 +57,23 @@ class ReporteController extends Controller
      */
     public function export(Request $request)
     {
-        $view = $request->get('view');
-        $search = $request->get('search');
+        $view = $request->get('view'); // Obtiene el parámetro 'view' de la solicitud HTTP
+        $search = $request->get('search'); // Obtiene el parámetro 'search' de la solicitud HTTP
     
-        $query = $this->getModelQuery($view);
+        $query = $this->getModelQuery($view); // Obtiene la consulta base según la vista especificada
     
+        // Si hay un término de búsqueda, aplica la lógica de búsqueda en la consulta   
         if ($search) {
             $query->where(function ($query) use ($search, $view) {
                 $this->applySearchLogic($query, $search, $view);
             });
         }
     
-        $data = $query->paginate(20);
+        $data = $query->get(); // Estrae los resultados de la consulta
     
-        $headers = $this->getHeadersForView($view);
+        $headers = $this->getHeadersForView($view); // Obtiene los encabezados para la vista especificada
     
-        $exportData = [];
+        $exportData = []; // Inicializa el arreglo donde se almacenarán los datos para exportación
     
         foreach ($data as $item) {
             // Convertir el objeto a un array y eliminar las últimas dos columnas de los datos
@@ -173,10 +179,12 @@ class ReporteController extends Controller
         }
     
         if ($request->input('format') === 'pdf') {
+            // Genera y descarga el PDF
             $pdf = PDF::loadView('reporte.pdf', compact('headers', 'exportData', 'view', 'search'));
             $pdf->setPaper('landscape');
             return $pdf->download('reporte.pdf');
         } elseif ($request->input('format') === 'excel') {
+            // Genera y descarga el Excel
             $tableName = $this->getTableName($view);
             $exportData = collect([[$tableName]])->push($headers)->merge($exportData);
             return Excel::download(new ReporteExport($exportData), 'reporte.xlsx');
@@ -190,7 +198,9 @@ class ReporteController extends Controller
     private function applySearchLogic($query, $search, $view)
     {
         switch ($view) {
+            // En caso de que la vista sea 'personas'
             case 'personas':
+                // Aplica condiciones de búsqueda para campos específicos de la tabla 'personas'
                 $query->where('name', 'like', '%' . $search . '%')
                     ->orWhere('lastname', 'like', '%' . $search . '%')
                     ->orWhere('cedula', 'like', '%' . $search . '%')
@@ -212,7 +222,10 @@ class ReporteController extends Controller
                         $q->where('nombre', 'like', '%' . $search . '%');
                     });
                 break;
+                
+            // En caso de que la vista sea 'vehiculos'
             case 'vehiculos':
+                // Aplica condiciones de búsqueda para campos específicos de la tabla 'vehiculos'
                 $query->where('placa', 'like', '%' . $search . '%')
                     ->orWhere('chasis', 'like', '%' . $search . '%')
                     ->orWhere('motor', 'like', '%' . $search . '%')
@@ -237,7 +250,9 @@ class ReporteController extends Controller
                         $q->where('nombre', 'like', '%' . $search . '%');
                     });
                 break;
+                // En caso de que la vista sea 'mantenimientos'
             case 'mantenimientos':
+                // Aplica condiciones de búsqueda para campos específicos de la tabla 'mantenimientos'
                 $query->where('fecha', 'like', '%' . $search . '%')
                     ->orWhere('hora', 'like', '%' . $search . '%')
                     ->orWhere('kilometraje', 'like', '%' . $search . '%')
@@ -253,7 +268,9 @@ class ReporteController extends Controller
                         $q->where('lastname', 'like', '%' . $search . '%');
                     });
                 break;
+                // En caso de que la vista sea 'recepciones'
             case 'recepciones':
+                // Aplica condiciones de búsqueda para campos específicos de la tabla 'recepciones'
                 $query->where('fecha_ingreso', 'like', '%' . $search . '%')
                     ->orWhere('hora_ingreso', 'like', '%' . $search . '%')
                     ->orWhere('kilometraje', 'like', '%' . $search . '%')
@@ -266,7 +283,9 @@ class ReporteController extends Controller
                         $q->where('nombre', 'like', '%' . $search . '%');
                     });
                 break;
+                // En caso de que la vista sea 'entregas'
             case 'entregas':
+                // Aplica condiciones de búsqueda para campos específicos de la tabla 'entregas'
                 $query->where('fecha_entrega', 'like', '%' . $search . '%')
                     ->orWhere('p_retiro', 'like', '%' . $search . '%')
                     ->orWhere('km_actual', 'like', '%' . $search . '%')
@@ -276,7 +295,9 @@ class ReporteController extends Controller
                         $q->where('placa', 'like', '%' . $search . '%');
                     });
                 break;
+                // En caso de que la vista sea 'subcircuitos'
             case 'subcircuitos':
+                // Aplica condiciones de búsqueda para campos específicos de la tabla 'subcircuitos'
                 $query->where('nombre', 'like', '%' . $search . '%')
                     ->orWhere('codigo', 'like', '%' . $search . '%')
                     ->orWhereHas('provincia', function ($q) use ($search) {
@@ -298,7 +319,9 @@ class ReporteController extends Controller
                         $q->where('nombre', 'like', '%' . $search . '%');
                     });
                 break;
+                // En caso de que la vista sea 'default'
             default:
+            // Aplica condiciones de búsqueda para campos específicos de la tabla 'default'
                 $query->where('nombre', 'like', '%' . $search . '%')
                     ->orWhere('codigo', 'like', '%' . $search . '%')
                     ->orWhereHas('provincia', function ($q) use ($search) {
@@ -334,6 +357,7 @@ class ReporteController extends Controller
      */
     private function getHeadersForView($view)
     {
+        // Encabezados para la vista 'personas, vehiculos, etc.
         switch ($view) {
             case 'personas':
                 return ['ID', 'Nombre', 'Apellido', 'Cédula', 'Fecha de Nacimiento', 'Sangre', 'Ciudad Nacimiento', 'Teléfono', 'Grado', 'Rango', 'Estado', '', ''];
@@ -357,19 +381,27 @@ class ReporteController extends Controller
      */
     private function getModelQuery($view)
     {
+        
+        // Retorna la consulta del modelo User para la vista 'personas'
         switch ($view) {
             case 'personas':
                 return User::query();
+                // Retorna la consulta del modelo Vehiculo para la vista 'vehiculos'
             case 'vehiculos':
                 return Vehiculo::query();
+                // Retorna la consulta del modelo Mantenimiento para la vista 'mantenimientos'
             case 'mantenimientos':
                 return Mantenimiento::query();
+                // Retorna la consulta del modelo Vehirecepcione para la vista 'recepciones'
             case 'recepciones':
                 return Vehirecepcione::query();
+                // Retorna la consulta del modelo Vehientrega para la vista 'entregas'
             case 'entregas':
                 return Vehientrega::query();
+                // Retorna la consulta del modelo Subcircuito para la vista 'subcircuitos'
             case 'subcircuitos':
                 return Subcircuito::query();
+                // Si la vista no está especificada, se devuelve la consulta del modelo Subcircuito por defecto
             default:
                 return Subcircuito::query();
         }
@@ -382,18 +414,25 @@ class ReporteController extends Controller
     private function getTableName($view)
     {
         switch ($view) {
+            // Retorna el nombre de la tabla 'users' para la vista 'personas'
             case 'personas':
                 return 'users';
+                // Retorna el nombre de la tabla 'vehiculos' para la vista 'vehiculos'
             case 'vehiculos':
                 return 'vehiculos';
+                // Retorna el nombre de la tabla 'mantenimientos' para la vista 'mantenimientos'
             case 'mantenimientos':
                 return 'mantenimientos';
+                // Retorna el nombre de la tabla 'vehirecepciones' para la vista 'recepciones'
             case 'recepciones':
                 return 'vehirecepciones';
+                // Retorna el nombre de la tabla 'vehientregas' para la vista 'entregas'
             case 'entregas':
                 return 'vehientregas';
+                // Retorna el nombre de la tabla 'subcircuitos' para la vista 'subcircuitos'
             case 'subcircuitos':
                 return 'subcircuitos';
+                // Si la vista no está especificada, se devuelve el nombre de la tabla 'subcircuitos' por defecto
             default:
                 return 'subcircuitos';
         }

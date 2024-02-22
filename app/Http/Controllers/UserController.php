@@ -12,6 +12,7 @@ use App\Models\Sangre;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
 
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:users.index')->only('index');
@@ -42,9 +44,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $search = request('search');
-        $query = User::query();
+        $search = request('search'); // Se obtiene el término de búsqueda
+        $query = User::query(); // Se crea una consulta para obtener los provincias
     
+        // Si hay un término de búsqueda, se aplica el filtro  de búsqueda en la consulta
         if ($search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
@@ -65,8 +68,9 @@ class UserController extends Controller
                     });
             });
         }
-        $users = $query->paginate(12);
+        $users = $query->paginate(12);// Se obtienen los provincias paginados
 
+        // Se devuelve la vista con los provincias paginados
         return view('user.index', compact('users'))
             ->with('i', (request()->input('page', 1) - 1) * $users->perPage());
     }
@@ -78,7 +82,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $user = new User();
+        $user = new User();; // Se crea una nueva instancia de provincia
         $d_sangre = Sangre::all();
         $d_provincia = Provincia::all();
         $d_canton = Canton::all();
@@ -88,7 +92,7 @@ class UserController extends Controller
         $d_estado = Estado::all();
 
         $edicion = false;
-
+        // Se devuelve la vista con el formulario de creación
         return view('user.create', compact('user', 'd_sangre', 'd_provincia', 'd_canton', 'd_parroquia', 'd_grado', 'd_rango', 'd_estado', 'edicion'));
     }
 
@@ -108,8 +112,8 @@ class UserController extends Controller
             return back()->withErrors($validator)->withInput();
         }
     
-        // Verificar si el estado ya está presente en la solicitud
-        $estado = $request->input('estado_id');
+        
+        $estado = $request->input('estado_id');// Verificar si el estado ya está presente en la solicitud
     
         if (empty($estado)) {
             // Si no se proporciona un estado, establecer el estado predeterminado (en este caso, 1 = Activo)
@@ -121,31 +125,26 @@ class UserController extends Controller
         $nombre = strtolower(substr($request->input('name'), 0, 2));
         $base_usuario = 'ec' . $apellido . $nombre;
     
-        // Asegurar que el nombre de usuario sea único
-        $usuario = $this->generarUsuarioUnico($base_usuario);
+        
+        $usuario = $this->generarUsuarioUnico($base_usuario);// Asegura que el nombre de usuario sea único
     
-        // Generar correo electrónico
-        $correo = $usuario . '@policianacional.gob.ec';
+        $correo = $usuario . '@policianacional.gob.ec';// Genera correo electrónico
     
-        // Agregar el nombre de usuario y correo electrónico a la solicitud
-        $request->merge(['usuario' => $usuario, 'email' => $correo]);
+        $request->merge(['usuario' => $usuario, 'email' => $correo]);// Agregar el nombre de usuario y correo electrónico a la solicitud
     
-        // Verificar si la contraseña ya está presente en la solicitud
-        $password = $request->input('password');
+        $password = $request->input('password');// Verificar si la contraseña ya está presente en la solicitud
     
         if (empty($password)) {
             // Si no se proporciona una contraseña, establecer la contraseña predeterminada
-            $request->merge(['password' => bcrypt('Policia2024.')]);
+            $request->merge(['password' => bcrypt('Policia2024#')]);
         }
     
         try {
-            DB::beginTransaction();
+            DB::beginTransaction(); // Se inicia una transacción de base de datos
     
-            // Crear el usuario en la base de datos con los datos proporcionados en la solicitud
-            $user = User::create($request->all());
+            $user = User::create($request->all());// Crear el usuario en la base de datos con los datos proporcionados en la solicitud
     
-            // Asignar el rol "Policia" al usuario
-            $rolPolicia = Role::where('name', 'Policia')->first();
+            $rolPolicia = Role::where('name', 'Policia')->first();// Asignar el rol "Policia" al usuario
     
             if ($rolPolicia) {
                 $user->assignRole($rolPolicia);
@@ -155,10 +154,12 @@ class UserController extends Controller
                 return redirect()->route('users.index')->with('error', 'Error: El rol "Policia" no está definido.');
             }
     
-            DB::commit();
+            DB::commit(); // Se confirma la transacción
     
+            // Se redirige a la lista de users con un mensaje de éxito
             return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
         } catch (\Exception $e) {
+            // En caso de error, se deshace la transacción y se redirige con un mensaje de error
             DB::rollBack();
             return redirect()->route('users.index')->with('error', 'Error al crear el usuario: ' . $e->getMessage());
         }
@@ -173,11 +174,12 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::findOrFail($id); // Intenta encontrar el User por su ID
             $d_rol = Role::all();
     
-            return view('user.show', compact('user', 'd_rol'));
+            return view('user.show', compact('user', 'd_rol')); // Devuelve la vista con los detalles del provincia
         } catch (ModelNotFoundException $e) {
+            // Si no se encuentra el User, redirige a la lista de User con un mensaje de error
             return redirect()->route('users.index')->with('error', 'El usuario no existe.');
         }
     }
@@ -191,7 +193,7 @@ class UserController extends Controller
     public function edit($id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::findOrFail($id); // Intenta encontrar el User por su ID
             $d_sangre = Sangre::all();
             $d_provincia = Provincia::all();
             $d_canton = Canton::all();
@@ -216,6 +218,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Validar los datos del formulario
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:50',
             'lastname' => 'required|max:50',
@@ -230,13 +233,13 @@ class UserController extends Controller
             'rango_id' => 'required',
             'estado_id' => 'required',
         ]);
-    
+            // Si la validación falla, redirigir de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
     
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
     
             $validatedData = $validator->validated();
     
@@ -245,27 +248,26 @@ class UserController extends Controller
             $nombre = strtolower(substr($validatedData['name'], 0, 2));
             $base_usuario = 'ec' . $apellido . $nombre;
     
-            // Asegurar que el nombre de usuario sea único
-            $usuario = $this->generarUsuarioUnico($base_usuario, true);
+            $usuario = $this->generarUsuarioUnico($base_usuario, true); // Asegurar que el nombre de usuario sea único
     
-            // Generar correo electrónico
-            $correo = $usuario . '@policianacional.gob.ec';
+            $correo = $usuario . '@policianacional.gob.ec';// Generar correo electrónico
     
-            // Verificar si la contraseña ya está presente en la solicitud
-            $password = $request->input('password');
+            $password = $request->input('password');// Verificar si la contraseña ya está presente en la solicitud
     
             if (empty($password)) {
                 // Si no se proporciona una contraseña, establecer la contraseña predeterminada
-                $request->merge(['password' => bcrypt('Policia2024.')]);
+                $request->merge(['password' => bcrypt('Policia2024#')]);
             }
     
             // Actualizar el usuario con los nuevos datos
             $user->update(array_merge($validatedData, ['usuario' => $usuario, 'email' => $correo]));
     
-            DB::commit();
+            DB::commit();// Confirmar la transacción
     
+            // Redirigir a la lista de users con un mensaje de éxito
             return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
         } catch (\Exception $e) {
+            // En caso de error, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('users.index')->with('error', 'Error al actualizar el usuario: ' . $e->getMessage());
         }
@@ -278,21 +280,25 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
-            DB::beginTransaction();
+            DB::beginTransaction();// Iniciar una transacción de base de datos
     
-            $user = User::findOrFail($id);
-            $user->delete();
+            $user = User::findOrFail($id);// Buscar el User por su ID
+            $user->delete();// Eliminar el User
     
-            DB::commit();
+            DB::commit();// Confirmar la transacción
     
+            // Redirigir a la lista de cantones con un mensaje de éxito
             return redirect()->route('users.index')->with('success', 'Usuario borrado exitosamente.');
         } catch (ModelNotFoundException $e) {
+            // En caso de que el User no exista, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('users.index')->with('error', 'El usuario no existe.');
         } catch (QueryException $e) {
+            // En caso de que no se pueda eliminar debido a datos asociados, deshacer la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('users.index')->with('error', 'El usuario no puede eliminarse, tiene datos asociados.');
         } catch (\Exception $e) {
+            // En caso de error, deshace la transacción y redirigir con un mensaje de error
             DB::rollBack();
             return redirect()->route('users.index')->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
         }
@@ -300,19 +306,55 @@ class UserController extends Controller
     
 
 
-    public function getCantones($provinciaId) {
-        $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
-        return response()->json($cantones);
+    public function getCantones($provinciaId)
+    {
+        try {
+            // Intenta encontrar los cantones correspondientes a la provincia proporcionada
+            $cantones = Canton::where('provincia_id', $provinciaId)->pluck('nombre', 'id')->toArray();
+            
+            // Devuelve una respuesta JSON con los cantones encontrados
+            return response()->json($cantones);
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentran cantones, devuelve un error 404
+            return new JsonResponse(['error' => 'Cantones no encontrados'], 404);
+        } catch (\Exception $e) {
+            // Si ocurre otro tipo de error, devuelve un error 500
+            return new JsonResponse(['error' => 'Error interno del servidor'], 500);
+        }
+    }
+    
+    public function getParroquias($cantonId)
+    {
+        try {
+            // Intenta encontrar las parroquias correspondientes al cantón proporcionado
+            $parroquias = Parroquia::where('canton_id', $cantonId)->pluck('nombre', 'id')->toArray();
+            
+            // Devuelve una respuesta JSON con las parroquias encontradas
+            return response()->json($parroquias);
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentran parroquias, devuelve un error 404
+            return new JsonResponse(['error' => 'Parroquias no encontradas'], 404);
+        } catch (\Exception $e) {
+            // Si ocurre otro tipo de error, devuelve un error 500
+            return new JsonResponse(['error' => 'Error interno del servidor'], 500);
+        }
     }
 
-    public function getParroquias($cantonId) {
-        $parroquias = Parroquia::where('canton_id', $cantonId)->pluck('nombre', 'id')->toArray();
-        return response()->json($parroquias);
-    }
-
-    public function getRangos($gradoId) {
-        $rangos = Rango::where('grado_id', $gradoId)->pluck('nombre', 'id')->toArray();
-        return response()->json($rangos);
+    public function getRangos($gradoId)
+    {
+        try {
+            // Intenta encontrar las rangos correspondientes al cantón proporcionado
+            $rangos = Rango::where('grado_id', $gradoId)->pluck('nombre', 'id')->toArray();
+            
+            // Devuelve una respuesta JSON con las parroquias encontradas
+            return response()->json($rangos);
+        } catch (ModelNotFoundException $e) {
+            // Si no se encuentran rangos, devuelve un error 404
+            return new JsonResponse(['error' => 'Parroquias no encontradas'], 404);
+        } catch (\Exception $e) {
+            // Si ocurre otro tipo de error, devuelve un error 500
+            return new JsonResponse(['error' => 'Error interno del servidor'], 500);
+        }
     }
 
 

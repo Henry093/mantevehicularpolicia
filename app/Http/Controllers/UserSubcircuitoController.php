@@ -26,6 +26,7 @@ use Illuminate\Validation\Rule;
  */
 class UsersubcircuitoController extends Controller
 {
+    // Constructor que establece los middleware para restringir el acceso a las acciones del controlador
     public function __construct()
     {
         $this->middleware('can:usersubcircuitos.index')->only('index');
@@ -60,7 +61,7 @@ class UsersubcircuitoController extends Controller
         ->whereNotIn('estado_id', [2, 3])
         ->get();
 
-        $usersubcircuito = new Usersubcircuito();
+        $usersubcircuito = new Usersubcircuito(); // Se crea una nueva instancia de Usersubcircuito
         $d_provincia = Provincia::all();
         $d_canton = Canton::all();
         $d_parroquia = Parroquia::all();
@@ -70,7 +71,8 @@ class UsersubcircuitoController extends Controller
 
         $edicion = false;
         $edicion2 = true;
-
+        
+        // Se devuelve la vista con el formulario de creación
         return view('usersubcircuito.create', compact(
             'usersubcircuito',
             'd_user',
@@ -96,31 +98,39 @@ class UsersubcircuitoController extends Controller
         // Validación de los datos de entrada según las reglas definidas en el modelo
         $validator = Validator::make($request->all(), Usersubcircuito::$rules);
 
+        // Si la validación falla, se redirige de nuevo al formulario con los errores
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
         try {
     
-            DB::beginTransaction();
+            DB::beginTransaction(); // Se inicia una transacción de base de datos
     
+            // Buscamos si ya existe un registro para este usuario en la tabla Usersubcircuito
             $userId = $request->input('user_id');
+            // Si ya existe un registro para este usuario, redirigimos de nuevo al formulario de creación con un mensaje de error
             $userExistente = Usersubcircuito::where('user_id', $userId)->first();
             if ($userExistente) {
                 return redirect()->route('usersubcircuitos.create')->with('error', 'Ya existe un registro para este usuario.');
             }
     
+            // Obtenemos el estado de asignación del formulario     
             $estado = $request->input('asignacion_id');
+
+            // Si el estado de asignación está vacío, lo establecemos en '1'
             if (empty($estado)) {
                 $request->merge(['asignacion_id' => '1']);
             }
     
-            Usersubcircuito::create($request->all());
+            Usersubcircuito::create($request->all()); // Se crea un nuevo provincia con los datos proporcionados
     
-            DB::commit();
+            DB::commit();// Se confirma la transacción
     
+            // Se redirige a la lista de provincias con un mensaje de éxito
             return redirect()->route('usersubcircuitos.index')
             ->with('success', 'Usuario asignado al Subcircuito creado exitosamente.');
         } catch (\Exception $e) {
+            // En caso de error, se deshace la transacción y se redirige con un mensaje de error
             DB::rollBack();
             return redirect()->route('usersubcircuitos.index')
             ->with('error', 'Error al crear el usuario asignado al subcircuito: ' . $e->getMessage());
@@ -220,7 +230,7 @@ class UsersubcircuitoController extends Controller
             // Validar los datos de la solicitud
             $validatedData = $request->validate($rules);
     
-            DB::beginTransaction();
+            DB::beginTransaction(); // Se inicia una transacción de base de datos
     
             // Verificar si la asignación es igual a 2 (No Asignado)
             if ($validatedData['asignacion_id'] == 2) {
@@ -254,11 +264,13 @@ class UsersubcircuitoController extends Controller
                 $usersubcircuito->update($asignadoData);
             }
     
-            DB::commit();
+            DB::commit(); // Se confirma la transacción
     
+            // Se redirige a la lista de provincias con un mensaje de éxito
             return redirect()->route('usersubcircuitos.index')
                 ->with('success', 'Usuario asignado al Subcircuito actualizado exitosamente.');
         } catch (\Exception $e) {
+            // Si no se encuentra el provincia, redirige a la lista de cantones con un mensaje de error
             DB::rollBack();
             return redirect()->route('usersubcircuitos.index')->with('error', 'Error al actualizar el usuario asignado al subcircuito: ' . $e->getMessage());
         }
