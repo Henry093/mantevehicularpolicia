@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ReporteExport;
 use App\Models\Mantenimiento;
+use App\Models\Pertrecho;
 use App\Models\Subcircuito;
 use App\Models\Vehiculo;
 use App\Models\Vehientrega;
@@ -158,6 +159,15 @@ class ReporteController extends Controller
                     $item->nombre,
                     $item->codigo,
                     $item->estado->nombre,
+
+                ];
+            } elseif ($view === 'pertrechos') {
+                $exportData[] = [
+                    $item->id,
+                    $item->tpertrecho->nombre,
+                    $item->nombre,
+                    $item->descripcion,
+                    $item->codigo,
 
                 ];
             } else {
@@ -319,6 +329,18 @@ class ReporteController extends Controller
                         $q->where('nombre', 'like', '%' . $search . '%');
                     });
                 break;
+
+                case 'pertrechos':
+                    // Aplica condiciones de búsqueda para campos específicos de la tabla 'subcircuitos'
+                    $query->where('nombre', 'like', '%' . $search . '%')
+                        ->orWhere('descripcion', 'like', '%' . $search . '%')
+                        ->orWhere('codigo', 'like', '%' . $search . '%')
+                        ->orWhereHas('tpertrechos', function ($q) use ($search) {
+                            $q->where('nombre', 'like', '%' . $search . '%');
+                        });
+                    break;
+
+
                 // En caso de que la vista sea 'default'
             default:
             // Aplica condiciones de búsqueda para campos específicos de la tabla 'default'
@@ -371,6 +393,8 @@ class ReporteController extends Controller
                 return ['ID', 'Orden', 'Fecha de Entrega', 'Persona que Retira', 'Kilometraje Actual', 'Kilometraje Próximo Mantenimiento', 'Observaciones', 'Estado Mantenimiento', '', ''];
             case 'subcircuitos':
                 return ['ID', 'Provincia', 'Cantón', 'Parroquia', 'Distrito', 'Circuito', 'Subcircuito', 'Código', 'Estado', '', ''];
+            case 'pertrechos':
+                return ['ID', 'Tipo Pertrecho', 'Nombre', 'Descripción', 'Código',  '', ''];
             default:
                 return ['ID', 'Provincia', 'Cantón', 'Parroquia', 'Distrito', 'Código Distrito', 'Circuito', 'Código Circuito', 'Subcircuito', 'Código Subcircuito', 'Estado', '', ''];
         }
@@ -401,6 +425,12 @@ class ReporteController extends Controller
                 // Retorna la consulta del modelo Subcircuito para la vista 'subcircuitos'
             case 'subcircuitos':
                 return Subcircuito::query();
+
+                
+            case 'pertrechos':
+                return Pertrecho::query();
+
+
                 // Si la vista no está especificada, se devuelve la consulta del modelo Subcircuito por defecto
             default:
                 return Subcircuito::query();
@@ -432,6 +462,12 @@ class ReporteController extends Controller
                 // Retorna el nombre de la tabla 'subcircuitos' para la vista 'subcircuitos'
             case 'subcircuitos':
                 return 'subcircuitos';
+
+            
+            case 'pertrechos':
+                    return 'pertrechos';
+
+
                 // Si la vista no está especificada, se devuelve el nombre de la tabla 'subcircuitos' por defecto
             default:
                 return 'subcircuitos';

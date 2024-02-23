@@ -52,6 +52,7 @@ class UserSeeder extends Seeder
 		$rol3 =Role::create(['name' => 'Técnico 1']);
 		$rol4 =Role::create(['name' => 'Técnico 2']);
 		$rol5 =Role::create(['name' => 'Policía']);
+		$rol6 =Role::create(['name' => 'Técnico 3']);
 
 		//Permisos
 		Permission::create(['name' =>'home', 'description' => 'Ver Dashboard'])->syncRoles([$rol1, $rol2, $rol3, $rol4, $rol5]);
@@ -262,11 +263,18 @@ class UserSeeder extends Seeder
 		Permission::create(['name' =>'vehientregas.show', 'description' => 'Ver entrega de vehículo'])->syncRoles([$rol1]);
 		Permission::create(['name' =>'vehientregas.destroy', 'description' => 'Eliminar entrega de vehículo'])->syncRoles([$rol1]);
 		
+		//Pertrechos
+		Permission::create(['name' =>'tpertrechos.index', 'description' => 'Lista de Tipo Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'tpertrechos.create', 'description' => 'Crear Tipo Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'tpertrechos.edit', 'description' => 'Editar Tipo Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'tpertrechos.show', 'description' => 'Ver Tipo Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'tpertrechos.destroy', 'description' => 'Eliminar Tipo Pertrechos'])->syncRoles([$rol1, $rol6]);
 
-
-
-
-
+		Permission::create(['name' =>'pertrechos.index', 'description' => 'Lista dePertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'pertrechos.create', 'description' => 'Crear Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'pertrechos.edit', 'description' => 'Editar Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'pertrechos.show', 'description' => 'Ver Pertrechos'])->syncRoles([$rol1, $rol6]);
+		Permission::create(['name' =>'pertrechos.destroy', 'description' => 'Eliminar Pertrechos'])->syncRoles([$rol1, $rol6]);
 
 
         //Usuario 

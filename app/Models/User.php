@@ -171,5 +171,10 @@ class User extends Authenticatable
             return in_array($role, ['Administrador', 'Alta Gerencia', 'Técnico 1', 'Técnico 2']);
         });
     }
+
+    public function asignarpertrechos()
+    {
+        return $this->hasMany(Asignarpertrecho::class);
+    }
     
 }

@@ -473,6 +473,34 @@ return [
             ],
         ], 
         
+        [
+            'text' => 'Pertrechos',
+            'icon' => 'ti ti-home-check',
+            'can' => 'pertrechos.index',
+            'active' => ['pertrechos'],
+            'submenu' => [
+                [
+                    'text' => 'Tipo Pertrecho',
+                    'route' => 'tpertrechos.index',
+                    'icon' => 'ti ti-file-description',
+                    'can' => 'tpertrechos.index',
+                ],
+                [
+                    'text' => 'Pertrechos',
+                    'route' => 'pertrechos.index',
+                    'icon' => 'ti ti-file-description',
+                    'can' => 'pertrechos.index',
+                ],
+                [
+                    'text' => 'Asignar Pertrechos',
+                    'route' => 'asignarpertrechos.index',
+                    'icon' => 'ti ti-file-description',
+                    //'can' => 'reclamo.reporteReclamo',
+                ],
+                
+            ],
+        ], 
+        
 
     ],
 

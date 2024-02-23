@@ -62,6 +62,7 @@
                                                 <option value="recepciones" {{ $view == 'recepciones' ? 'selected' : '' }}>Recepción de Vehículos</option>
                                                 <option value="entregas" {{ $view == 'entregas' ? 'selected' : '' }}>Entrega de Vehículos</option>
                                                 <option value="subcircuitos" {{ $view == 'subcircuitos' ? 'selected' : '' }}>Subcircuitos</option>
+                                                <option value="pertrechos" {{ $view == 'pertrechos' ? 'selected' : '' }}>Pertrechos</option>
                                             </select>
                                         </div>
                                         
@@ -370,6 +371,48 @@
                                             <td>{{ $item->nombre }}</td>
                                             <td>{{ $item->codigo }}</td>
                                             <td>{{ $item->estado->nombre }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="10">@lang('No Data Found')</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer d-flex align-items-center">
+                            {!! $data->links('tablar::pagination') !!}
+                        </div>
+                        @elseif($view == 'pertrechos')
+                        <div class="table-responsive min-vh-100">
+                            <table class="table card-table table-vcenter text-nowrap datatable">
+                                <thead>
+                                    <tr>
+                                        <th class="w-1">No.
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-sm text-dark icon-thick" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <polyline points="6 15 12 9 18 15"/>
+                                            </svg>
+                                        </th>
+                                        <th>Tipo de Pertrecho</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Código</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($data as $item)
+                                        <tr>
+                                            <td>{{ ++$i }}</td>
+                                            <td>{{ $item->tpertrecho->nombre }}</td>
+                                            <td>{{ $item->nombre }}</td>
+                                            <td>{{ $item->descripcion }}</td>
+                                            <td>{{ $item->codigo }}</td>
                                         </tr>
                                     @empty
                                         <tr>
