@@ -130,6 +130,7 @@
                                                            href="{{ route('novedades.edit',$novedade->id) }}">
                                                            @lang('Edit')
                                                         </a>
+                                                        @if(auth()->user()->isAdmin())
                                                         <form
                                                             action="{{ route('novedades.destroy',$novedade->id) }}"
                                                             method="POST">
@@ -142,6 +143,7 @@
                                                                     @lang('Delete')
                                                             </button>
                                                         </form>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
