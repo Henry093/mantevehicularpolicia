@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AsignacionController;
 use App\Http\Controllers\AsignarController;
+use App\Http\Controllers\AsignarpertrechoController;
 use App\Http\Controllers\AsignarVehiculoController;
 use App\Http\Controllers\CantonController;
 use App\Http\Controllers\CircuitoController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\ModeloController;
 use App\Http\Controllers\NovedadeController;
 use App\Http\Controllers\ParroquiaController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PertrechoController;
 use App\Http\Controllers\ProvinciaController;
 use App\Http\Controllers\RangoController;
 use App\Http\Controllers\ReclamoController;
@@ -29,6 +31,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SangreController;
 use App\Http\Controllers\SubcircuitoController;
 use App\Http\Controllers\TnovedadeController;
+use App\Http\Controllers\TpertrechoController;
 use App\Http\Controllers\TreclamoController;
 use App\Http\Controllers\TvehiculoController;
 use App\Http\Controllers\UserController;
@@ -193,4 +196,13 @@ Route::group(['middleware' => ['auth']], function(){
     
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
     Route::any('/reportes/export', [ReporteController::class, 'export'])->name('reportes.export');
+
+
+    //Pertrechos 
+    Route::resource('tpertrechos', TpertrechoController::class)->names('tpertrechos');
+    Route::resource('pertrechos', PertrechoController::class)->names('pertrechos');
+    
+    Route::resource('asignarpertrechos', AsignarpertrechoController::class)->names('asignarpertrechos');
+
+
 });

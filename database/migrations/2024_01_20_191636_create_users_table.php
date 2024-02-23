@@ -364,6 +364,38 @@ return new class extends Migration
                 $table->foreign('subcircuito_id')->references('id')->on('subcircuitos');
                 $table->foreign('treclamo_id')->references('id')->on('treclamos');
             });    
+
+
+
+            //Examen
+            Schema::create('tpertrechos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->string('nombre');
+                $table->timestamps();
+            });
+
+            Schema::create('pertrechos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('tpertrecho_id');
+                $table->string('nombre');
+                $table->string('descripcion');
+                $table->string('codigo');
+
+                $table->foreign('tpertrecho_id')->references('id')->on('tpertrechos');
+                $table->timestamps();
+            });
+
+            Schema::create('asignarpertrechos', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('pertrecho_id');
+                $table->unsignedBigInteger('user_id');
+                $table->timestamps();
+                $table->foreign('pertrecho_id')->references('id')->on('pertrechos')->onDelete('cascade');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+
+
+
     }
 
     /**
@@ -402,6 +434,9 @@ return new class extends Migration
         
         Schema::dropIfExists('treclamos');
         Schema::dropIfExists('reclamos');
+        Schema::dropIfExists('tpertrechos');
+        Schema::dropIfExists('pertrechos');
+        Schema::dropIfExists('asignarpertrechos');
 
     }
 };
